@@ -1,7 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@nuxt/ui", "@nuxtjs/google-fonts"],
+  modules: ["@nuxt/ui", "@nuxtjs/google-fonts", "@nuxt/image"],
+  css: ['~/assets/css/variabel.css'],
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: "en"
+      },
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1"
+    }
+  },
   typescript: {
     typeCheck: true,
   },
@@ -19,4 +29,13 @@ export default defineNuxtConfig({
       },
     },
   },
+  image: {
+    format: ["webp"],
+  },
+  components: [
+    {
+      path: "~/components",
+      pathPrefix: false,
+    },
+  ],
 });
