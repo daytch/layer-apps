@@ -1,5 +1,7 @@
 <template>
-  <section class="bg-[--app-primary-200] relative pt-[118px] pb-[109px]">
+  <section
+    class="bg-[--app-primary-200] relative pt-8 md:pt-[118px] pb-16 md:pb-[109px]"
+  >
     <NuxtImg
       format="webp"
       src="/images/home/leave_pattern_right.png"
@@ -8,7 +10,7 @@
       height="632"
       class="absolute top-0 bottom-0 right-0 h-full w-auto object-cover"
     />
-    <UContainer>
+    <UContainer class="relative z-[5]">
       <div
         class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-16"
       >
@@ -24,7 +26,9 @@
           />
         </div>
         <div class="flex-1">
-          <h2 class="text-white text-[40px] font-bold leading-[48px] mb-6">
+          <h2
+            class="text-white text-[40px] font-bold leading-[48px] mb-6 text-center md:text-left"
+          >
             Layer Apps
           </h2>
           <p
