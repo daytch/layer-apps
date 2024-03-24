@@ -24,6 +24,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
 <template>
   <NuxtImg
+    format="webp"
     src="/images/layer_apps_potrait.svg"
     alt="Layer Apps Logo"
     width="105"

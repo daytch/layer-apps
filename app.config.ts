@@ -37,6 +37,11 @@ export default defineAppConfig({
         size: "md",
       },
     },
+    container: {
+      base: "mx-auto",
+      padding: "px-4 sm:px-6 lg:px-8",
+      constrained: "max-w-7xl",
+    },
     formGroup: {
       label: {
         base: "text-[--app-dark-100] md:text-base",
