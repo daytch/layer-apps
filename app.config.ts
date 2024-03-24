@@ -1,6 +1,7 @@
 export default defineAppConfig({
   nuxtIcon: {},
   ui: {
+    strategy: "override",
     notifications: {
       position: "top-0 bottom-auto left-1/2 -translate-x-1/2",
     },
@@ -39,7 +40,7 @@ export default defineAppConfig({
     },
     container: {
       base: "mx-auto",
-      padding: "px-4 sm:px-6 lg:px-8",
+      padding: "px-6 sm:px-6 lg:px-8",
       constrained: "max-w-7xl",
     },
     formGroup: {

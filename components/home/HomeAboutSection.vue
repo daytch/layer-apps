@@ -1,14 +1,14 @@
 <template>
-  <section class="bg-white pt-[89px] pb-[191px]">
+  <section class="bg-white pt-6 md:pt-[89px] pb-[64px] md:pb-[191px]">
     <UContainer>
       <div
-        class="flex flex-col-reverse md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0 md:space-2"
+        class="flex flex-col-reverse md:flex-row md:justify-between md:items-center md:space-x-2"
       >
-        <div class="w-full md:w-1/2">
+        <div class="w-full md:w-1/2 mt-9 md:mt-0">
           <h2
             class="text-[30px] font-semibold leading-[38px] text-[--app-dark-100] mb-6"
           >
-            Kandang Ayam Telue
+            Kandang Ayam Telur
             <span class="text-[--app-primary-100]">“Cokro Farm”</span>
           </h2>
           <p
