@@ -1,7 +1,31 @@
 <script setup lang="ts">
-const toast = useToast();
+useSeoMeta({
+  title: "Layer Apps",
+});
 </script>
 
 <template>
-  <div>Landing page</div>
+  <!-- Header -->
+  <AppHeader />
+  <!-- End Header -->
+  <main>
+    <!-- Hero -->
+    <HomeHeroSection />
+    <!-- End Hero -->
+    <!-- About -->
+    <HomeAboutSection />
+    <!-- End About -->
+    <!-- Our Solution-->
+    <OurSolutionSection />
+    <!-- End Our Solution-->
+    <!-- About Bottom -->
+    <HomeAboutSectionBottom />
+    <!-- End About Bottom -->
+    <!-- Farmer Gallery -->
+    <HomeFarmerGallerySection />
+    <!-- End Farmer Gallery -->
+  </main>
+  <!-- Footer -->
+  <HomeFooter />
+  <!-- End Footer -->
 </template>

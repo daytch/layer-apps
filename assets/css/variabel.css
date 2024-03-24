@@ -1,18 +1,32 @@
 :root {
-  --app-primary-100: #22AD5C;
-  --app-primary-200: #1A8245;
-  --app-primary-300: #2CD673;
-  --app-primary-400: #57DE8F;
-  --app-primary-500: #82E6AC;
-  --app-primary-600: #ACEFC8;
-  --app-primary-700: #DAF8E6;
-  
+  /* */
+  --app-primary-text: #637381;
+  --app-secondary-text: #8899a8;
+  --app-secondary: #13c296;
+
+  /* Primary Color */
+  --app-primary-100: #22ad5c;
+  --app-primary-200: #1a8245;
+  --app-primary-300: #2cd673;
+  --app-primary-400: #57de8f;
+  --app-primary-500: #82e6ac;
+  --app-primary-600: #acefc8;
+  --app-primary-700: #daf8e6;
+
+  /* Dark Color */
   --app-dark-100: #111928;
-  --app-dark-200: #1F2A37;
+  --app-dark-200: #1f2a37;
   --app-dark-300: #374151;
-  --app-dark-400: #4B5563;
-  --app-dark-500: #6B7280;
-  --app-dark-600: #9CA3AF;
-  --app-dark-700: #D1D5DB;
-  --app-dark-800: #E5E7EB;
+  --app-dark-400: #4b5563;
+  --app-dark-500: #6b7280;
+  --app-dark-600: #9ca3af;
+  --app-dark-700: #d1d5db;
+  --app-dark-800: #e5e7eb;
+
+  /* Gray Color */
+  --app-gray-100: #f9fafb;
+  --app-gray-200: #f3f4f6;
+  --app-gray-300: #e5e7eb;
+  --app-gray-400: #dee2e6;
+  --app-gray-500: #ced4da;
 }

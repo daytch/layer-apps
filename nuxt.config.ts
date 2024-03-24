@@ -1,16 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  nitro: {
+    compressPublicAssets: true,
+    prerender: {
+      crawlLinks: true,
+    },
+  },
   devtools: { enabled: true },
   modules: ["@nuxt/ui", "@nuxtjs/google-fonts", "@nuxt/image"],
-  css: ['~/assets/css/variabel.css'],
+  css: ["~/assets/css/variabel.css"],
   app: {
     head: {
       htmlAttrs: {
-        lang: "en"
+        lang: "en",
       },
       charset: "utf-8",
-      viewport: "width=device-width, initial-scale=1"
-    }
+      viewport: "width=device-width, initial-scale=1",
+    },
   },
   typescript: {
     typeCheck: true,
