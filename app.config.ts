@@ -30,7 +30,7 @@ export default defineAppConfig({
       },
     },
     input: {
-      base: "placeholder-[--app-dark-600]",
+      base: "placeholder-[--app-dark-600] w-full",
       size: {
         md: "py-3 px-5 text-base",
       },
