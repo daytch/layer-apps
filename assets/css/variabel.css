@@ -29,4 +29,19 @@
   --app-gray-300: #e5e7eb;
   --app-gray-400: #dee2e6;
   --app-gray-500: #ced4da;
+
+  /* Danger Color */
+  --app-danger-100: #f23030;
+  --app-danger-200: #e10e0e;
+  --app-danger-300: #f56060;
+  --app-danger-400: #f89090;
+  --app-danger-500: #fbc0c0;
+  --app-danger-600: #fdd8d8;
+  --app-danger-700: #feebeb;
+  --app-danger-800: #fef3f3;
+
+  /* Layouting */
+  --sidebar-width: 317px;
+  --sidebar-collapse-width: 116px;
+  --header-dashboard-height: 94px;
 }
