@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   modules: ["@nuxt/ui", "@nuxtjs/google-fonts", "@nuxt/image"],
-  css: ["~/assets/css/variabel.css"],
+  css: ["~/assets/css/variabel.css", "~/assets/css/global.css"],
   app: {
     head: {
       htmlAttrs: {
