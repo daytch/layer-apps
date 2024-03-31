@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import {
-  eachDayOfInterval,
-  eachWeekOfInterval,
-  eachMonthOfInterval,
-  format,
-} from "date-fns";
-import {
   VisXYContainer,
   VisLine,
   VisAxis,
@@ -13,126 +7,155 @@ import {
   VisCrosshair,
   VisTooltip,
 } from "@unovis/vue";
-export type Period = "daily" | "weekly" | "monthly";
 
-export interface Range {
-  start: Date;
-  end: Date;
-}
+type DataRecord = { date: string | Date; amount: number };
 
-const cardRef = ref<HTMLElement | null>(null);
-
-const props = defineProps({
-  period: {
-    type: String as PropType<Period>,
-    required: true,
-  },
-  range: {
-    type: Object as PropType<Range>,
-    required: true,
-  },
-});
-
-type DataRecord = {
-  date: Date;
-  amount: number;
-};
-
-const { width } = useElementSize(cardRef);
-
-// We use `useAsyncData` here to have same random data on the client and server
-const { data } = await useAsyncData<DataRecord[]>(
-  async () => {
-    const dates = {
-      daily: eachDayOfInterval,
-      weekly: eachWeekOfInterval,
-      monthly: eachMonthOfInterval,
-    }[props.period](props.range);
-
-    const min = 1000;
-    const max = 10000;
-
-    return dates.map((date: any) => ({
-      date,
-      amount: Math.floor(Math.random() * (max - min + 1)) + min,
-    }));
+const data: DataRecord[] = [
+  {
+    date: "2024-03-15T17:00:00.000Z",
+    amount: 4662,
   },
   {
-    watch: [() => props.period, () => props.range],
-    default: () => [],
-  }
-);
+    date: "2024-03-16T17:00:00.000Z",
+    amount: 2340,
+  },
+  {
+    date: "2024-03-17T17:00:00.000Z",
+    amount: 8950,
+  },
+  {
+    date: "2024-03-18T17:00:00.000Z",
+    amount: 7497,
+  },
+  {
+    date: "2024-03-19T17:00:00.000Z",
+    amount: 3777,
+  },
+  {
+    date: "2024-03-20T17:00:00.000Z",
+    amount: 6180,
+  },
+  {
+    date: "2024-03-21T17:00:00.000Z",
+    amount: 1260,
+  },
+  {
+    date: "2024-03-22T17:00:00.000Z",
+    amount: 8776,
+  },
+  {
+    date: "2024-03-23T17:00:00.000Z",
+    amount: 4850,
+  },
+  {
+    date: "2024-03-24T17:00:00.000Z",
+    amount: 2535,
+  },
+  {
+    date: "2024-03-25T17:00:00.000Z",
+    amount: 2382,
+  },
+  {
+    date: "2024-03-26T17:00:00.000Z",
+    amount: 4615,
+  },
+  {
+    date: "2024-03-27T17:00:00.000Z",
+    amount: 3607,
+  },
+  {
+    date: "2024-03-28T17:00:00.000Z",
+    amount: 3946,
+  },
+  {
+    date: "2024-03-29T17:00:00.000Z",
+    amount: 8588,
+  },
+];
+
+const people = [
+  "Semua",
+  "Kandang Satu",
+  "Kandang Dua",
+  "Kandang Tiga",
+  "Kandang Empat",
+  "Kandang Lima",
+];
+
+const selected = ref(people[0]);
 
 const x = (_: DataRecord, i: number) => i;
 const y = (d: DataRecord) => d.amount;
 
-const total = computed(() =>
-  data.value.reduce((acc: number, { amount }) => acc + amount, 0)
-);
-
-const formatNumber = new Intl.NumberFormat("en", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-}).format;
-
-const formatDate = (date: Date): string => {
-  return {
-    daily: format(date, "d MMM"),
-    weekly: format(date, "d MMM"),
-    monthly: format(date, "MMM yyy"),
-  }[props.period];
-};
-
-const xTicks = (i: number) => {
-  if (i === 0 || i === data.value.length - 1 || !data.value[i]) {
-    return "";
-  }
-
-  return formatDate(data.value[i].date);
-};
-
 const template = (d: DataRecord) =>
-  `${formatDate(d.date)}: ${formatNumber(d.amount)}`;
+  `${formatDate(d.date, "dd MMMM")}: ${d.amount}`;
 </script>
 
 <template>
   <DashboardContainer>
     <UCard ref="cardRef" :ui="{ body: { padding: '!pb-3 !px-0' } as any }">
       <template #header>
-        <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
-            Revenue
-          </p>
-          <p class="text-3xl text-gray-900 dark:text-white font-semibold">
-            {{ formatNumber(total) }}
-          </p>
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-5"
+        >
+          <div>
+            <h3
+              class="text-[--app-dark-100] text-2xl font-semibold leading-[30px] mb-1"
+            >
+              FCR Overall
+            </h3>
+            <p class="text-base leading-6 text-[--app-primary-text]">
+              Nilai terakhir : 2,75
+            </p>
+          </div>
+
+          <USelectMenu
+            v-model="selected"
+            :options="people"
+            class="select-options relative"
+          />
         </div>
       </template>
 
-      <VisXYContainer
-        :data="data"
-        :padding="{ top: 10 }"
-        class="h-96"
-        :width="width"
-      >
-        <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
-        <VisArea
-          :x="x"
-          :y="y"
-          color="rgb(var(--color-primary-DEFAULT))"
-          :opacity="0.1"
-        />
+      <div class="px-4">
+        <VisXYContainer
+          :data="data"
+          :padding="{ top: 10 }"
+          class="h-[383px]"
+          :width="'100%'"
+        >
+          <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
+          <VisArea
+            :x="x"
+            :y="y"
+            color="rgb(var(--color-primary-DEFAULT))"
+            :opacity="0.1"
+          />
+          <VisAxis
+            type="y"
+            :tick-format="(i:any) => {
+          return i
+        }"
+          />
+          <VisAxis
+            type="x"
+            :x="x"
+            :tick-format="(i: number) => {
+            if(!data[i]) {
+              return ''
+            }
+          return formatDate(data[i].date, 'MMM')
+        }"
+          />
 
-        <VisAxis type="x" :x="x" :tick-format="xTicks" />
+          <VisCrosshair
+            color="rgb(var(--color-primary-DEFAULT))"
+            :template="template"
+          />
 
-        <VisCrosshair
-          color="rgb(var(--color-primary-DEFAULT))"
-          :template="template"
-        />
-
-        <VisTooltip />
-      </VisXYContainer>
+          <VisTooltip />
+        </VisXYContainer>
+      </div>
     </UCard>
   </DashboardContainer>
 </template>
@@ -150,19 +173,9 @@ const template = (d: DataRecord) =>
   --vis-tooltip-border-color: rgb(var(--color-gray-200));
   --vis-tooltip-text-color: rgb(var(--color-gray-900));
 }
-
-.dark {
-  .unovis-xy-container {
-    --vis-crosshair-line-stroke-color: rgb(var(--color-primary-400));
-    --vis-crosshair-circle-stroke-color: rgb(var(--color-gray-900));
-
-    --vis-axis-grid-color: rgb(var(--color-gray-800));
-    --vis-axis-tick-color: rgb(var(--color-gray-800));
-    --vis-axis-tick-label-color: rgb(var(--color-gray-500));
-
-    --vis-tooltip-background-color: rgb(var(--color-gray-900));
-    --vis-tooltip-border-color: rgb(var(--color-gray-800));
-    --vis-tooltip-text-color: #fff;
-  }
+</style>
+<style>
+.select-options .block.truncate {
+  @apply text-base;
 }
 </style>
