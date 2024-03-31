@@ -9,7 +9,13 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="py-[14px] lg:py-[36px] space-y-[14px] lg:space-y-8">
-    <AdminDashboardIndexTemplate />
-  </div>
+  <!-- ADMIN/SUPERADMIN -->
+  <!-- <AdminDashboardIndexTemplate /> -->
+  <!-- END ADMIN/SUPERADMIN -->
+  <!-- MANDOR -->
+  <!-- <ForemanDashboardIndexTemplate /> -->
+  <!-- END MANDOR -->
+  <!-- MEMBER -->
+  <MemberDashboardIndexTemplate />
+  <!-- END MEMBER -->
 </template>
