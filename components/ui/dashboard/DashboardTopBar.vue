@@ -48,27 +48,6 @@ const items = computed(() => [
       </NuxtLink>
       <!-- End CCTV Page -->
       <!-- Notification -->
-      <!-- <UDropdown :items="items">
-        <UChip
-          size="2xl"
-          :ui="{
-            base: 'absolute rounded-full w-[14px] h-[14px] bg-red-500 min-w-[0] top-[18px] right-[18px]',
-          }"
-        >
-          <UButton
-            type="button"
-            icon="i-heroicons-bell"
-            color="gray"
-            class="rounded-full p-3 bg-transparent ring-[--app-primary-100] [&>span]:text-[--app-primary-100] [&>span]:w-6 [&>span]:h-6"
-          />
-          <template #trailing>
-            <UIcon
-              name="i-heroicons-ellipsis-vertical"
-              class="w-5 h-5 ml-auto"
-            />
-          </template>
-        </UChip>
-      </UDropdown> -->
       <UDropdown
         :items="items"
         :ui="{
