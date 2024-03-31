@@ -23,3 +23,13 @@ body {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
+
+.content-wrapper-height {
+  min-height: calc(100vh - 3rem);
+}
+
+@media (min-width: 1024px) {
+  .content-wrapper-height {
+    min-height: calc(100vh - var(--header-dashboard-height));
+  }
+}

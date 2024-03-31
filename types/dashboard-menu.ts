@@ -1,4 +1,4 @@
-type RoleType = "SUPERADMIN" | "ADMIN" | "MANDOR" | "USER";
+export type RoleType = "SUPERADMIN" | "ADMIN" | "MANDOR" | "MEMBER";
 
 export type Menu = {
   icon: Component;
