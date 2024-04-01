@@ -59,7 +59,7 @@ defineEmits<{
       <UButton
         @click="() => (showModal = false)"
         type="button"
-        color="secondary"
+        color="sky"
         variant="ghost"
         block
         class="mt-[10px]"
@@ -71,7 +71,7 @@ defineEmits<{
             md: 'py-[13px] px-7',
           },
           color: {
-            secondary: {
+            sky: {
               ghost:
                 'bg-white text-[--app-dark-100] disabled:cursor-not-allowed',
             },

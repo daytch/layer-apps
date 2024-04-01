@@ -3,7 +3,8 @@ export default defineAppConfig({
   ui: {
     strategy: "override",
     notifications: {
-      position: "top-0 bottom-auto left-1/2 -translate-x-1/2",
+      position: "top-[50px] bottom-auto left-1/2 -translate-x-1/2",
+      actions: "hidden",
     },
     notification: {
       background: "bg-{color}-800/50",

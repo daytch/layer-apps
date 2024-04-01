@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { TOAST_SUCCESS_UI } from "~/constants/ui";
 import type { SOPItem } from "~/types/sop";
 const { handleDeselectSOPItem } = useSelectSOP();
+const toast = useToast();
 
 const SOP_DUMMY_DATA = ref<Array<SOPItem>>([
   {
@@ -32,6 +34,13 @@ const handleConfim = (item: SOPItem | null) => {
     return data;
   });
   handleDeselectSOPItem();
+  toast.add({
+    icon: "i-heroicons-check-circle-16-solid",
+    title: "Laporan berhasil diperbaharui",
+    ui: {
+      ...TOAST_SUCCESS_UI,
+    },
+  });
 };
 </script>
 
