@@ -1,11 +1,13 @@
 body {
-  --sb-track-color: #232e33;
+  --sb-track-color: #ddd;
   --sb-thumb-color: #6baf8d;
   --sb-size: 2px;
+  --sb-height: 4px;
 }
 
 *::-webkit-scrollbar {
   width: var(--sb-size);
+  height: var(--sb-height);
 }
 
 *::-webkit-scrollbar-track {
@@ -32,4 +34,8 @@ body {
   .content-wrapper-height {
     min-height: calc(100vh - var(--header-dashboard-height));
   }
+}
+
+.input-select-trigger {
+  @apply py-3 px-5 text-base;
 }
