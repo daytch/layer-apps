@@ -11,6 +11,7 @@
       <span v-html="description" class="hidden" />
     </template>
   </UNotifications>
+  <UModals />
 </template>
 
 <style>

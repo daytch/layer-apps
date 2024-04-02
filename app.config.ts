@@ -16,8 +16,12 @@ export default defineAppConfig({
         },
       },
       size: {
-        xs: "p-3 text-md",
-        md: "py-3 px-5 text-base font-medium",
+        xs: "text-md",
+        md: "text-base font-medium",
+      },
+      padding: {
+        xs: "p-3",
+        md: "py-3 px-5",
       },
       icon: {
         size: {
@@ -31,9 +35,18 @@ export default defineAppConfig({
       },
     },
     input: {
-      base: "placeholder-[--app-dark-600] w-full",
+      base: "placeholder-[--app-dark-600] w-full border-0 disabled:bg-[--app-gray-200] disabled:cursor-not-allowed",
       size: {
-        md: "py-3 px-5 text-base",
+        md: "text-base",
+      },
+      padding: {
+        md: "py-3 px-5 ",
+      },
+      color: {
+        white: {
+          outline:
+            "bg-white text-[--app-primary-text] ring-1 ring-[#DFE4EA] focus:ring-2 focus:ring-[--app-primary-100] border-0",
+        },
       },
       default: {
         size: "md",
@@ -49,6 +62,12 @@ export default defineAppConfig({
         base: "text-[--app-dark-100] md:text-base",
       },
       container: "mt-[10px]",
+    },
+    inputMenu: {
+      base: "border-0",
+      option: {
+        size: "text-base",
+      },
     },
   },
 });

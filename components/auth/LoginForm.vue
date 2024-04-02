@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { z } from "zod";
+import { object, string, type InferType } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
 
-const schema = z.object({
-  employeId: z.string().min(1, "ID Karyawan wajib diisi."),
-  password: z.string().min(1, "Password wajib diisi."),
+const schema = object({
+  employeId: string().required("ID Karyawan wajib diisi."),
+  password: string().required("Password wajib diisi."),
 });
 const { type, handleChangeVisibility, iconClassName } =
   usePasswordInputVisibility();
 
-type Schema = z.output<typeof schema>;
+type Schema = InferType<typeof schema>;
 
 const state = reactive({
   employeId: "",

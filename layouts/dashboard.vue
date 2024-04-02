@@ -5,14 +5,14 @@ const { isSidebarExpanded } = useDashboardSidebar();
 </script>
 
 <template>
-  <div class="flex overflow-hidden min-h-screen bg-[--app-gray-200]">
+  <div class="flex overflow-x-hidden min-h-screen bg-[--app-gray-200]">
     <DashboardPCSidebar :menus="DASHBOARD_MENU || []" />
     <div
-      class="flex-1 transition-all"
+      class="flex-1 transition-all content-width"
       :class="
         isSidebarExpanded
-          ? 'lg:ml-[--sidebar-width]'
-          : 'lg:ml-[--sidebar-collapse-width]'
+          ? 'lg:ml-[--sidebar-width] lg-content-width-expanded'
+          : 'lg:ml-[--sidebar-collapse-width] lg-content-width-not-expanded'
       "
     >
       <DashboardTopBar />
@@ -22,3 +22,17 @@ const { isSidebarExpanded } = useDashboardSidebar();
   <DashboardSPSidebar :menus="DASHBOARD_MENU || []" />
   <DashboardSPNotification />
 </template>
+
+<style>
+.content-width {
+  max-width: 100vw;
+}
+@media (min-width: 1024px) {
+  .lg-content-width-expanded {
+    max-width: calc(100vw - var(--sidebar-width));
+  }
+  .lg-content-width-not-expanded {
+    max-width: calc(100vw - var(--sidebar-collapse-width));
+  }
+}
+</style>
