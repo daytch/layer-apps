@@ -44,4 +44,7 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
+  build: {
+    transpile: ["@vuepic/vue-datepicker"],
+  },
 });
