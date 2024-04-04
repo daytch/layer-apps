@@ -35,6 +35,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
 <template>
   <UModal
     v-model="showFormModal"
+    :prevent-close="true"
     :ui="{
       strategy: 'override',
       width: 'w-full max-w-[343px] md:max-w-[500px]',
@@ -119,7 +120,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             <UInputMenu
               size="md"
               :nullable="true"
-              v-model="state.medicine"
+              v-model="state.progress"
               :options="KandangOptions"
               placeholder="Pilih Progress"
               :input-class="'input-select-trigger'"
