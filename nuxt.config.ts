@@ -7,7 +7,13 @@ export default defineNuxtConfig({
     },
   },
   devtools: { enabled: true },
-  modules: ["@nuxt/ui", "@nuxtjs/google-fonts", "@nuxt/image", "@vueuse/nuxt"],
+  modules: [
+    "@nuxt/ui",
+    "@nuxtjs/google-fonts",
+    "@nuxt/image",
+    "@vueuse/nuxt",
+    "@pinia/nuxt",
+  ],
   css: ["~/assets/css/variabel.css", "~/assets/css/global.css"],
   app: {
     head: {

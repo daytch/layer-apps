@@ -69,5 +69,9 @@ export default defineAppConfig({
         size: "text-base",
       },
     },
+    checkbox: {
+      label: "text-base text-[--app-dark-100]",
+      base: "w-5 h-5",
+    },
   },
 });
