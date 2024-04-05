@@ -61,7 +61,7 @@ export const DASHBOARD_MENU: Menu[] = [
   {
     text: "User Management",
     icon: IconSetting,
-    roles: ["ADMIN", "MANDOR", "SUPERADMIN", "MEMBER"],
-    to: "/",
+    roles: ["ADMIN", "SUPERADMIN"],
+    to: "/dashboard/users",
   },
 ];
