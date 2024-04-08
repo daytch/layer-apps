@@ -50,7 +50,7 @@ export const DASHBOARD_MENU: Menu[] = [
     text: "SOP Kandang",
     icon: IconChecklist,
     roles: ["ADMIN", "MANDOR", "SUPERADMIN", "MEMBER"],
-    to: "/",
+    to: "/dashboard/management-sop",
   },
   {
     text: "Cashflow",

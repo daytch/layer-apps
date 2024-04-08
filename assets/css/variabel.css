@@ -12,6 +12,7 @@
   --app-primary-500: #82e6ac;
   --app-primary-600: #acefc8;
   --app-primary-700: #daf8e6;
+  --app-primary-800: #c2f3d6;
 
   /* Dark Color */
   --app-dark-100: #111928;
@@ -22,6 +23,7 @@
   --app-dark-600: #9ca3af;
   --app-dark-700: #d1d5db;
   --app-dark-800: #e5e7eb;
+  --app-dark-900: #1d2433;
 
   /* Gray Color */
   --app-gray-100: #f9fafb;
