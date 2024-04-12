@@ -3,13 +3,14 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
 defineEmits<{
-  (e: "update:modelValue", value: Date): void;
+  (e: "update:modelValue", value: Date | Date[]): void;
 }>();
 
 defineProps<{
-  modelValue: Date | undefined;
+  modelValue: Date | Date[] | undefined;
   placeholder?: string;
   errorState?: string;
+  range?: boolean;
 }>();
 </script>
 
@@ -17,8 +18,8 @@ defineProps<{
   <VueDatePicker
     :model-value="modelValue"
     :teleport="true"
+    :range="range"
     :enable-time-picker="false"
-    placeholder="Haha"
     @update:model-value="(value) => $emit('update:modelValue', value)"
   >
     <template #dp-input="{ value }">

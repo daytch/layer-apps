@@ -42,6 +42,9 @@
   --app-danger-700: #feebeb;
   --app-danger-800: #fef3f3;
 
+  /* Blue Color */
+  --app-blue-100: #3758f9;
+
   /* Layouting */
   --sidebar-width: 317px;
   --sidebar-collapse-width: 116px;

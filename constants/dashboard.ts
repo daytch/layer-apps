@@ -56,7 +56,7 @@ export const DASHBOARD_MENU: Menu[] = [
     text: "Cashflow",
     icon: IconMoneyReceive,
     roles: ["ADMIN", "MANDOR", "SUPERADMIN", "MEMBER"],
-    to: "/",
+    to: "/dashboard/cashflow",
   },
   {
     text: "User Management",
