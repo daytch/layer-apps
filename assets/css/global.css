@@ -44,5 +44,8 @@ body {
   @apply p-0;
 }
 .dp__input_icon {
-  @apply inline-flex items-center left-5;
+  @apply inline-flex items-center;
+}
+.dp__input_icon {
+  transform: translate(12px, -50%) !important;
 }
