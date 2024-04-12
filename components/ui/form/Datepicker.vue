@@ -46,12 +46,3 @@ defineProps<{
     </template>
   </VueDatePicker>
 </template>
-
-<style>
-.dp__main {
-  @apply p-0;
-}
-.dp__input_icon {
-  @apply inline-flex items-center left-5;
-}
-</style>
