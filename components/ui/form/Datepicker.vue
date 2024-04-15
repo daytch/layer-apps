@@ -26,7 +26,7 @@ defineProps<{
       <input
         :value="value"
         :placeholder="placeholder"
-        class="py-3 pr-5 pl-11 text-base ring-1 ring-[#DFE4EA] rounded-md bg-white w-full focus:ring-[--app-primary-100] outline-none focus:ring-2 disabled:bg-[--app-gray-200]"
+        class="py-3 pr-5 pl-11 text-base ring-1 ring-[#DFE4EA] rounded-md bg-white w-full focus:ring-[--app-primary-100] outline-none focus:ring-2 disabled:bg-[--app-gray-200] text-[--app-primary-text] placeholder:text-[--app-primary-text]"
         :class="{
           'ring-red-500 focus:ring-red-500': !!errorState?.length,
         }"
