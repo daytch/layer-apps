@@ -6,5 +6,6 @@ export type DiagnosisKandang = {
   reporter: string;
   diseaseHistory: string;
   medicationAdministered: string;
+  doses?: number;
   progress: "HANDLED" | "UNHANDLED";
 };

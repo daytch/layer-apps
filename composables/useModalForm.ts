@@ -13,5 +13,14 @@ export const useModalForm = <T>() => {
     (selectedItem.value = undefined), (showModal.value = false);
   };
 
+  watch(
+    () => showModal.value,
+    () => {
+      if (!showModal.value) {
+        selectedItem.value = undefined;
+      }
+    }
+  );
+
   return { showModal, handleCloseModal, handleShowModal, selectedItem };
 };
