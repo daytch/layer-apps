@@ -98,7 +98,6 @@ const {
       </tbody>
     </table>
   </div>
-  <pre>{{ JSON.stringify(selectedItem, null, 2) }}</pre>
   <AppModal v-model="showHandleReportModal">
     <ProcessReportForm
       @handle-close-modal="handleCloseModalReport"
