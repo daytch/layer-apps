@@ -26,13 +26,13 @@ export const DASHBOARD_MENU: Menu[] = [
     text: "Stok Pakan & Obat",
     icon: IconMedicine,
     roles: ["ADMIN", "MANDOR", "SUPERADMIN", "MEMBER"],
-    to: "/",
+    to: "/dashboard/stok-pakan-obat",
   },
   {
     text: "Laporan Hasil Bulanan",
     icon: IconReport,
     roles: ["ADMIN", "MANDOR", "SUPERADMIN", "MEMBER"],
-    to: "/",
+    to: "/dashboard/laporan-hasil-bulanan",
   },
   {
     text: "Grafik FCR Harian",
@@ -44,7 +44,7 @@ export const DASHBOARD_MENU: Menu[] = [
     text: "Diagnosis Kandang",
     icon: IconWarehouse,
     roles: ["ADMIN", "MANDOR", "SUPERADMIN", "MEMBER"],
-    to: "/",
+    to: "/dashboard/diagnosis-kandang",
   },
   {
     text: "SOP Kandang",
