@@ -10,6 +10,7 @@ defineEmits<{
 defineProps<{
   showAddButton: boolean;
   addButtonText?: string;
+  containerClass?: string;
 }>();
 const filterState = reactive({
   rageDate: [
@@ -20,7 +21,7 @@ const filterState = reactive({
 </script>
 
 <template>
-  <div class="p-4 border rounded">
+  <div class="p-4 border rounded" :class="containerClass">
     <div
       class="flex flex-col lg:flex-row lg:items-center"
       :class="{
@@ -38,7 +39,7 @@ const filterState = reactive({
           strategy: 'override',
           base: 'whitespace-nowrap',
           padding: {
-            md: 'py-[13px] px-4',
+            md: 'py-3 px-4',
           },
           inline: 'inline-flex items-center justify-center',
           color: {
@@ -68,7 +69,7 @@ const filterState = reactive({
             strategy: 'override',
             base: 'text-center',
             padding: {
-              md: 'py-[13px] px-4',
+              md: 'py-3 px-4',
             },
             inline: 'inline-flex items-center justify-center',
             color: {
