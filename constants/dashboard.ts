@@ -38,7 +38,7 @@ export const DASHBOARD_MENU: Menu[] = [
     text: "Grafik FCR Harian",
     icon: IconFCR,
     roles: ["ADMIN", "MANDOR", "SUPERADMIN", "MEMBER"],
-    to: "/",
+    to: "/dashboard/grafik-fcr",
   },
   {
     text: "Diagnosis Kandang",

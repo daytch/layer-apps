@@ -73,17 +73,6 @@ const data: DataRecord[] = [
   },
 ];
 
-const people = [
-  "Semua",
-  "Kandang Satu",
-  "Kandang Dua",
-  "Kandang Tiga",
-  "Kandang Empat",
-  "Kandang Lima",
-];
-
-const selected = ref(people[0]);
-
 const x = (_: DataRecord, i: number) => i;
 const y = (d: DataRecord) => d.amount;
 
@@ -92,72 +81,66 @@ const template = (d: DataRecord) =>
 </script>
 
 <template>
-  <DashboardContainer>
-    <UCard ref="cardRef" :ui="{ body: { padding: '!pb-3 !px-0' } as any }">
-      <template #header>
-        <div
-          class="flex flex-col md:flex-row md:items-center justify-between gap-5"
-        >
-          <div>
-            <h3
-              class="text-[--app-dark-100] text-2xl font-semibold leading-[30px] mb-1"
-            >
-              FCR Overall
-            </h3>
-            <p class="text-base leading-6 text-[--app-primary-text]">
-              Nilai terakhir : 2,75
-            </p>
-          </div>
-
-          <USelectMenu
-            v-model="selected"
-            :options="people"
-            class="select-options relative"
-          />
+  <UCard ref="cardRef" :ui="{ body: { padding: '!pb-3 !px-0' } as any }">
+    <template #header>
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-5"
+      >
+        <div>
+          <h3
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px] mb-1"
+          >
+            FCR Overall
+          </h3>
+          <p class="text-base leading-6 text-[--app-primary-text]">
+            Nilai terakhir : 2,75
+          </p>
         </div>
-      </template>
 
-      <div class="px-4">
-        <VisXYContainer
-          :data="data"
-          :padding="{ top: 10 }"
-          class="h-[383px]"
-          :width="'100%'"
-        >
-          <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
-          <VisArea
-            :x="x"
-            :y="y"
-            color="rgb(var(--color-primary-DEFAULT))"
-            :opacity="0.1"
-          />
-          <VisAxis
-            type="y"
-            :tick-format="(i:any) => {
+        <slot name="filter" />
+      </div>
+    </template>
+
+    <div class="px-4">
+      <VisXYContainer
+        :data="data"
+        :padding="{ top: 10 }"
+        class="h-[383px]"
+        :width="'100%'"
+      >
+        <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
+        <VisArea
+          :x="x"
+          :y="y"
+          color="rgb(var(--color-primary-DEFAULT))"
+          :opacity="0.1"
+        />
+        <VisAxis
+          type="y"
+          :tick-format="(i:any) => {
           return i
         }"
-          />
-          <VisAxis
-            type="x"
-            :x="x"
-            :tick-format="(i: number) => {
+        />
+        <VisAxis
+          type="x"
+          :x="x"
+          :tick-format="(i: number) => {
             if(!data[i]) {
               return ''
             }
           return formatDate(data[i].date, 'MMM')
         }"
-          />
+        />
 
-          <VisCrosshair
-            color="rgb(var(--color-primary-DEFAULT))"
-            :template="template"
-          />
+        <VisCrosshair
+          color="rgb(var(--color-primary-DEFAULT))"
+          :template="template"
+        />
 
-          <VisTooltip />
-        </VisXYContainer>
-      </div>
-    </UCard>
-  </DashboardContainer>
+        <VisTooltip />
+      </VisXYContainer>
+    </div>
+  </UCard>
 </template>
 
 <style scoped>
