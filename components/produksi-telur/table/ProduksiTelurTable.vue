@@ -1,225 +1,349 @@
 <script setup lang="ts">
-import {
-  FlexRender,
-  getCoreRowModel,
-  useVueTable,
-  createColumnHelper,
-  type HeaderGroup,
-} from "@tanstack/vue-table";
-import { ref } from "vue";
-
-type Person = {
-  firstName: string;
-  lastName: string;
-  age: number;
-  visits: number;
-  status: string;
-  progress: number;
+const { checkVisibleColumn, isUpdateView } = useDataTable();
+const dummy = {
+  date: "1 Jan 2024",
+  age_week: 1,
+  pop: 3800,
+  m: "",
+  afk: "",
+  sell: "",
+  last_pop: 3800,
+  foodType: "",
+  foodKG: "",
+  foodFIT: 475,
+  nItem: "",
+  pItem: "",
+  BSItem: 120,
+  totalItem: 120,
+  nKG: "",
+  pKG: "",
+  BSKG: 20.05,
+  totalKG: 20.05,
+  HD: "3.2%",
+  FCR: 23.17,
+  eggWeight: 170.83,
+  eggMass: 5.39,
+  ovk: "-",
 };
-
-function getMergeHeaderGroups<T>(tableHeaderGroups: HeaderGroup<T>[]) {
-  const headerGroups = tableHeaderGroups;
-  const headerIds = new Set(); // 동일한 컬럼명 중복 방지
-  const resultHeaderGroups = [];
-
-  if (headerGroups.length === 1) return [tableHeaderGroups[0].headers];
-
-  for (let i = 0; i < headerGroups.length; i++) {
-    const headerGroup: any =
-      i === 0 ? headerGroups[i].headers : resultHeaderGroups[i];
-
-    // 행 객체 평면화
-    const preHeaders = headerGroup.map((header: any) =>
-      header.isPlaceholder
-        ? {
-            ...header,
-            isPlaceholder: false,
-            rowSpan: tableHeaderGroups.length - i,
-          }
-        : { ...header, rowSpan: 1 }
-    );
-    resultHeaderGroups.pop(); // 마지막 배열을 꺼냄
-    resultHeaderGroups.push(preHeaders); // 수정된 배열을 저장
-    preHeaders.forEach((preHeader: any) => headerIds.add(preHeader.column.id)); // 현재까지 보유한 header 누적
-
-    const targetHeaders = headerGroups[i + 1].headers;
-    const newHeaders = targetHeaders.filter(
-      (header) => !headerIds.has(header.column.id)
-    );
-    resultHeaderGroups.push(newHeaders);
-
-    if (i === headerGroups.length - 2) {
-      break;
-    }
-  }
-  return resultHeaderGroups;
-}
-
-const defaultData: Person[] = [
-  {
-    firstName: "tanner",
-    lastName: "linsley",
-    age: 24,
-    visits: 100,
-    status: "In Relationship",
-    progress: 50,
-  },
-  {
-    firstName: "tandy",
-    lastName: "miller",
-    age: 40,
-    visits: 40,
-    status: "Single",
-    progress: 80,
-  },
-  {
-    firstName: "joe",
-    lastName: "dirte",
-    age: 45,
-    visits: 20,
-    status: "Complicated",
-    progress: 10,
-  },
-];
-
-const columnHelper = createColumnHelper<Person>();
-
-const columns = [
-  columnHelper.group({
-    header: "Name",
-
-    columns: [
-      columnHelper.accessor("firstName", {
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor((row) => row.lastName, {
-        id: "lastName",
-        cell: (info) => info.getValue(),
-        header: () => "Last Name",
-      }),
-    ],
-  }),
-  columnHelper.group({
-    header: "Info",
-
-    columns: [
-      columnHelper.accessor("age", {
-        header: () => "Age",
-      }),
-      columnHelper.group({
-        header: "More Info",
-        columns: [
-          columnHelper.accessor("visits", {
-            header: () => "Visits",
-          }),
-          columnHelper.accessor("status", {
-            header: "Status",
-          }),
-          columnHelper.accessor("progress", {
-            header: "Profile Progress",
-          }),
-        ],
-      }),
-    ],
-  }),
-];
-
-const data = ref(defaultData);
-
-const rerender = () => {
-  data.value = defaultData;
-};
-
-const table = useVueTable({
-  get data() {
-    return data.value;
-  },
-  columns,
-  getCoreRowModel: getCoreRowModel(),
-});
 </script>
 
 <template>
   <div class="w-full overflow-auto">
     <table class="w-full">
       <thead>
-        <tr
-          v-for="headerGroup in table.getHeaderGroups()"
-          :key="headerGroup.id"
-        >
-          <template v-for="header in headerGroup.headers" :key="header.id">
-            <th :colSpan="header.colSpan">
-              {{ console.log(header) }}
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
-            </th>
-          </template>
+        <tr>
+          <th
+            rowspan="3"
+            v-if="isUpdateView"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            <UCheckbox />
+          </th>
+          <th
+            v-if="checkVisibleColumn('date')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Tanggal
+          </th>
+          <th
+            v-if="checkVisibleColumn('age_day')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Umur (Hr)
+          </th>
+          <th
+            v-if="checkVisibleColumn('age_week')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Umur (Mgg)
+          </th>
+          <th
+            v-if="checkVisibleColumn('pop')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Pop
+          </th>
+          <th
+            v-if="checkVisibleColumn('m')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            M
+          </th>
+          <th
+            v-if="checkVisibleColumn('afk')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            AFK
+          </th>
+          <th
+            v-if="checkVisibleColumn('sell')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Jual
+          </th>
+          <th
+            v-if="checkVisibleColumn('last_pop')"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Pop Akhir
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            colspan="3"
+          >
+            Pakan
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            colspan="8"
+          >
+            Produksi
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            HD
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Egg Weight (Gr/Btr)
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            Egg Mass (Kg Telur/1000 Ekor)
+          </th>
+          <th
+            width="124"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="3"
+          >
+            OVK
+          </th>
+        </tr>
+        <tr>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="2"
+          >
+            Jenis
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="2"
+          >
+            KG
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            rowspan="2"
+          >
+            FIT (gr/ek)
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            colspan="4"
+          >
+            Butir
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            colspan="4"
+          >
+            KG
+          </th>
+        </tr>
+        <tr>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            N
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            P
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            BS
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            Total Btr.
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            N
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            P
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            BS
+          </th>
+          <th
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+          >
+            Total Kg.
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in table.getRowModel().rows" :key="row.id">
-          <td v-for="cell in row.getVisibleCells()" :key="cell.id">
-            <FlexRender
-              :render="cell.column.columnDef.cell"
-              :props="cell.getContext()"
-            />
+        <tr
+          v-for="(item, index) in Array(10).fill(dummy)"
+          class="bg-white even:bg-[#F8F9FC]"
+        >
+          <td
+            v-if="isUpdateView"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            <UCheckbox />
+          </td>
+          <td
+            v-if="checkVisibleColumn('date')"
+            class="whitespace-nowrap p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item.date }}
+          </td>
+          <td
+            v-if="checkVisibleColumn('age_day')"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ index + 1 }}
+          </td>
+          <td
+            v-if="checkVisibleColumn('age_week')"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.age_week }}
+          </td>
+          <td
+            v-if="checkVisibleColumn('pop')"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.pop }}
+          </td>
+          <td
+            v-if="checkVisibleColumn('m')"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.m }}
+          </td>
+          <td
+            v-if="checkVisibleColumn('afk')"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.afk }}
+          </td>
+          <td
+            v-if="checkVisibleColumn('sell')"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.sell }}
+          </td>
+          <td
+            v-if="checkVisibleColumn('last_pop')"
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.last_pop }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.foodType }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.foodKG }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.foodFIT }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.nItem }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.pItem }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.BSItem }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.totalItem }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.nKG }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.pKG }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.BSKG }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.totalKG }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.HD }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.FCR }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.eggWeight }}
+          </td>
+          <td
+            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+          >
+            {{ item?.ovk }}
           </td>
         </tr>
       </tbody>
     </table>
-    <div class="h-4" />
-    <button @click="rerender" class="border p-2">Rerender</button>
   </div>
-  <table class="a_table">
-    <thead>
-      <tr>
-        <th rowspan="3">ID</th>
-        <th rowspan="3">firstName</th>
-        <th rowspan="3">lastName</th>
-        <th colspan="4">Info</th>
-        <th rowspan="3">Created At</th>
-      </tr>
-      <tr>
-        <th rowspan="2">Age</th>
-        <th colspan="3">I-More Info</th>
-      </tr>
-      <tr>
-        <th>Visits</th>
-        <th>Status</th>
-        <th>Profile Progress</th>
-      </tr>
-    </thead>
-  </table>
 </template>
-
-<style>
-html {
-  font-family: sans-serif;
-  font-size: 14px;
-}
-
-table {
-  border: 1px solid lightgray;
-}
-
-tbody {
-  border-bottom: 1px solid lightgray;
-}
-
-th {
-  border-bottom: 1px solid lightgray;
-  border-right: 1px solid lightgray;
-  padding: 2px 4px;
-}
-
-tfoot {
-  color: gray;
-}
-
-tfoot th {
-  font-weight: normal;
-}
-</style>
