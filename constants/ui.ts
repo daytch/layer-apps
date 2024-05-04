@@ -15,6 +15,12 @@ export const TOAST_SUCCESS_UI = {
   title: "text-[#004434]",
 };
 
+export const TOAST_ERROR_UI = {
+  ...TOAST_BASE_UI,
+  background: "bg-red-500",
+  title: "text-white",
+};
+
 export const ROLE_OPTIONS: SelectOptionType[] = [
   {
     value: "MEMBER",

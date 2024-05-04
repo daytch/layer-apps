@@ -14,6 +14,11 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@pinia/nuxt",
   ],
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.BASE_API_URL || "https://api-dev.layerapps.id",
+    },
+  },
   css: ["~/assets/css/variabel.css", "~/assets/css/global.css"],
   app: {
     head: {

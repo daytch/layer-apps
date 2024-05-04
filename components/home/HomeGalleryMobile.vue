@@ -24,14 +24,7 @@ const isAlreadyShowAllImage = computed(
         >
           <div
             v-if="index === 1 && !isAlreadyShowAllImage"
-            class="absolute top-0 bottom-0 right-0 left-0 rounded-[22px] rotate-180"
-            style="
-              background: linear-gradient(
-                180deg,
-                #d9d9d9 0%,
-                rgba(115, 115, 115, 0) 80.04%
-              );
-            "
+            class="absolute top-0 bottom-0 right-0 left-0 rounded-[22px] rotate-180 home-gallery-bg-pattern"
           />
           <NuxtImg
             :src="image"
@@ -55,3 +48,13 @@ const isAlreadyShowAllImage = computed(
     </UContainer>
   </div>
 </template>
+
+<style>
+.home-gallery-bg-pattern {
+  background: linear-gradient(
+    180deg,
+    #d9d9d9 0%,
+    rgba(115, 115, 115, 0) 80.04%
+  );
+}
+</style>
