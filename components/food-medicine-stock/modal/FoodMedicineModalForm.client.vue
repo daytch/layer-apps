@@ -53,14 +53,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UModal
-    :ui="{
-      strategy: 'override',
-      width: 'w-full max-w-[343px] md:max-w-[500px]',
-      container: 'flex min-h-full items-center justify-center text-center',
-    }"
-    v-model="showFormModal"
-  >
+  <AppModal v-model="showFormModal">
     <UForm
       ref="form"
       :schema="schema"
@@ -77,17 +70,17 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           body: {
             base: 'mb-[50px]',
             background: '',
-            padding: 'px-4',
+            padding: 'px-10',
           },
           header: {
             base: '',
             background: '',
-            padding: 'px-4 pt-5',
+            padding: 'px-10 pt-10',
           },
           footer: {
             base: '',
             background: '',
-            padding: 'px-4 pb-4',
+            padding: 'px-10 pb-10',
           },
         }"
       >
@@ -122,53 +115,63 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
               :input-class="'input-select-trigger'"
             />
           </UFormGroup>
-          <UFormGroup name="itemName" label="Nama Barang">
-            <template #label>
-              <FormLabel>Nama Barang</FormLabel>
-            </template>
-            <UInputMenu
-              size="md"
-              v-model="state.itemName"
-              :nullable="true"
-              :options="NamaBarangOptions"
-              placeholder="Pilih Nama Barang"
-              :input-class="'input-select-trigger'"
-            />
-          </UFormGroup>
-          <UFormGroup name="itemID" label="ID Barang">
-            <template #label>
-              <FormLabel>ID Barang</FormLabel>
-            </template>
-            <UInput
-              variant="outline"
-              placeholder="Masukkan ID Barang"
-              v-model="state.itemID"
-            />
-          </UFormGroup>
-          <UFormGroup name="price" label="Harga Persatuan">
-            <template #label>
-              <FormLabel>Harga Persatuan</FormLabel>
-            </template>
-            <UInput
-              variant="outline"
-              placeholder="Harga Persatuan"
-              v-model="state.price"
-            >
-              <template #leading>
-                <span class="text-gray-500 dark:text-gray-400 text-xs">Rp</span>
-              </template></UInput
-            >
-          </UFormGroup>
-          <UFormGroup name="quantity" label="Value Qty.">
-            <template #label>
-              <FormLabel>Value Qty.</FormLabel>
-            </template>
-            <UInput
-              variant="outline"
-              placeholder="Value Qty."
-              v-model="state.quantity"
-            />
-          </UFormGroup>
+          <div
+            class="sm:flex items-center space-y-6 sm:space-x-10 sm:space-y-0"
+          >
+            <UFormGroup name="itemName" label="Nama Barang" class="flex-1">
+              <template #label>
+                <FormLabel>Nama Barang</FormLabel>
+              </template>
+              <UInputMenu
+                size="md"
+                v-model="state.itemName"
+                :nullable="true"
+                :options="NamaBarangOptions"
+                placeholder="Pilih Nama Barang"
+                :input-class="'input-select-trigger'"
+              />
+            </UFormGroup>
+            <UFormGroup name="itemID" label="ID Barang" class="flex-1">
+              <template #label>
+                <FormLabel>ID Barang</FormLabel>
+              </template>
+              <UInput
+                variant="outline"
+                placeholder="Masukkan ID Barang"
+                v-model="state.itemID"
+              />
+            </UFormGroup>
+          </div>
+          <div
+            class="sm:flex items-center space-y-6 sm:space-x-10 sm:space-y-0"
+          >
+            <UFormGroup name="price" label="Harga Persatuan" class="flex-1">
+              <template #label>
+                <FormLabel>Harga Persatuan</FormLabel>
+              </template>
+              <UInput
+                variant="outline"
+                placeholder="Harga Persatuan"
+                v-model="state.price"
+              >
+                <template #leading>
+                  <span class="text-gray-500 dark:text-gray-400 text-xs"
+                    >Rp</span
+                  >
+                </template></UInput
+              >
+            </UFormGroup>
+            <UFormGroup name="quantity" label="Value Qty." class="flex-1">
+              <template #label>
+                <FormLabel>Value Qty.</FormLabel>
+              </template>
+              <UInput
+                variant="outline"
+                placeholder="Value Qty."
+                v-model="state.quantity"
+              />
+            </UFormGroup>
+          </div>
         </div>
         <template #footer>
           <div class="flex justify-end items-center space-x-[18px]">
@@ -215,5 +218,5 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </template>
       </UCard>
     </UForm>
-  </UModal>
+  </AppModal>
 </template>

@@ -54,7 +54,7 @@ const items = [
           <StockManagement />
         </div>
         <div v-else-if="item.key === 'riwayat-pemakaian'" class="py-[14px]">
-          Riwayat Pemakaian
+          <UsageHistory />
         </div>
         <div v-else class="hidden" />
       </template>

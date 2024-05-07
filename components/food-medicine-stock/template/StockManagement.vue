@@ -43,29 +43,11 @@ const handleAddStock = (newStock: Omit<FoodMedicineStock, "id">) => {
 </script>
 
 <template>
-  <div class="p-4 border rounded">
-    <UButton
-      @click="showFormModal = true"
-      type="button"
-      icon="i-heroicons-plus"
-      size="md"
-      :ui="{
-        strategy: 'override',
-        base: '',
-        padding: {
-          md: 'py-[13px] px-4',
-        },
-        color: {
-          primary: {
-            solid:
-              'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-          },
-        },
-      }"
-    >
-      Tambah Data
-    </UButton>
-  </div>
+  <FoodMedicineTableFilter
+    :show-add-button="true"
+    :add-button-text="'Tambah Data'"
+    @handle-add-data="showFormModal = true"
+  />
   <FoodMedicineStockTable :items="DUMMY_DATA" />
   <FoodMedicineModalForm @handle-add-stock="handleAddStock" />
 </template>

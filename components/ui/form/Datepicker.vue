@@ -3,13 +3,14 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
 defineEmits<{
-  (e: "update:modelValue", value: Date): void;
+  (e: "update:modelValue", value: Date | Date[]): void;
 }>();
 
 defineProps<{
-  modelValue: Date | undefined;
+  modelValue: Date | Date[] | undefined;
   placeholder?: string;
   errorState?: string;
+  range?: boolean;
 }>();
 </script>
 
@@ -17,15 +18,15 @@ defineProps<{
   <VueDatePicker
     :model-value="modelValue"
     :teleport="true"
+    :range="range"
     :enable-time-picker="false"
-    placeholder="Haha"
     @update:model-value="(value) => $emit('update:modelValue', value)"
   >
     <template #dp-input="{ value }">
       <input
         :value="value"
         :placeholder="placeholder"
-        class="py-3 pr-5 pl-11 text-base ring-1 ring-[#DFE4EA] rounded-md bg-white w-full focus:ring-[--app-primary-100] outline-none focus:ring-2 disabled:bg-[--app-gray-200]"
+        class="py-3 pr-5 pl-11 text-base ring-1 ring-[#DFE4EA] rounded-md bg-white w-full focus:ring-[--app-primary-100] outline-none focus:ring-2 disabled:bg-[--app-gray-200] text-[--app-primary-text] placeholder:text-[--app-primary-text]"
         :class="{
           'ring-red-500 focus:ring-red-500': !!errorState?.length,
         }"
@@ -45,12 +46,3 @@ defineProps<{
     </template>
   </VueDatePicker>
 </template>
-
-<style>
-.dp__main {
-  @apply p-0;
-}
-.dp__input_icon {
-  @apply inline-flex items-center left-5;
-}
-</style>

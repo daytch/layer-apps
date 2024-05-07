@@ -69,5 +69,27 @@ export default defineAppConfig({
         size: "text-base",
       },
     },
+    checkbox: {
+      label: "text-base text-[--app-dark-100]",
+      base: "w-5 h-5",
+    },
+    textarea: {
+      base: "placeholder-[--app-dark-600] w-full border-0 disabled:bg-[--app-gray-200] disabled:cursor-not-allowed",
+      size: {
+        md: "text-base",
+      },
+      padding: {
+        md: "py-3 px-5 ",
+      },
+      color: {
+        white: {
+          outline:
+            "bg-white text-[--app-primary-text] ring-1 ring-[#DFE4EA] focus:ring-2 focus:ring-[--app-primary-100] border-0",
+        },
+      },
+      default: {
+        size: "md",
+      },
+    },
   },
 });

@@ -8,6 +8,7 @@ const schema = object({
 });
 const { type, handleChangeVisibility, iconClassName } =
   usePasswordInputVisibility();
+const { login } = useAuth();
 
 type Schema = InferType<typeof schema>;
 
@@ -17,8 +18,7 @@ const state = reactive({
 });
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  // Do something with data
-  console.log(event.data);
+  login({ username: event.data.employeId, password: event.data.password });
 }
 </script>
 

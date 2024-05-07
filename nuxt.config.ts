@@ -7,7 +7,18 @@ export default defineNuxtConfig({
     },
   },
   devtools: { enabled: true },
-  modules: ["@nuxt/ui", "@nuxtjs/google-fonts", "@nuxt/image", "@vueuse/nuxt"],
+  modules: [
+    "@nuxt/ui",
+    "@nuxtjs/google-fonts",
+    "@nuxt/image",
+    "@vueuse/nuxt",
+    "@pinia/nuxt",
+  ],
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.BASE_API_URL || "https://api-dev.layerapps.id",
+    },
+  },
   css: ["~/assets/css/variabel.css", "~/assets/css/global.css"],
   app: {
     head: {
