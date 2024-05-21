@@ -5,38 +5,50 @@ import type {
 } from "~/types/auth";
 import { useAuthUser } from "./useAuthUser";
 import { authRepository } from "~/repository/modules/auth";
-import { TOAST_ERROR_UI } from "~/constants/ui";
+import { useAuthCookie } from "./useAuthCookie";
 
 export const useAuth = () => {
   const { $api } = useNuxtApp();
   const authRepo = authRepository($api);
   const authUser = useAuthUser();
-  const toast = useToast();
+  const { setToken } = useAuthCookie();
 
-  const setUser = (user: LoginResponseWithoutToken) => {
+  const setUser = (user: LoginResponseWithoutToken | null) => {
     authUser.value = user;
   };
 
-  const setCookie = (cookie: any) => {
-    cookie.value = cookie;
+  const login = async (loginPayload: LoginPayload) => {
+    const response = await authRepo.login(loginPayload);
+    if (response?.data !== undefined) {
+      let tempData = response?.data as LoginResponse;
+      setUser(tempData);
+      setToken(tempData.access_token);
+      return authUser;
+    }
   };
 
-  const login = async (loginPayload: LoginPayload) => {
-    try {
-      const response = await authRepo.login(loginPayload);
-      if (response?.data !== undefined) {
-        let tempData = response?.data as LoginResponse;
-        setUser(tempData);
+  const me = async () => {
+    if (!authUser.value) {
+      try {
+        const data = await authRepo.profile();
+        if (data?.data) {
+          setUser(data?.data as LoginResponseWithoutToken);
+        }
+      } catch (error) {
+        setToken(null);
       }
-    } catch (error: any) {
-      toast.add({
-        title: error?.data?.message || "",
-        ui: { ...TOAST_ERROR_UI },
-      });
     }
+  };
+
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    navigateTo("/");
   };
 
   return {
     login,
+    me,
+    logout,
   };
 };

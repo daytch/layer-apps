@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { object, string, type InferType } from "yup";
+import { TOAST_ERROR_UI } from "~/constants/ui";
 import type { FormSubmitEvent } from "#ui/types";
 
 const schema = object({
@@ -9,6 +10,7 @@ const schema = object({
 const { type, handleChangeVisibility, iconClassName } =
   usePasswordInputVisibility();
 const { login } = useAuth();
+const toast = useToast();
 
 type Schema = InferType<typeof schema>;
 
@@ -18,7 +20,18 @@ const state = reactive({
 });
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  login({ username: event.data.employeId, password: event.data.password });
+  try {
+    await login({
+      username: event.data.employeId,
+      password: event.data.password,
+    });
+    await navigateTo("/");
+  } catch (error: any) {
+    toast.add({
+      title: error?.data?.message || "",
+      ui: { ...TOAST_ERROR_UI },
+    });
+  }
 }
 </script>
 

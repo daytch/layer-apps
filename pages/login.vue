@@ -2,6 +2,9 @@
 useSeoMeta({
   title: "Login | Layer Apps",
 });
+definePageMeta({
+  middleware: ["guest-only"],
+});
 </script>
 
 <template>

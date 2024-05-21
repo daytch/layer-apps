@@ -3,6 +3,7 @@ import type { CashflowDataType } from "~/types/cashflow";
 
 definePageMeta({
   layout: "dashboard",
+  middleware: ["dashboard"],
 });
 useSeoMeta({
   title: "Cashflow | Layer Apps",
