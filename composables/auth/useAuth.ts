@@ -28,15 +28,14 @@ export const useAuth = () => {
   };
 
   const me = async () => {
-    if (!authUser.value) {
-      try {
-        const data = await authRepo.profile();
-        if (data?.data) {
-          setUser(data?.data as LoginResponseWithoutToken);
-        }
-      } catch (error) {
-        setToken(null);
+    if (!!authUser.value) return;
+    try {
+      const data = await authRepo.profile();
+      if (data?.data) {
+        setUser(data?.data as LoginResponseWithoutToken);
       }
+    } catch (error) {
+      setToken(null);
     }
   };
 
