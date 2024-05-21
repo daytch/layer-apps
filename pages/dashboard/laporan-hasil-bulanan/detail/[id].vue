@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "dashboard",
+  middleware: ["dashboard"],
 });
 useSeoMeta({
   title: "Detail Laporan Hasil Bulanan | Layer Apps",

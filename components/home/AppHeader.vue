@@ -1,3 +1,8 @@
+<script setup lang="ts">
+const authUser = useAuthUser();
+const { logout } = useAuth();
+</script>
+
 <template>
   <nav class="bg-[--app-primary-100] py-[22px]">
     <UContainer>
@@ -12,11 +17,21 @@
           />
         </NuxtLink>
         <NuxtLink
+          v-if="!authUser"
           to="/login"
           class="hidden md:inline-flex justify-center items-center bg-transparent text-white py-[13px] px-[28px] rounded-md border border-white text-base font-medium leading-6 uppercase"
         >
           Login
         </NuxtLink>
+        <template v-else-if="authUser">
+          <button
+            type="button"
+            @click="logout"
+            class="hidden md:inline-flex justify-center items-center bg-transparent text-white py-[13px] px-[28px] rounded-md border border-white text-base font-medium leading-6 uppercase"
+          >
+            Logout
+          </button>
+        </template>
       </div>
     </UContainer>
   </nav>

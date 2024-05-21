@@ -11,9 +11,10 @@ export type LoginResponse = {
   coopId: number;
   email: string;
   phone: string;
-  avatar: null | string;
+  avatar: string | null;
   is_active: boolean;
   access_token: string;
+  role_name: string;
 };
 
 export type LoginResponseWithoutToken = Omit<LoginResponse, "access_token">;

@@ -3,6 +3,7 @@ import type { RoleType } from "~/types/dashboard-menu";
 
 definePageMeta({
   layout: "dashboard",
+  middleware: ["dashboard"],
 });
 useSeoMeta({
   title: "Dashboard | Layer Apps",
@@ -21,10 +22,5 @@ const ROLE = ref<RoleType>("ADMIN");
     <!-- MANDOR -->
     <!-- <ForemanDashboardIndexTemplate /> -->
     <!-- END MANDOR -->
-  </template>
-  <template v-else>
-    <!-- MEMBER -->
-    <!-- <MemberDashboardIndexTemplate /> -->
-    <!-- END MEMBER -->
   </template>
 </template>

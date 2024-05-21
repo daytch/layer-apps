@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const ONE_DAY = 60 * 60 * 24 * 1000;
+
 export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
@@ -17,6 +19,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.BASE_API_URL || "https://api-dev.layerapps.id",
+      cookieName: "__session",
+      cookieExpires: ONE_DAY.toString(),
     },
   },
   css: ["~/assets/css/variabel.css", "~/assets/css/global.css"],
