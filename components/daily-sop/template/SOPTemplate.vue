@@ -51,7 +51,7 @@ const handleConfim = (item: SOPItem | null) => {
       <template v-for="data in SOP_DUMMY_DATA">
         <SOPCard
           :id="data.id"
-          :role="'MANDOR'"
+          :role="'Mandor'"
           :activity="data.title"
           :time="data.time"
           :is-done="data.isDone"

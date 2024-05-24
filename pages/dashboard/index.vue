@@ -9,18 +9,23 @@ useSeoMeta({
   title: "Dashboard | Layer Apps",
   description: "Dashboard | Layer Apps",
 });
-const ROLE = ref<RoleType>("ADMIN");
+const authUser = useAuthUser();
 </script>
 
 <template>
-  <template v-if="ROLE === 'ADMIN' || ROLE === 'SUPERADMIN'">
+  <template
+    v-if="
+      authUser?.user?.role_name === 'Admin' ||
+      authUser?.user?.role_name === 'Superadmin'
+    "
+  >
     <!-- ADMIN/SUPERADMIN -->
     <AdminDashboardIndexTemplate />
     <!-- END ADMIN/SUPERADMIN -->
   </template>
-  <template v-else-if="ROLE === 'MANDOR'">
+  <template v-else-if="authUser?.user?.role_name === 'Mandor'">
     <!-- MANDOR -->
-    <!-- <ForemanDashboardIndexTemplate /> -->
+    <ForemanDashboardIndexTemplate />
     <!-- END MANDOR -->
   </template>
 </template>
