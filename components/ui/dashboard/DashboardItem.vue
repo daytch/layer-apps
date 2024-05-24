@@ -5,6 +5,8 @@ defineProps<{
   isSidebarExpanded: boolean;
   menus: Menu[];
 }>();
+
+const isAdmin = useAdmin();
 </script>
 
 <template>
@@ -12,10 +14,17 @@ defineProps<{
     <IconLogoLayerAppsByCokroFarmFull v-if="isSidebarExpanded" />
     <IconLogoLayerAppsByCokroFarm v-else />
   </div>
+
   <div class="flex-1 flex flex-col">
     <ul class="pr-4 overflow-x-hidden overflow-y-auto flex-1 max-h-[70vh]">
       <template v-for="(menu, index) in menus" :key="index">
-        <li>
+        <li
+          v-if="
+            isAdmin &&
+            (menu?.roles?.includes('Admin') ||
+              menu?.roles?.includes('Superadmin'))
+          "
+        >
           <DashboardSidebarLink
             :text="menu.text"
             :icon="menu.icon"

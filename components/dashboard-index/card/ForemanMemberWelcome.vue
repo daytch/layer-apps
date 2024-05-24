@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoleType } from "~/types/dashboard-menu";
 
-type Role = Extract<RoleType, "MEMBER" | "MANDOR">;
+type Role = Extract<RoleType, "Anak Kandang" | "Mandor">;
 
 defineProps<{
   role: Role;
@@ -17,7 +17,7 @@ defineProps<{
       <div class="flex items-center justify-between mb-6">
         <p class="text-2xl font-semibold leading-[30px]">Ahmad Rozikin</p>
         <div class="text-sm py-1 px-2 bg-[#F27430] rounded-[32px]">
-          {{ role === "MANDOR" ? "Mandor" : "Anak Kandang" }}
+          {{ role === "Mandor" ? "Mandor" : "Anak Kandang" }}
         </div>
       </div>
       <div

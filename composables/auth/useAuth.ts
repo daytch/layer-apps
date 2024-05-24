@@ -41,17 +41,10 @@ export const useAuth = () => {
         error: true,
         user: null,
       });
-    } finally {
-      setUser({
-        loading: false,
-        error: false,
-        user: null,
-      });
     }
   };
 
   const me = async () => {
-    if (!!authUser.value || !accessToken?.value) return;
     setUser({
       loading: true,
       error: false,
@@ -71,12 +64,6 @@ export const useAuth = () => {
       setUser({
         loading: false,
         error: true,
-        user: null,
-      });
-    } finally {
-      setUser({
-        loading: false,
-        error: false,
         user: null,
       });
     }

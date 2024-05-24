@@ -1,6 +1,6 @@
 <template>
   <div class="content-wrapper-height flex flex-col w-full bg-white pb-20">
-    <ForemanMemberWelcome :role="'MANDOR'" />
+    <ForemanMemberWelcome :role="'Mandor'" />
     <DashboardContainer>
       <div class="flex items-center justify-between pt-3 mb-[14px]">
         <p class="text-sm text-[--app-dark-100] font-medium leading-[22px]">
