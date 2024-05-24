@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { accessToken } = useAuthCookie();
+</script>
+
 <template>
   <section class="relative h-[684px] md:h-[858px] overflow-hidden">
     <div
@@ -143,6 +147,7 @@
           Digital Marketing System
         </h1>
         <NuxtLink
+          v-if="!!accessToken?.length"
           to="/login"
           class="inline-flex justify-center items-center w-full md:hidden bg-white text-[--app-secondary] py-[13px] px-7 rounded-md font-medium text-base leading-6 uppercase"
           >Masuk</NuxtLink

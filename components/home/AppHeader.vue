@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const authUser = useAuthUser();
+const { accessToken } = useAuthCookie();
 const { logout } = useAuth();
 </script>
 
@@ -17,13 +17,13 @@ const { logout } = useAuth();
           />
         </NuxtLink>
         <NuxtLink
-          v-if="!authUser"
+          v-if="!accessToken"
           to="/login"
           class="hidden md:inline-flex justify-center items-center bg-transparent text-white py-[13px] px-[28px] rounded-md border border-white text-base font-medium leading-6 uppercase"
         >
           Login
         </NuxtLink>
-        <template v-else-if="authUser">
+        <template v-else-if="accessToken">
           <button
             type="button"
             @click="logout"
