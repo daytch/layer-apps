@@ -1,7 +1,7 @@
 export default defineNuxtRouteMiddleware(async () => {
-  const user = useAuthUser();
+  const { accessToken } = useAuthCookie();
 
-  if (user.value) {
+  if (accessToken.value) {
     if (process.server) return navigateTo({ name: "index" });
 
     return abortNavigation();

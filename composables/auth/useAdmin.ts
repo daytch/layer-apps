@@ -3,6 +3,6 @@ export const useAdmin = () => {
 
   return computed(() => {
     if (!authUser?.value) return false;
-    return authUser.value?.role_name?.toLowerCase().includes("admin");
+    return authUser.value?.user?.role_name?.toLowerCase().includes("admin");
   });
 };
