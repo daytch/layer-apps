@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { type Kandang } from "~/types/kandang";
+import { type KandangType } from "~/types/kandang";
 
 defineProps<{
-  kandang: Array<Kandang>;
+  kandang: Array<KandangType>;
+  loading?: boolean;
+  error?: any;
 }>();
+defineEmits<{
+  (e: "handleSelectUpdateKandang", item: KandangType): void;
+}>();
+
+const { deleteKandang, isLoading } = useKandang();
 
 const columns = [
   {
@@ -23,7 +30,15 @@ const columns = [
   },
 ];
 const showDeleteConfirmModal = ref(false);
-const selectedKandang = ref<Kandang | undefined>(undefined);
+const selectedKandang = ref<KandangType | undefined>(undefined);
+
+const handleDelete = async () => {
+  if (!!selectedKandang.value?.id) {
+    showDeleteConfirmModal.value = false;
+    await deleteKandang(selectedKandang.value.id);
+  }
+  selectedKandang.value = undefined;
+};
 </script>
 
 <template>
@@ -40,47 +55,79 @@ const selectedKandang = ref<Kandang | undefined>(undefined);
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in kandang" class="border-b">
-          <td
-            class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
-          >
-            {{ item.cageName }}
-          </td>
-          <td
-            class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
-          >
-            {{ item.cageId }}
-          </td>
-          <td class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm">
-            {{ item.address }}
-          </td>
-          <td class="py-[27px] px-4">
-            <div class="flex items-center space-x-5">
-              <button type="button">
-                <IconPencilUpdate />
-              </button>
-              <button
-                type="button"
-                @click="
-                  () => {
-                    selectedKandang = item;
-                    showDeleteConfirmModal = true;
-                  }
-                "
-              >
-                <IconTrash />
-              </button>
-            </div>
-          </td>
-        </tr>
+        <template v-if="!!kandang.length">
+          <tr v-for="item in kandang" class="border-b">
+            <td
+              class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              {{ item.name }}
+            </td>
+            <td
+              class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              {{ item.nik }}
+            </td>
+            <td
+              class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm"
+            >
+              {{ item.address }}
+            </td>
+            <td class="py-[27px] px-4">
+              <div class="flex items-center space-x-5">
+                <button
+                  type="button"
+                  @click="() => $emit('handleSelectUpdateKandang', item)"
+                >
+                  <IconPencilUpdate />
+                </button>
+                <button
+                  type="button"
+                  @click="
+                    () => {
+                      selectedKandang = item;
+                      showDeleteConfirmModal = true;
+                    }
+                  "
+                >
+                  <IconTrash />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </template>
+        <template v-else-if="!kandang.length && loading">
+          <tr class="border-y">
+            <td
+              :colspan="columns.length"
+              class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              <LoadingSpinner />
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr class="border-y">
+            <td
+              :colspan="columns.length"
+              class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              Data Kandang Tidak Ditemukan
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>
-  <DeleteConfirmModal title="Hapus Kandang" v-model="showDeleteConfirmModal">
+  <DeleteConfirmModal
+    title="Hapus Kandang"
+    v-model="showDeleteConfirmModal"
+    @handle-confirm-delete="handleDelete"
+    :is-loading="isLoading"
+  >
     <template #description>
       <p class="delete-confirm-description">
         Apakah anda yakin, untuk menghapus :<br />
-        {{ selectedKandang?.cageName }} - {{ selectedKandang?.cageId }} ?
+        {{ selectedKandang?.name }} - {{ selectedKandang?.nik }} ?
       </p>
     </template>
   </DeleteConfirmModal>

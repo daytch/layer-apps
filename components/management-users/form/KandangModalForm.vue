@@ -1,33 +1,53 @@
 <script setup lang="ts">
 import { object, string, type InferType } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
+import type { KandangPayload, KandangType } from "~/types/kandang";
 
-const emits = defineEmits(["handleCloseModal", "handleSuccessAddUser"]);
+const emits = defineEmits<{
+  (e: "handleSuccessAddKandang", item: KandangPayload): void;
+  (e: "handleCloseModal"): void;
+}>();
+const props = defineProps<{
+  initialValue?: KandangType;
+  isLoading?: boolean;
+}>();
 
 const Schema = object({
-  cageName: string().required("Nama Kandang tidak boleh kosong."),
-  cageId: string().required("ID Kandang tidak boleh kosong."),
+  name: string().required("Nama Kandang tidak boleh kosong."),
+  nik: string().required("ID Kandang tidak boleh kosong."),
   address: string().required("Alamat Kandang tidak boleh kosong."),
 });
+
 type FormValuesType = InferType<typeof Schema>;
 
 const formState = reactive<FormValuesType>({
-  cageId: "",
-  cageName: "",
+  nik: "",
+  name: "",
   address: "",
 });
 
+onMounted(() => {
+  if (!!props.initialValue) {
+    formState.name = props?.initialValue?.name;
+    formState.nik = props?.initialValue?.nik;
+    formState.address = props?.initialValue?.address;
+  }
+});
+
 const handleCloseModal = () => {
-  formState.cageId = "";
-  formState.cageName = "";
+  formState.nik = "";
+  formState.name = "";
   formState.address = "";
   emits("handleCloseModal");
 };
 
 async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
   const { data } = event;
-  emits("handleSuccessAddUser", data);
-  emits("handleCloseModal");
+  emits("handleSuccessAddKandang", {
+    name: data?.name,
+    address: data?.address,
+    code: data?.nik,
+  });
 }
 </script>
 
@@ -68,7 +88,7 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
           <h2
             class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
           >
-            Tambah Karyawan
+            {{ !!initialValue ? "Update" : "Tambah" }} Kandang
           </h2>
           <UButton
             @click="handleCloseModal"
@@ -79,24 +99,24 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
         </div>
       </template>
       <div class="space-y-6">
-        <UFormGroup name="cageName" label="Nama Kandang">
+        <UFormGroup name="name" label="Nama Kandang">
           <template #label>
             <FormLabel>Nama Kandang</FormLabel>
           </template>
           <UInput
             variant="outline"
             placeholder="Nama Kandang"
-            v-model="formState.cageName"
+            v-model="formState.name"
           />
         </UFormGroup>
-        <UFormGroup name="cageId" label="ID Kandang">
+        <UFormGroup name="nik" label="ID Kandang">
           <template #label>
             <FormLabel>ID Kandang</FormLabel>
           </template>
           <UInput
             variant="outline"
             placeholder="ID Kandang"
-            v-model="formState.cageId"
+            v-model="formState.nik"
           />
         </UFormGroup>
         <UFormGroup name="address" label="Alamat Kandang">
@@ -136,6 +156,7 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
           <UButton
             type="submit"
             size="md"
+            :disabled="isLoading"
             :ui="{
               strategy: 'override',
               padding: {
@@ -149,7 +170,7 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
               },
             }"
           >
-            Tambah
+            {{ isLoading ? "Tunggu..." : !!initialValue ? "Update" : "Tambah" }}
           </UButton>
         </div>
       </template>
