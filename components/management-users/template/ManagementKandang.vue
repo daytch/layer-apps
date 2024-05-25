@@ -6,7 +6,10 @@ const { getAllKandang, createKandang, updateSelectedKandang, isLoading } =
   useKandang();
 const { data, pending, error } = await useAsyncData(
   ASYNC_KEY.kandang,
-  getAllKandang
+  async () => getAllKandang(),
+  {
+    lazy: true,
+  }
 );
 
 const FILTER_OPTIONS = [
