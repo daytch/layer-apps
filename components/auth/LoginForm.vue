@@ -19,18 +19,24 @@ const state = reactive({
   password: "",
 });
 
+const loading = ref(false);
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
+  loading.value = true;
   try {
     await login({
       username: event.data.employeId,
       password: event.data.password,
     });
+    loading.value = false;
     await navigateTo("/");
   } catch (error: any) {
     toast.add({
       title: error?.data?.message || "",
       ui: { ...TOAST_ERROR_UI },
     });
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -76,7 +82,25 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </UInput>
       </UFormGroup>
 
-      <UButton type="submit" :block="true">Masuk</UButton>
+      <UButton
+        type="submit"
+        :block="true"
+        :disabled="loading"
+        :ui="{
+          strategy: 'override',
+          base: '',
+          padding: {
+            md: 'py-[10px] px-4',
+          },
+          color: {
+            primary: {
+              solid:
+                'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
+            },
+          },
+        }"
+        >{{ loading ? "Tunggu..." : "Masuk" }}</UButton
+      >
     </UForm>
 
     <div class="flex items-start mt-[50px] relative z-10">

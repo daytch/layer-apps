@@ -20,7 +20,7 @@ export const DASHBOARD_MENU: Menu[] = [
     text: "Produksi Telur",
     icon: IconEgg,
     roles: ["Superadmin", "Admin"],
-    to: "/",
+    to: "/dashboard/produksi-telur",
   },
   {
     text: "Stok Pakan & Obat",
