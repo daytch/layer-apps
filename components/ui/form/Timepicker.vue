@@ -38,7 +38,7 @@ defineProps<{
       />
     </template>
     <template #action-preview="{ value }">
-      {{ formatDate(value, "yyyy/MM/dd") }}
+      <span class="hidden">{{ value }}</span>
     </template>
     <template #clear-icon>
       <div class="hidden"></div>
