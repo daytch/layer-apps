@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { RoleType } from "~/types/dashboard-menu";
-
 definePageMeta({
   layout: "dashboard",
   middleware: ["dashboard"],
