@@ -10,3 +10,25 @@ export type User = {
   role: RoleType;
   status: UserStatus;
 };
+
+export type UserType = {
+  email: string;
+  id: number;
+  avatar: null | string;
+  nik: string;
+  name: string;
+  phone: string;
+  is_active: boolean;
+  role_name: string;
+  coop_name: string;
+};
+
+export type CreateUserPayload = {
+  password: string;
+  name: string;
+  roleId: number;
+  coopId: number;
+  email: string;
+  phone: string;
+  avatar?: string;
+};
