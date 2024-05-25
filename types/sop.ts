@@ -18,3 +18,13 @@ export type SOPProgress = {
   title: string;
   isDone: boolean;
 };
+
+export type SOPDataType = {
+  id: number;
+  roleId: number;
+  title: string;
+  time: string;
+  description: string;
+  createdAt: string;
+  updateAt: string;
+};
