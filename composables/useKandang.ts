@@ -67,7 +67,6 @@ export const useKandang = () => {
 
   const updateSelectedKandang = async (id: number, data: KandangPayload) => {
     initialFetch();
-    const now = new Date();
     previousKandans.value = kandangs.value;
     kandangs.value = kandangs.value?.map((kandang) =>
       kandang.id === id ? { ...kandang, ...data } : kandang
