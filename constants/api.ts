@@ -6,9 +6,11 @@ export const API_LIST = {
   users: "/users",
   createUser: "/users/register",
   user: (id: number) => `/users/${id}`,
+  getallsop: (roleId: number) => `/sop/getallsop?roleId=${roleId}`,
 };
 
 export const ASYNC_KEY = {
   kandang: "kandang",
   user: "user",
+  sop: "sop",
 };

@@ -1,12 +1,25 @@
 <script setup lang="ts">
-import type { ManagementSOP } from "~/types/sop";
+import { ASYNC_KEY } from "~/constants/api";
+import { ROLES } from "~/constants/role";
+import type { SOPDataType } from "~/types/sop";
 
-defineProps<{
-  items: Array<ManagementSOP>;
+const props = defineProps<{
   activeTab: string;
 }>();
+const { getAllSopsByRoleId } = useFetchSOP();
+const roleId = computed(
+  () => ROLES.find((role) => role.name === props.activeTab)?.id
+);
 
-const selectedSOPItem = ref<ManagementSOP | undefined>(undefined);
+const { data, error, pending } = await useAsyncData(
+  ASYNC_KEY.sop,
+  async () => getAllSopsByRoleId(roleId?.value),
+  {
+    lazy: true,
+    watch: [roleId],
+  }
+);
+const selectedSOPItem = ref<SOPDataType | undefined>(undefined);
 const showDeleteSOPMOdal = ref(false);
 </script>
 
@@ -36,43 +49,62 @@ const showDeleteSOPMOdal = ref(false);
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in items" class="border-b border-b-[--app-gray-500]">
-          <td
-            class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
-          >
-            {{ item.sop }}
-          </td>
-          <td
-            class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
-          >
-            {{ activeTab }}
-          </td>
-          <td
-            class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
-          >
-            {{ item.time }}
-          </td>
-          <td
-            class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
-          >
-            <div class="flex items-center space-x-5">
-              <button type="button">
-                <IconPenUpdate />
-              </button>
-              <button
-                type="button"
-                @click="
-                  () => {
-                    selectedSOPItem = item;
-                    showDeleteSOPMOdal = true;
-                  }
-                "
-              >
-                <IconTrash />
-              </button>
-            </div>
-          </td>
-        </tr>
+        <template v-if="pending">
+          <tr class="border-b border-b-[--app-gray-500]">
+            <td
+              :colspan="4"
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              <LoadingSpinner />
+            </td>
+          </tr>
+        </template>
+        <template v-else-if="!pending && !!data?.length">
+          <tr v-for="item in data" class="border-b border-b-[--app-gray-500]">
+            <td
+              class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
+            >
+              {{ item?.title }}
+            </td>
+            <td
+              class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
+            >
+              {{ ROLES.find((role) => role?.id === item?.roleId)?.name }}
+            </td>
+            <td
+              class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
+            >
+              {{ item.time }}
+            </td>
+            <td
+              class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
+            >
+              <div class="flex items-center space-x-5">
+                <button type="button">
+                  <IconPenUpdate />
+                </button>
+                <button
+                  type="button"
+                  @click="
+                    () => {
+                      selectedSOPItem = item;
+                      showDeleteSOPMOdal = true;
+                    }
+                  "
+                >
+                  <IconTrash />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr>
+            <td :colspan="4">
+              <NoDataStatus>Data SOP Tidak Ditemukan</NoDataStatus>
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>
