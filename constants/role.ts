@@ -31,3 +31,9 @@ export const ROLES: Array<Role> = [
     updateAt: "2024-04-06T20:49:40.246Z",
   },
 ];
+
+export const ROLES_OPTIONS_FORM: Array<{ label: string; value: number }> =
+  ROLES.map((role) => ({
+    value: role.id,
+    label: role.name,
+  }));

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { mixed, object, type InferType, string, array } from "yup";
-import { ROLE_OPTIONS } from "~/constants/ui";
 import type { FormSubmitEvent } from "#ui/types";
+import { ROLES_OPTIONS_FORM } from "~/constants/role";
+import { ASYNC_KEY } from "~/constants/api";
 
 const emits = defineEmits(["handleCloseModal", "handleSuccessAddUser"]);
 
@@ -16,6 +17,7 @@ const Schema = object({
 });
 type FormValueType = InferType<typeof Schema>;
 
+const { getAllKandang } = useKandang();
 const formState = reactive<FormValueType>({
   name: "",
   id: "",
@@ -23,6 +25,14 @@ const formState = reactive<FormValueType>({
   role: undefined,
   cage: [],
 });
+
+const { data, pending } = await useAsyncData(
+  ASYNC_KEY.kandang,
+  async () => getAllKandang(),
+  {
+    lazy: true,
+  }
+);
 
 const handleCloseModal = () => {
   formState.name = "";
@@ -133,7 +143,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               size="md"
               :nullable="true"
               v-model="formState.role"
-              :options="ROLE_OPTIONS"
+              :options="ROLES_OPTIONS_FORM"
               placeholder="Pilih Role"
               :input-class="'input-select-trigger'"
             />
@@ -144,28 +154,17 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             <FormLabel>Ditempatkan di</FormLabel>
           </template>
           <template #default="{ error }">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-              <UCheckbox
-                v-model="formState.cage"
-                value="kandang-jatisari"
-                label="Kandang Jatisari"
-                id="kandang-jatisari"
-                name="kandang-jatisari"
-              />
-              <UCheckbox
-                v-model="formState.cage"
-                value="kandang-batang"
-                label="Kandang Batang"
-                id="kandang-batang"
-                name="kandang-batang"
-              />
-              <UCheckbox
-                v-model="formState.cage"
-                value="kandang-blado"
-                label="Kandang Blado"
-                id="kandang-blado"
-                name="kandang-blado"
-              />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <template v-if="!!data?.length">
+                <UCheckbox
+                  v-for="kandang in data"
+                  v-model="formState.cage"
+                  :value="kandang.id"
+                  :label="kandang.name"
+                  :id="String(kandang.id)"
+                  :name="String(kandang.id)"
+                />
+              </template>
             </div>
           </template>
         </UFormGroup>

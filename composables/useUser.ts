@@ -1,7 +1,7 @@
 import { ASYNC_KEY } from "~/constants/api";
 import { TOAST_ERROR_UI, TOAST_SUCCESS_UI } from "~/constants/ui";
 import { userRepository } from "~/repository/modules/user";
-import type { UserType } from "~/types/user";
+import type { CreateUserPayload, UserType } from "~/types/user";
 
 export const useUser = () => {
   const { $api } = useNuxtApp();
@@ -9,8 +9,6 @@ export const useUser = () => {
   const userRepo = userRepository($api);
   const isLoading = ref(false);
   const isError = ref(false);
-  const { data: users } = useNuxtData<Array<UserType>>(ASYNC_KEY.user);
-  const previousUsers = ref<any>([]);
 
   const initialFetch = () => {
     isLoading.value = true;
@@ -30,8 +28,6 @@ export const useUser = () => {
 
   const handleError = (message: string) => {
     isError.value = true;
-    users.value = previousUsers.value;
-    previousUsers.value = [];
     toast.add({
       icon: "i-heroicons-check-circle-16-solid",
       title: message,
@@ -48,9 +44,57 @@ export const useUser = () => {
     }
   };
 
+  const deleteUserById = async (id: number) => {
+    initialFetch();
+    try {
+      const response = await userRepo.deleteUserById(id);
+      if (!!response?.data) {
+        handleSuccess("Berhasil menghapus data user.");
+      }
+    } catch (error) {
+      handleError("Gagal menghapus data user.");
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const updateUserById = async (
+    id: number,
+    updateUserPayload: CreateUserPayload
+  ) => {
+    initialFetch();
+    try {
+      const response = await userRepo.updateUserById(id, updateUserPayload);
+      if (!!response?.data) {
+        handleSuccess("Berhasil mengubah data user.");
+      }
+    } catch (error) {
+      handleError("Gagal mengubah data user.");
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const createNewUser = async (createUserPayload: CreateUserPayload) => {
+    initialFetch();
+    try {
+      const response = await userRepo.createNewUser(createUserPayload);
+      if (!!response?.data) {
+        handleSuccess("Berhasil menyimpan data user.");
+      }
+    } catch (error) {
+      handleError("Gagal menyimpan data user.");
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     getAllUsers,
     isLoading,
     isError,
+    deleteUserById,
+    updateUserById,
+    createNewUser,
   };
 };
