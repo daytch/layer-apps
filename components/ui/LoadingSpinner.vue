@@ -1,8 +1,8 @@
 <template>
-  <div role="status">
+  <div role="status" class="flex justify-center py-5">
     <svg
       aria-hidden="true"
-      class="w-8 h-8 text-gray-200 animate-spin fill-blue-600"
+      class="w-8 h-8 text-gray-200 animate-spin fill-[--app-primary-100]"
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
