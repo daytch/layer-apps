@@ -10,9 +10,6 @@ import { API_LIST } from "~/constants/api";
 export const authRepository = <T>(fetch: FetchType<T>) => ({
   async login(payload: LoginPayload): Promise<APIResponse<LoginResponse>> {
     return fetch(API_LIST.login, {
-      headers: {
-        "Content-Type": "application/json",
-      },
       method: "POST",
       body: JSON.stringify(payload),
     });

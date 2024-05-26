@@ -3,6 +3,7 @@ import type { CashflowDataType } from "~/types/cashflow";
 
 defineProps<{
   items: Array<CashflowDataType>;
+  loading?: boolean;
 }>();
 
 const {

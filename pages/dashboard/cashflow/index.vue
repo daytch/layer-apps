@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ASYNC_KEY } from "~/constants/api";
 import type { CashflowDataType } from "~/types/cashflow";
 
 definePageMeta({
@@ -9,24 +10,17 @@ useSeoMeta({
   title: "Cashflow | Layer Apps",
   description: "Cashflow | Layer Apps",
 });
-const data: Array<CashflowDataType> = [
-  {
-    id: 2,
-    periode: "2024-04-12T00:00:00.000Z",
-    trans_date: "2024-04-12T11:14:00.732Z",
-    tipe: "DEBIT",
-    nominal: 0,
-    total: 0,
-  },
-  {
-    id: 3,
-    periode: "2024-04-12T00:00:00.000Z",
-    trans_date: "2024-04-12T11:14:00.732Z",
-    tipe: "KREDIT",
-    nominal: 51000,
-    total: 51000,
-  },
-];
+const { getAllCashflows } = useFetchCashflow();
+const { data: cashflows, pending: cashflowsLoading } = await useAsyncData(
+  ASYNC_KEY.cashflow,
+  async () => getAllCashflows(),
+  { lazy: true }
+);
+
+const totalCashflow = computed(() => {
+  if (!cashflows?.value?.length) return 0;
+  return cashflows?.value?.reduce((prev, current) => prev + current.total, 0);
+});
 </script>
 
 <template>
@@ -34,9 +28,9 @@ const data: Array<CashflowDataType> = [
     <DashboardContainer>
       <DashboardHeadingTitle>Cashflow (Rekap Pemasukan)</DashboardHeadingTitle>
       <div class="w-full max-w-[505px] mt-8">
-        <BalanceCard />
+        <BalanceCard :total-cashflow="totalCashflow" />
       </div>
-      <CashflowTemplate :items="data" />
+      <CashflowTemplate :items="cashflows || []" :loading="cashflowsLoading" />
     </DashboardContainer>
   </div>
 </template>
