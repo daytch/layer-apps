@@ -34,6 +34,16 @@ defineProps<{
 }>();
 const showDeleteConfirm = ref(false);
 const selected = ref<UserType | undefined>(undefined);
+const { isLoading, deleteUserById } = useUser();
+
+const handleDeleteUser = async () => {
+  if (!selected.value?.id) return;
+  try {
+    await deleteUserById(selected.value.id);
+    showDeleteConfirm.value = false;
+  } finally {
+  }
+};
 </script>
 
 <template>
@@ -143,11 +153,8 @@ const selected = ref<UserType | undefined>(undefined);
   <DeleteConfirmModal
     v-model="showDeleteConfirm"
     :title="'Hapus Karyawan'"
-    @handle-confirm-delete="
-      () => {
-        console.log('delete', selected);
-      }
-    "
+    :is-loading="isLoading"
+    @handle-confirm-delete="handleDeleteUser"
   >
     <template #description>
       <p class="delete-confirm-description">

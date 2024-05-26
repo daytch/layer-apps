@@ -5,7 +5,7 @@ export const API_LIST = {
   kandangId: (id: number) => `/coop/${id}`,
   users: "/users",
   createUser: "/users/register",
-  user: (id: number) => `/users/${id}`,
+  userById: (id: number) => `/users/${id}`,
   getallsop: (roleId: number) => `/sop/getallsop?roleId=${roleId}`,
   cashflow: "/cashflow",
   cashflowById: (cashflowId: number) => `/cashflow/${cashflowId}`,

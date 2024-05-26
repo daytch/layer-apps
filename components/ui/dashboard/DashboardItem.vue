@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { Menu } from "~/types/dashboard-menu";
+import type { Menu, RoleType } from "~/types/dashboard-menu";
 
 defineProps<{
   isSidebarExpanded: boolean;
   menus: Menu[];
 }>();
 
-const isAdmin = useAdmin();
+const userState = useAuthUser();
+const { logout } = useAuth();
 </script>
 
 <template>
@@ -20,9 +21,7 @@ const isAdmin = useAdmin();
       <template v-for="(menu, index) in menus" :key="index">
         <li
           v-if="
-            isAdmin &&
-            (menu?.roles?.includes('Admin') ||
-              menu?.roles?.includes('Superadmin'))
+           menu.roles.includes(userState?.user?.role_name as RoleType)
           "
         >
           <DashboardSidebarLink
@@ -37,6 +36,7 @@ const isAdmin = useAdmin();
       </template>
     </ul>
     <button
+      @click="logout"
       type="button"
       class="inline-flex items-center py-[18px] pl-10 pr-4 text-lg font-medium leading-6 w-full rounded-tr-[12px] rounded-br-[12px] relative mb-8"
     >

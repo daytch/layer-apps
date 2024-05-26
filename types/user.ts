@@ -32,3 +32,11 @@ export type CreateUserPayload = {
   phone: string;
   avatar?: string;
 };
+
+export type ResponseCreateUser = {
+  password: string;
+  roleId: number;
+  coopId: number;
+  createdAt: string;
+  updateAt: string;
+} & UserType;

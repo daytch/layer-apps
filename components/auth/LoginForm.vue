@@ -24,17 +24,14 @@ const loading = ref(false);
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true;
   try {
-    await login({
+    const response = await login({
       username: event.data.employeId,
       password: event.data.password,
     });
-    loading.value = false;
-    await navigateTo("/");
-  } catch (error: any) {
-    toast.add({
-      title: error?.data?.message || "",
-      ui: { ...TOAST_ERROR_UI },
-    });
+    if (!!response?.value?.user) {
+      loading.value = false;
+      await navigateTo("/");
+    }
   } finally {
     loading.value = false;
   }
