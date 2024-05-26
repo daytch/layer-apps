@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { object, string, type InferType } from "yup";
-import { TOAST_ERROR_UI } from "~/constants/ui";
 import type { FormSubmitEvent } from "#ui/types";
 
 const schema = object({
