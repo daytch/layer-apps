@@ -99,7 +99,7 @@ const handleDelete = async () => {
           <tr class="border-y">
             <td
               :colspan="columns.length"
-              class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
             >
               <LoadingSpinner />
             </td>
@@ -107,11 +107,8 @@ const handleDelete = async () => {
         </template>
         <template v-else>
           <tr class="border-y">
-            <td
-              :colspan="columns.length"
-              class="py-[27px] px-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
-            >
-              Data Kandang Tidak Ditemukan
+            <td :colspan="columns.length">
+              <NoDataStatus>Data Kandang Tidak Ditemukan</NoDataStatus>
             </td>
           </tr>
         </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { User } from "~/types/user";
+import { ASYNC_KEY } from "~/constants/api";
+import type { UserType } from "~/types/user";
 
 const FILTER_OPTIONS = [
   {
@@ -7,25 +8,15 @@ const FILTER_OPTIONS = [
     value: "all",
   },
 ];
+const { getAllUsers } = useUser();
 const showUserModal = ref(false);
-const USER_DUMMY = ref<Array<User>>([
-  {
-    id: "COKRO-01",
-    avatar: "/images/user_dummy_avatar.png",
-    name: "Ridwan Hakim",
-    role: "Anak Kandang",
-    status: "ACTIVE",
-    phoneNumber: "081238213123",
-  },
-  {
-    id: "COKRO-02",
-    avatar: "/images/user_dummy_avatar.png",
-    name: "Ridwan Hakim",
-    role: "Anak Kandang",
-    status: "INACTIVE",
-    phoneNumber: "081238213123",
-  },
-]);
+const {
+  data: users,
+  pending,
+  error,
+} = await useAsyncData(ASYNC_KEY.user, async () => getAllUsers(), {
+  lazy: true,
+});
 const activeFilter = ref(undefined);
 </script>
 
@@ -63,7 +54,7 @@ const activeFilter = ref(undefined);
       :input-class="'input-select-trigger'"
     />
   </div>
-  <UserTable :users="USER_DUMMY" />
+  <UserTable :users="users || []" :loading="pending" :error="error" />
   <AppModal v-model="showUserModal">
     <UserModalForm
       @handle-close-modal="showUserModal = false"
