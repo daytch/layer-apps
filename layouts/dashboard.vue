@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DASHBOARD_MENU } from "~/constants/dashboard";
+import { DASHBOARD_MENU, DASHBOARD_MENU_SP } from "~/constants/dashboard";
 
 const { isSidebarExpanded } = useDashboardSidebar();
 </script>
@@ -19,7 +19,7 @@ const { isSidebarExpanded } = useDashboardSidebar();
       <slot />
     </div>
   </div>
-  <DashboardSPSidebar :menus="DASHBOARD_MENU || []" />
+  <DashboardSPSidebar :menus="DASHBOARD_MENU_SP || []" />
   <DashboardSPNotification />
 </template>
 
