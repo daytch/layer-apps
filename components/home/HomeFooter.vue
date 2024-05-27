@@ -12,13 +12,7 @@
       <div
         class="flex flex-col space-y-9 sm:flex-row sm:space-y-0 justify-between mb-[116px]"
       >
-        <NuxtImg
-          format="webp"
-          src="/images/layer_apps_white_landscape.svg"
-          alt="Layer Apps Logo"
-          width="177"
-          height="40"
-        />
+        <LogoByCokroFarmLandscape class="h-10 w-auto" />
         <div class="flex items-center space-x-3">
           <p class="text-white text-base font-normal leading-6">
             Hubungi kami :

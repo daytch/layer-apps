@@ -8,13 +8,7 @@ const { logout } = useAuth();
     <UContainer>
       <div class="flex items-center justify-center md:justify-between">
         <NuxtLink to="/">
-          <NuxtImg
-            format="webp"
-            alt="Layer Apps Logo"
-            width="178"
-            height="40"
-            src="/images/layer_apps_white_landscape.svg"
-          />
+          <LogoByCokroFarmLandscape class="h-10 w-auto" />
         </NuxtLink>
         <NuxtLink
           v-if="!accessToken"

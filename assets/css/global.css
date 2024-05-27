@@ -37,7 +37,7 @@ body {
 }
 
 .input-select-trigger {
-  @apply py-3 px-5 text-base;
+  @apply py-3 px-5 text-base placeholder:text-[--app-primary-text] text-[--app-dark-200];
 }
 
 .dp__main {
