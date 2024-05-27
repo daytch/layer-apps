@@ -1,29 +1,20 @@
 <script setup lang="ts">
-import { mixed, object, type InferType, string, array } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
 import { ROLES_OPTIONS_FORM } from "~/constants/role";
 import { ASYNC_KEY } from "~/constants/api";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
+import { UserFormSchema, type UserFormValueType } from "~/schemas/user";
 
 const emits = defineEmits(["handleCloseModal", "handleSuccessAddUser"]);
-
-const Schema = object({
-  name: string().required("Nama tidak boleh kosong."),
-  password: string().required("Password tidak boleh kosong."),
-  phoneNumber: string().optional(),
-  role: mixed().test("Required", "Role tidak boleh kosong.", (value: any) => {
-    return value?.value !== undefined;
-  }),
-  coop: array().of(string()).min(1, "Kandang penempatan tidak boleh kosong."),
-  email: string()
-    .email("Email tidka valid.")
-    .required("Email tidak boleh kosong."),
-});
-type FormValueType = InferType<typeof Schema>;
 
 const { getAllKandang } = useKandang();
 const { type, handleChangeVisibility, iconClassName } =
   usePasswordInputVisibility();
-const formState = reactive<FormValueType>({
+const formState = reactive<UserFormValueType>({
   name: "",
   password: "",
   phoneNumber: "",
@@ -41,6 +32,26 @@ const { data, pending } = await useAsyncData(
   }
 );
 
+const showCoopField = computed(
+  () =>
+    !!(formState?.role as any)?.label &&
+    !(formState?.role as any)?.label?.toLowerCase()?.includes("admin")
+);
+const isCoopMultiple = computed(
+  () => (formState.role as any)?.label === "Mandor"
+);
+
+watch(
+  () => formState.role,
+  (role: any) => {
+    if (role?.label === "Anak Kandang") {
+      formState.coop = {};
+    } else {
+      formState.coop = [];
+    }
+  }
+);
+
 const handleCloseModal = () => {
   formState.name = "";
   formState.password = "";
@@ -51,7 +62,7 @@ const handleCloseModal = () => {
   emits("handleCloseModal");
 };
 
-async function onSubmit(event: FormSubmitEvent<FormValueType>) {
+async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
   const { data } = event;
   console.log(data);
 }
@@ -60,33 +71,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
 <template>
   <UForm
     class="space-y-4"
-    :schema="Schema"
+    :schema="UserFormSchema"
     :state="formState"
     @submit="onSubmit"
   >
-    <UCard
-      :ui="{
-        ring: '',
-        divide: '',
-        rounded: 'rounded-[14px]',
-        shadow: '',
-        body: {
-          base: 'mb-[50px]',
-          background: '',
-          padding: 'px-10',
-        },
-        header: {
-          base: '',
-          background: '',
-          padding: 'px-10 pt-10',
-        },
-        footer: {
-          base: '',
-          background: '',
-          padding: 'px-10 pb-10',
-        },
-      }"
-    >
+    <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
         <div
           class="w-full flex justify-between items-center pb-6 mb-6 border-b"
@@ -117,27 +106,8 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
           <label
             for="avatar"
             class="absolute w-8 h-8 bg-[--app-primary-100] border-2 border-gray-400 rounded-full inline-flex items-center justify-center cursor-pointer bottom-0 -right-1"
-            ><svg
-              style="margin-top: -3px"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="#fff"
-              class="size-5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
-              />
-            </svg>
-
+          >
+            <IconPhoto class="size-5" style="margin-top: -3px" />
             <input type="file" class="hidden" id="avatar" />
           </label>
         </div>
@@ -158,7 +128,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             </template>
             <UInput
               variant="outline"
-              placeholder="ID User"
+              placeholder="Email User"
               v-model="formState.email"
             />
           </UFormGroup>
@@ -212,24 +182,36 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             :input-class="'input-select-trigger'"
           />
         </UFormGroup>
-        <UFormGroup name="cage" label="Ditempatkan di">
+        <UFormGroup name="coop" label="Ditempatkan di" v-if="showCoopField">
           <template #label>
             <FormLabel>Ditempatkan di</FormLabel>
           </template>
-          <template #default="{ error }">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <template v-if="!!data?.length">
-                <UCheckbox
-                  v-for="kandang in data"
-                  v-model="formState.coop"
-                  :value="kandang.id"
-                  :label="kandang.name"
-                  :id="String(kandang.id)"
-                  :name="String(kandang.id)"
-                />
-              </template>
-            </div>
-          </template>
+          <USelectMenu
+            size="md"
+            v-model="formState.coop"
+            :options="data || []"
+            placeholder="Pilih Kandang"
+            option-attribute="name"
+            by="id"
+            :disabled="!formState.role"
+            :multiple="isCoopMultiple"
+          >
+            <template #label>
+              <span
+                v-if="isCoopMultiple && !!(formState?.coop as Array<any>)?.length"
+                class="truncate text-[--app-dark-200]"
+                >{{ (formState?.coop as any)?.length }} dipilih</span
+              >
+              <span
+                v-else-if="!isCoopMultiple && !!(formState?.coop as any)?.name"
+                class="truncate text-[--app-dark-200]"
+                >{{ (formState?.coop as any)?.name }}</span
+              >
+              <span v-else class="text-[--app-primary-text]"
+                >Pilih Kandang</span
+              >
+            </template>
+          </USelectMenu>
         </UFormGroup>
       </div>
       <template #footer>
@@ -240,36 +222,14 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             color="sky"
             variant="ghost"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                sky: {
-                  ghost:
-                    'bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]',
-                },
-              },
-            }"
+            :ui="{ ...UI_GHOST_BUTTON_STYLES }"
           >
             Batal
           </UButton>
           <UButton
             type="submit"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                primary: {
-                  solid:
-                    'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-                },
-              },
-            }"
+            :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
             Tambah
           </UButton>

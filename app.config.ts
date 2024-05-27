@@ -35,7 +35,7 @@ export default defineAppConfig({
       },
     },
     input: {
-      base: "placeholder-[--app-dark-600] w-full border-0 disabled:bg-[--app-gray-200] disabled:cursor-not-allowed",
+      base: "w-full border-0 disabled:bg-[--app-gray-200] disabled:cursor-not-allowed",
       size: {
         md: "text-base",
       },
@@ -45,9 +45,10 @@ export default defineAppConfig({
       color: {
         white: {
           outline:
-            "bg-white text-[--app-primary-text] ring-1 ring-[#DFE4EA] focus:ring-2 focus:ring-[--app-primary-100] border-0",
+            "bg-white text-[--app-dark-200] ring-1 ring-[#DFE4EA] focus:ring-2 focus:ring-[--app-primary-100] border-0",
         },
       },
+      placeholder: "placeholder-[--app-dark-600]",
       default: {
         size: "md",
       },
@@ -89,6 +90,25 @@ export default defineAppConfig({
       },
       default: {
         size: "md",
+      },
+    },
+    selectMenu: {
+      option: {
+        size: "text-base",
+      },
+    },
+    select: {
+      size: {
+        md: "text-base",
+      },
+      padding: {
+        md: "py-3 px-5",
+      },
+      color: {
+        white: {
+          outline:
+            "shadow-sm bg-white text-gray-900 ring-1 ring-inset ring-[#DFE4EA] focus:ring-2 focus:ring-primary-500",
+        },
       },
     },
   },
