@@ -9,6 +9,8 @@ export const API_LIST = {
   getallsop: (roleId: number) => `/sop/getallsop?roleId=${roleId}`,
   cashflow: "/cashflow",
   cashflowById: (cashflowId: number) => `/cashflow/${cashflowId}`,
+  foodMedicineStock: "/obat",
+  foodMedicineById: (id: number) => `/obat/${id}`,
 };
 
 export const ASYNC_KEY = {
@@ -16,4 +18,5 @@ export const ASYNC_KEY = {
   user: "user",
   sop: "sop",
   cashflow: "cashflow",
+  foodMedicine: "food-medicine",
 };
