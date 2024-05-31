@@ -70,6 +70,7 @@ const range = ref([
   </div>
   <CashflowTable
     :items="items"
+    :loading="loading"
     @handle-show-update-modal="
       (item) => {
         handleShowModal(item);
