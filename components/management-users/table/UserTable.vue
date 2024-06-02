@@ -32,6 +32,10 @@ defineProps<{
   loading?: boolean;
   error?: any;
 }>();
+defineEmits<{
+  (e: "handleShowUpdateModal", item: UserType): void;
+}>();
+
 const showDeleteConfirm = ref(false);
 const selected = ref<UserType | undefined>(undefined);
 const { isLoading, deleteUserById } = useUser();
@@ -124,7 +128,10 @@ const handleDeleteUser = async () => {
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
             >
               <div class="flex items-center space-x-5">
-                <button type="button">
+                <button
+                  type="button"
+                  @click="$emit('handleShowUpdateModal', user)"
+                >
                   <IconPencilUpdate />
                 </button>
                 <button

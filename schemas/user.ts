@@ -1,7 +1,16 @@
-import { mixed, object, type InferType, string, array } from "yup";
+import { mixed, object, type InferType, string, array, boolean } from "yup";
 export const UserFormSchema = object({
   name: string().required("Nama tidak boleh kosong."),
-  password: string().required("Password tidak boleh kosong."),
+  isUpdateMode: boolean().default(false),
+  password: string()
+    .when(["isUpdateMode"], {
+      is: (value: boolean) => !value,
+      then: () => string().required("Password tidak boleh kosong."),
+    })
+    .when(["isUpdateMode"], {
+      is: (value: boolean) => !!value,
+      then: () => string().nullable(),
+    }),
   phoneNumber: string().optional(),
   email: string()
     .email("Email tidak valid.")

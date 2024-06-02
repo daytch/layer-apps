@@ -3,6 +3,7 @@ export const API_LIST = {
   profile: "/auth/profile",
   allKandang: "/coop",
   kandangId: (id: number) => `/coop/${id}`,
+  uploadUserAvatar: "/users/upload",
   users: "/users",
   createUser: "/users/register",
   userById: (id: number) => `/users/${id}`,

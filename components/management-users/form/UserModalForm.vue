@@ -8,8 +8,17 @@ import {
   UI_PRIMARY_BUTTON_STYLES,
 } from "~/constants/ui";
 import { UserFormSchema, type UserFormValueType } from "~/schemas/user";
+import type { UserType, FormSubmitType } from "~/types/user";
+["handleCloseModal", "handleSuccessAddUser"];
 
-const emits = defineEmits(["handleCloseModal", "handleSuccessAddUser"]);
+const emits = defineEmits<{
+  (e: "handleCloseModal"): void;
+  (e: "handleSuccessAddUser", data: FormSubmitType): void;
+}>();
+const props = defineProps<{
+  formDefaultValue?: UserType;
+  isLoading?: boolean;
+}>();
 
 const { getAllKandang } = useKandang();
 const { type, handleChangeVisibility, iconClassName } =
@@ -21,14 +30,18 @@ const formState = reactive<UserFormValueType>({
   role: undefined,
   coop: [],
   email: "",
+  isUpdateMode: false,
 });
 const previewAvatar = ref("/images/no_photo.png");
+const userAvatar = ref<File | null>(null);
 
-const { data, pending } = await useAsyncData(
+const { data } = await useAsyncData(
   ASYNC_KEY.kandang,
   async () => getAllKandang(),
   {
     lazy: true,
+    transform: (data) =>
+      !!data ? data.map(({ name, id }) => ({ label: name, value: id })) : [],
   }
 );
 
@@ -41,16 +54,42 @@ const isCoopMultiple = computed(
   () => (formState.role as any)?.label === "Mandor"
 );
 
-watch(
-  () => formState.role,
-  (role: any) => {
-    if (role?.label === "Anak Kandang") {
-      formState.coop = {};
-    } else {
-      formState.coop = [];
+onMounted(() => {
+  if (!!props?.formDefaultValue) {
+    const {
+      formDefaultValue: { email, coops, phone, name, role_name, avatar },
+    } = props;
+    const coopsDefaultValue = (coops || []).map(({ coopId, coop_name }) => ({
+      label: coop_name,
+      value: coopId,
+    }));
+    formState.isUpdateMode = true;
+    formState.email = email;
+    formState.phoneNumber = phone;
+    formState.name = name;
+    formState.role = ROLES_OPTIONS_FORM.find(
+      ({ label }) => label === role_name
+    );
+    if (role_name === "Mandor") {
+      formState.coop = coopsDefaultValue;
+    } else if (role_name === "Anak Kandang") {
+      formState.coop = coopsDefaultValue[0];
+    }
+    if (!!avatar?.length) {
+      previewAvatar.value = avatar;
     }
   }
-);
+});
+
+const handleSelectFile = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const files = target?.files;
+  if (!!files) {
+    const file = files[0];
+    userAvatar.value = file;
+    previewAvatar.value = URL.createObjectURL(file);
+  }
+};
 
 const handleCloseModal = () => {
   formState.name = "";
@@ -59,12 +98,29 @@ const handleCloseModal = () => {
   formState.role = undefined;
   formState.coop = [];
   formState.email = "";
+  formState.isUpdateMode = false;
   emits("handleCloseModal");
 };
 
 async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
-  const { data } = event;
-  console.log(data);
+  const {
+    data: { name, password, phoneNumber, role, coop, email, isUpdateMode },
+  } = event;
+  const coopId: Array<string> = Array.isArray(coop)
+    ? coop.map((c) => c?.value?.toString())
+    : [(coop as any)?.value?.toString()];
+  const payload: FormSubmitType = {
+    name,
+    password,
+    roleId: (role as any)?.value,
+    email,
+    isUpdateMode,
+    phone: phoneNumber,
+    coopId,
+    file: userAvatar?.value,
+    id: props?.formDefaultValue?.id,
+  };
+  emits("handleSuccessAddUser", payload);
 }
 </script>
 
@@ -108,7 +164,12 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
             class="absolute w-8 h-8 bg-[--app-primary-100] border-2 border-gray-400 rounded-full inline-flex items-center justify-center cursor-pointer bottom-0 -right-1"
           >
             <IconPhoto class="size-5" style="margin-top: -3px" />
-            <input type="file" class="hidden" id="avatar" />
+            <input
+              type="file"
+              class="hidden"
+              id="avatar"
+              @change="handleSelectFile($event)"
+            />
           </label>
         </div>
         <div class="flex flex-col md:flex-row gap-x-6 gap-y-6">
@@ -176,7 +237,15 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
           <UInputMenu
             size="md"
             :nullable="true"
-            v-model="formState.role"
+            :modelValue="formState.role"
+            @update:modelValue="(data: any) => {
+              formState.role = data 
+              if (data?.label === 'Anak Kandang') {
+                formState.coop = {};
+              } else {
+                formState.coop = [];
+              }
+            }"
             :options="ROLES_OPTIONS_FORM"
             placeholder="Pilih Role"
             :input-class="'input-select-trigger'"
@@ -191,8 +260,8 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
             v-model="formState.coop"
             :options="data || []"
             placeholder="Pilih Kandang"
-            option-attribute="name"
-            by="id"
+            option-attribute="label"
+            by="value"
             :disabled="!formState.role"
             :multiple="isCoopMultiple"
           >
@@ -203,9 +272,9 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
                 >{{ (formState?.coop as any)?.length }} dipilih</span
               >
               <span
-                v-else-if="!isCoopMultiple && !!(formState?.coop as any)?.name"
+                v-else-if="!isCoopMultiple && !!(formState?.coop as any)?.label"
                 class="truncate text-[--app-dark-200]"
-                >{{ (formState?.coop as any)?.name }}</span
+                >{{ (formState?.coop as any)?.label }}</span
               >
               <span v-else class="text-[--app-primary-text]"
                 >Pilih Kandang</span
@@ -228,10 +297,17 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
           </UButton>
           <UButton
             type="submit"
+            :disabled="isLoading"
             size="md"
             :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
-            Tambah
+            {{
+              isLoading
+                ? "Menyimpan..."
+                : !!formDefaultValue
+                ? "Update"
+                : "Tambah"
+            }}
           </UButton>
         </div>
       </template>
