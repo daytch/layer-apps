@@ -10,6 +10,18 @@ import { API_LIST } from "~/constants/api";
 type UserRepositoryResponse<T> = Promise<APIResponse<T>>;
 
 export const userRepository = <T>(fetch: FetchType<T>) => ({
+  async uploadUserAvatar(file: File): UserRepositoryResponse<{ path: string }> {
+    const formData = new FormData();
+    formData.append("image", file);
+    return fetch(API_LIST.uploadUserAvatar, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData,
+    });
+  },
   async getAllUsers(): UserRepositoryResponse<Array<UserType>> {
     return fetch(API_LIST.users, {
       method: "GET",

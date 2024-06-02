@@ -1,7 +1,7 @@
 import { ASYNC_KEY } from "~/constants/api";
 import { TOAST_ERROR_UI, TOAST_SUCCESS_UI } from "~/constants/ui";
 import { userRepository } from "~/repository/modules/user";
-import type { CreateUserPayload, UserType } from "~/types/user";
+import type { CreateUserPayload, FormSubmitType } from "~/types/user";
 
 export const useUser = () => {
   const { $api } = useNuxtApp();
@@ -36,6 +36,8 @@ export const useUser = () => {
       },
     });
   };
+
+  const uploadUserAvatar = (file: File) => userRepo.uploadUserAvatar(file);
 
   const getAllUsers = async () => {
     const response = await userRepo.getAllUsers();
@@ -89,12 +91,55 @@ export const useUser = () => {
     }
   };
 
+  const submitFormUser = async ({
+    name,
+    password,
+    file,
+    id,
+    isUpdateMode,
+    coopId,
+    roleId,
+    email,
+    phone,
+  }: FormSubmitType) => {
+    initialFetch();
+    const parsingPayload: CreateUserPayload = {
+      name,
+      coopId,
+      roleId,
+      email,
+      phone,
+    };
+    if (!isUpdateMode || (isUpdateMode && !!password?.length)) {
+      parsingPayload["password"] = password;
+    }
+    if (!!file) {
+      uploadUserAvatar(file)
+        .then((response) => {
+          const data = response?.data;
+          if (!!data?.path?.length) {
+            parsingPayload["avatar"] = data?.path;
+          }
+          id !== undefined
+            ? updateUserById(id, parsingPayload)
+            : createNewUser(parsingPayload);
+        })
+        .catch(() => {
+          handleError("Gagal mengupload avatar.");
+          isLoading.value = false;
+        });
+    } else {
+      id !== undefined
+        ? updateUserById(id, parsingPayload)
+        : createNewUser(parsingPayload);
+    }
+  };
+
   return {
     getAllUsers,
     isLoading,
     isError,
     deleteUserById,
-    updateUserById,
-    createNewUser,
+    submitFormUser,
   };
 };
