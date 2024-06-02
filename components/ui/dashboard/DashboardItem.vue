@@ -34,14 +34,16 @@ const { logout } = useAuth();
           />
         </li>
       </template>
+      <li>
+        <button
+          @click="logout"
+          type="button"
+          class="inline-flex items-center py-[18px] pl-10 pr-4 text-lg font-medium leading-6 w-full rounded-tr-[12px] rounded-br-[12px] relative mb-8"
+        >
+          <IconLogout />
+          <p class="ml-6 text-[#C2F3D6]" v-if="isSidebarExpanded">Keluar</p>
+        </button>
+      </li>
     </ul>
-    <button
-      @click="logout"
-      type="button"
-      class="inline-flex items-center py-[18px] pl-10 pr-4 text-lg font-medium leading-6 w-full rounded-tr-[12px] rounded-br-[12px] relative mb-8"
-    >
-      <IconLogout />
-      <p class="ml-6 text-[#C2F3D6]" v-if="isSidebarExpanded">Keluar</p>
-    </button>
   </div>
 </template>
