@@ -1,75 +1,137 @@
 <script setup lang="ts">
-import { mixed, object, type InferType, string, array } from "yup";
-import { ROLE_OPTIONS } from "~/constants/ui";
 import type { FormSubmitEvent } from "#ui/types";
+import { ROLES_OPTIONS_FORM } from "~/constants/role";
+import { ASYNC_KEY } from "~/constants/api";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
+import { UserFormSchema, type UserFormValueType } from "~/schemas/user";
+import type { UserType, FormSubmitType } from "~/types/user";
+["handleCloseModal", "handleSuccessAddUser"];
 
-const emits = defineEmits(["handleCloseModal", "handleSuccessAddUser"]);
+const emits = defineEmits<{
+  (e: "handleCloseModal"): void;
+  (e: "handleSuccessAddUser", data: FormSubmitType): void;
+}>();
+const props = defineProps<{
+  formDefaultValue?: UserType;
+  isLoading?: boolean;
+}>();
 
-const Schema = object({
-  name: string().required("Nama tidak boleh kosong."),
-  id: string().required("ID User tidak boleh kosong."),
-  phoneNumber: string().optional(),
-  role: mixed().test("Required", "Role tidak boleh kosong.", (value: any) => {
-    return value?.value !== undefined;
-  }),
-  cage: array().of(string()).min(1, "Kandang penempatan tidak boleh kosong."),
-});
-type FormValueType = InferType<typeof Schema>;
-
-const formState = reactive<FormValueType>({
+const { getAllKandang } = useKandang();
+const { type, handleChangeVisibility, iconClassName } =
+  usePasswordInputVisibility();
+const formState = reactive<UserFormValueType>({
   name: "",
-  id: "",
+  password: "",
   phoneNumber: "",
   role: undefined,
-  cage: [],
+  coop: [],
+  email: "",
+  isUpdateMode: false,
 });
+const previewAvatar = ref("/images/no_photo.png");
+const userAvatar = ref<File | null>(null);
+
+const { data } = await useAsyncData(
+  ASYNC_KEY.kandang,
+  async () => getAllKandang(),
+  {
+    lazy: true,
+    transform: (data) =>
+      !!data ? data.map(({ name, id }) => ({ label: name, value: id })) : [],
+  }
+);
+
+const showCoopField = computed(
+  () =>
+    !!(formState?.role as any)?.label &&
+    !(formState?.role as any)?.label?.toLowerCase()?.includes("admin")
+);
+const isCoopMultiple = computed(
+  () => (formState.role as any)?.label === "Mandor"
+);
+
+onMounted(() => {
+  if (!!props?.formDefaultValue) {
+    const {
+      formDefaultValue: { email, coops, phone, name, role_name, avatar },
+    } = props;
+    const coopsDefaultValue = (coops || []).map(({ coopId, coop_name }) => ({
+      label: coop_name,
+      value: coopId,
+    }));
+    formState.isUpdateMode = true;
+    formState.email = email;
+    formState.phoneNumber = phone;
+    formState.name = name;
+    formState.role = ROLES_OPTIONS_FORM.find(
+      ({ label }) => label === role_name
+    );
+    if (role_name === "Mandor") {
+      formState.coop = coopsDefaultValue;
+    } else if (role_name === "Anak Kandang") {
+      formState.coop = coopsDefaultValue[0];
+    }
+    if (!!avatar?.length) {
+      previewAvatar.value = avatar;
+    }
+  }
+});
+
+const handleSelectFile = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const files = target?.files;
+  if (!!files) {
+    const file = files[0];
+    userAvatar.value = file;
+    previewAvatar.value = URL.createObjectURL(file);
+  }
+};
 
 const handleCloseModal = () => {
   formState.name = "";
-  formState.id = "";
+  formState.password = "";
   formState.phoneNumber = "";
   formState.role = undefined;
-  formState.cage = [];
+  formState.coop = [];
+  formState.email = "";
+  formState.isUpdateMode = false;
   emits("handleCloseModal");
 };
 
-async function onSubmit(event: FormSubmitEvent<FormValueType>) {
-  const { data } = event;
-  emits("handleSuccessAddUser", data);
-  emits("handleCloseModal");
+async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
+  const {
+    data: { name, password, phoneNumber, role, coop, email, isUpdateMode },
+  } = event;
+  const coopId: Array<string> = Array.isArray(coop)
+    ? coop.map((c) => c?.value?.toString())
+    : [(coop as any)?.value?.toString()];
+  const payload: FormSubmitType = {
+    name,
+    password,
+    roleId: (role as any)?.value,
+    email,
+    isUpdateMode,
+    phone: phoneNumber,
+    coopId,
+    file: userAvatar?.value,
+    id: props?.formDefaultValue?.id,
+  };
+  emits("handleSuccessAddUser", payload);
 }
 </script>
 
 <template>
   <UForm
     class="space-y-4"
-    :schema="Schema"
+    :schema="UserFormSchema"
     :state="formState"
     @submit="onSubmit"
   >
-    <UCard
-      :ui="{
-        ring: '',
-        divide: '',
-        rounded: 'rounded-[14px]',
-        shadow: '',
-        body: {
-          base: 'mb-[50px]',
-          background: '',
-          padding: 'px-10',
-        },
-        header: {
-          base: '',
-          background: '',
-          padding: 'px-10 pt-10',
-        },
-        footer: {
-          base: '',
-          background: '',
-          padding: 'px-10 pb-10',
-        },
-      }"
-    >
+    <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
         <div
           class="w-full flex justify-between items-center pb-6 mb-6 border-b"
@@ -88,6 +150,28 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
         </div>
       </template>
       <div class="space-y-6">
+        <div
+          class="w-[80px] h-[80px] border border-[--app-primary-100] rounded-full relative"
+        >
+          <img
+            :src="previewAvatar"
+            width="80"
+            height="80"
+            class="w-full h-full object-contain"
+          />
+          <label
+            for="avatar"
+            class="absolute w-8 h-8 bg-[--app-primary-100] border-2 border-gray-400 rounded-full inline-flex items-center justify-center cursor-pointer bottom-0 -right-1"
+          >
+            <IconPhoto class="size-5" style="margin-top: -3px" />
+            <input
+              type="file"
+              class="hidden"
+              id="avatar"
+              @change="handleSelectFile($event)"
+            />
+          </label>
+        </div>
         <div class="flex flex-col md:flex-row gap-x-6 gap-y-6">
           <UFormGroup name="name" label="Nama" class="flex-1">
             <template #label>
@@ -99,14 +183,14 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               v-model="formState.name"
             />
           </UFormGroup>
-          <UFormGroup name="id" label="ID User" class="flex-1">
+          <UFormGroup name="email" label="Email" class="flex-1">
             <template #label>
-              <FormLabel>ID User</FormLabel>
+              <FormLabel>Email User</FormLabel>
             </template>
             <UInput
               variant="outline"
-              placeholder="ID User"
-              v-model="formState.id"
+              placeholder="Email User"
+              v-model="formState.email"
             />
           </UFormGroup>
         </div>
@@ -125,49 +209,78 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               v-model="formState.phoneNumber"
             />
           </UFormGroup>
-          <UFormGroup label="Role" name="role" class="flex-1">
-            <template #label>
-              <FormLabel>Role</FormLabel>
-            </template>
-            <UInputMenu
-              size="md"
-              :nullable="true"
-              v-model="formState.role"
-              :options="ROLE_OPTIONS"
-              placeholder="Pilih Role"
-              :input-class="'input-select-trigger'"
-            />
+          <UFormGroup label="Password" name="password" class="flex-1">
+            <UInput
+              :ui="{ icon: { trailing: { pointer: '' } } }"
+              v-model="formState.password"
+              :type="type"
+              placeholder="Masukan password"
+            >
+              <template #trailing>
+                <UButton
+                  type="button"
+                  color="gray"
+                  variant="link"
+                  :icon="iconClassName"
+                  :padded="false"
+                  size="sm"
+                  @click="handleChangeVisibility"
+                />
+              </template>
+            </UInput>
           </UFormGroup>
         </div>
-        <UFormGroup name="cage" label="Ditempatkan di">
+        <UFormGroup label="Role" name="role" class="flex-1">
+          <template #label>
+            <FormLabel>Role</FormLabel>
+          </template>
+          <UInputMenu
+            size="md"
+            :nullable="true"
+            :modelValue="formState.role"
+            @update:modelValue="(data: any) => {
+              formState.role = data 
+              if (data?.label === 'Anak Kandang') {
+                formState.coop = {};
+              } else {
+                formState.coop = [];
+              }
+            }"
+            :options="ROLES_OPTIONS_FORM"
+            placeholder="Pilih Role"
+            :input-class="'input-select-trigger'"
+          />
+        </UFormGroup>
+        <UFormGroup name="coop" label="Ditempatkan di" v-if="showCoopField">
           <template #label>
             <FormLabel>Ditempatkan di</FormLabel>
           </template>
-          <template #default="{ error }">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-              <UCheckbox
-                v-model="formState.cage"
-                value="kandang-jatisari"
-                label="Kandang Jatisari"
-                id="kandang-jatisari"
-                name="kandang-jatisari"
-              />
-              <UCheckbox
-                v-model="formState.cage"
-                value="kandang-batang"
-                label="Kandang Batang"
-                id="kandang-batang"
-                name="kandang-batang"
-              />
-              <UCheckbox
-                v-model="formState.cage"
-                value="kandang-blado"
-                label="Kandang Blado"
-                id="kandang-blado"
-                name="kandang-blado"
-              />
-            </div>
-          </template>
+          <USelectMenu
+            size="md"
+            v-model="formState.coop"
+            :options="data || []"
+            placeholder="Pilih Kandang"
+            option-attribute="label"
+            by="value"
+            :disabled="!formState.role"
+            :multiple="isCoopMultiple"
+          >
+            <template #label>
+              <span
+                v-if="isCoopMultiple && !!(formState?.coop as Array<any>)?.length"
+                class="truncate text-[--app-dark-200]"
+                >{{ (formState?.coop as any)?.length }} dipilih</span
+              >
+              <span
+                v-else-if="!isCoopMultiple && !!(formState?.coop as any)?.label"
+                class="truncate text-[--app-dark-200]"
+                >{{ (formState?.coop as any)?.label }}</span
+              >
+              <span v-else class="text-[--app-primary-text]"
+                >Pilih Kandang</span
+              >
+            </template>
+          </USelectMenu>
         </UFormGroup>
       </div>
       <template #footer>
@@ -178,38 +291,23 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             color="sky"
             variant="ghost"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                sky: {
-                  ghost:
-                    'bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]',
-                },
-              },
-            }"
+            :ui="{ ...UI_GHOST_BUTTON_STYLES }"
           >
             Batal
           </UButton>
           <UButton
             type="submit"
+            :disabled="isLoading"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                primary: {
-                  solid:
-                    'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-                },
-              },
-            }"
+            :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
-            Tambah
+            {{
+              isLoading
+                ? "Menyimpan..."
+                : !!formDefaultValue
+                ? "Update"
+                : "Tambah"
+            }}
           </UButton>
         </div>
       </template>

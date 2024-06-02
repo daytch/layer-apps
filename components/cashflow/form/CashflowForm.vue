@@ -104,7 +104,7 @@ const onCloseModal = () => {
           <h2
             class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
           >
-            {{ !!defaultValue ? "Update" : "Tambah" }} Laporan
+            {{ !!defaultValue ? "Update" : "Tambah" }} Cashflow
           </h2>
           <UButton
             @click="onCloseModal"

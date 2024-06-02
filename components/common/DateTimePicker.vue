@@ -23,5 +23,8 @@ defineProps<{
     <template #clear-icon>
       <div class="hidden"></div>
     </template>
+    <template #action-preview="{ value }">
+      <span class="hidden">{{ value }}</span>
+    </template>
   </VueDatePicker>
 </template>

@@ -13,7 +13,7 @@ defineProps<Props>();
   <NuxtLink
     active-class="bg-[--app-gray-100] text-[--app-primary-100] fill-[#22AD5C] active-link"
     :to="to"
-    class="inline-flex items-center py-[18px] pl-10 pr-4 text-lg font-medium leading-6 w-full rounded-tr-[12px] rounded-br-[12px] relative group text-[#C2F3D6] fill-[#C2F3D6]"
+    class="inline-flex items-center py-[18px] pl-10 pr-4 text-lg font-medium leading-6 w-full rounded-tr-[12px] rounded-br-[12px] relative group text-[#C2F3D6] dashboard-link"
   >
     <div
       v-if="isActive"
@@ -27,7 +27,10 @@ defineProps<Props>();
 </template>
 
 <style>
-.active-link svg path {
-  @apply fill-[#22AD5C];
+.dashboard-link.active-link svg path {
+  @apply !fill-[#22AD5C];
+}
+.dashboard-link svg path {
+  @apply !fill-[#C2F3D6];
 }
 </style>

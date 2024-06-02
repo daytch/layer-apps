@@ -39,3 +39,51 @@ export const ROLE_OPTIONS: SelectOptionType[] = [
     label: "Admin",
   },
 ];
+
+export const UI_CARD_STYLES = {
+  ring: "",
+  divide: "",
+  rounded: "rounded-[14px]",
+  shadow: "",
+  body: {
+    base: "mb-[50px]",
+    background: "",
+    padding: "px-10",
+  },
+  header: {
+    base: "",
+    background: "",
+    padding: "px-10 pt-10",
+  },
+  footer: {
+    base: "",
+    background: "",
+    padding: "px-10 pb-10",
+  },
+};
+
+export const UI_GHOST_BUTTON_STYLES = {
+  strategy: "override",
+  padding: {
+    md: "py-[13px] px-7",
+  },
+  color: {
+    sky: {
+      ghost:
+        "bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]",
+    },
+  },
+};
+
+export const UI_PRIMARY_BUTTON_STYLES = {
+  strategy: "override",
+  padding: {
+    md: "py-[13px] px-7",
+  },
+  color: {
+    primary: {
+      solid:
+        "bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed",
+    },
+  },
+};

@@ -13,44 +13,6 @@ const items = [
 ];
 
 const { selectedTab, handleChangeTab } = useAdminSOP(items);
-const DUMMY = ref<Array<ManagementSOP>>([
-  {
-    id: "1",
-    sop: "Cek sampling ayam (ayam ngorok, cekrek, sakit dll)",
-    user: "Mandor",
-    time: "06.00 - 08.00",
-  },
-  {
-    id: "2",
-    sop: "Cek keberishan pipa minum (kebersihan dan kondisi pipa)",
-    user: "Mandor",
-    time: "06.00 - 08.00",
-  },
-  {
-    id: "3",
-    sop: "Cek pipa makanan (ketebalan makanan & keberihan)",
-    user: "Mandor",
-    time: "06.00 - 08.00",
-  },
-  {
-    id: "4",
-    sop: "Cek stock pakan dan obat-obatan",
-    user: "Mandor",
-    time: "06.00 - 08.00",
-  },
-  {
-    id: "5",
-    sop: "Cek sanitasi air dan filter air",
-    user: "Mandor",
-    time: "06.00 - 08.00",
-  },
-  {
-    id: "6",
-    sop: "Cek bio security dan kebersihan lingkungan",
-    user: "Mandor",
-    time: "06.00 - 08.00",
-  },
-]);
 const showAddModal = ref(false);
 </script>
 
@@ -92,7 +54,7 @@ const showAddModal = ref(false);
         : 'Cek progress SOP Anak Kandang'
     "
   />
-  <ManagementSOPTable :items="DUMMY" :active-tab="items[selectedTab]?.label" />
+  <ManagementSOPTable :active-tab="items[selectedTab]?.label" />
 
   <AppModal v-model="showAddModal">
     <ManagementSOPForm

@@ -1,6 +1,6 @@
 export type SelectOptionType = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 export type TableHeaderType = {

@@ -1,22 +1,12 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "dashboard",
+  middleware: ["dashboard"],
 });
 useSeoMeta({
   title: "Produksi Telur | Layer Apps",
   description: "Produksi Telur | Layer Apps",
 });
-const visibleColumns = ref([
-  "all",
-  "date",
-  "age_day",
-  "age_week",
-  "pop",
-  "m",
-  "afk",
-  "sell",
-  "last_pop",
-]);
 </script>
 
 <template>

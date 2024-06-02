@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RoleType } from "~/types/dashboard-menu";
-type Role = Extract<RoleType, "MEMBER" | "MANDOR">;
+type Role = Extract<RoleType, "Anak Kandang" | "Mandor">;
 defineProps<{
   role: Role;
   activity: string;
@@ -15,7 +15,7 @@ const { handleSelectSOPItem } = useSelectSOP();
 <template>
   <div class="p-4 rounded-[14px] border border-[--app-dark-800]">
     <p class="text-sm font-normal leading-[22px] text-[--app-dark-500]">
-      {{ role === "MANDOR" ? "Mandor" : "Anak Kandang" }}
+      {{ role === "Mandor" ? "Mandor" : "Anak Kandang" }}
     </p>
     <h4 class="text-lg font-bold leading-[27px] mb-6">{{ activity }}</h4>
     <p class="text-xs font-normal leading-5 text-[--app-dark-500] mb-5">

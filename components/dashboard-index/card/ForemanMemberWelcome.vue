@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import type { RoleType } from "~/types/dashboard-menu";
-
-type Role = Extract<RoleType, "MEMBER" | "MANDOR">;
-
-defineProps<{
-  role: Role;
-}>();
+const authUser = useAuthUser();
 </script>
 
 <template>
@@ -15,9 +9,16 @@ defineProps<{
     <div class="relative z-[5] text-white">
       <p class="text-lg leading-[26px] font-normal mb-2">Selamat Bekerja</p>
       <div class="flex items-center justify-between mb-6">
-        <p class="text-2xl font-semibold leading-[30px]">Ahmad Rozikin</p>
-        <div class="text-sm py-1 px-2 bg-[#F27430] rounded-[32px]">
-          {{ role === "MANDOR" ? "Mandor" : "Anak Kandang" }}
+        <p class="text-2xl font-semibold leading-[30px]">
+          {{ authUser?.user?.name }}
+        </p>
+        <div
+          class="text-sm py-1 px-2 bg-[#F27430] rounded-[32px]"
+          v-if="!!authUser?.user"
+        >
+          {{
+            authUser?.user?.role_name === "Mandor" ? "Mandor" : "Anak Kandang"
+          }}
         </div>
       </div>
       <div

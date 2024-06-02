@@ -1,5 +1,15 @@
 import type { LoginResponseWithoutToken } from "~/types/auth";
 
+export type ReturnAuthUser = {
+  loading: boolean;
+  error: boolean;
+  user: LoginResponseWithoutToken | null;
+};
+
 export const useAuthUser = () => {
-  return useState<LoginResponseWithoutToken | null>("user", () => null);
+  return useState<ReturnAuthUser>("user", () => ({
+    loading: false,
+    error: false,
+    user: null,
+  }));
 };

@@ -9,6 +9,7 @@ const schema = object({
 const { type, handleChangeVisibility, iconClassName } =
   usePasswordInputVisibility();
 const { login } = useAuth();
+const toast = useToast();
 
 type Schema = InferType<typeof schema>;
 
@@ -17,8 +18,22 @@ const state = reactive({
   password: "",
 });
 
+const loading = ref(false);
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  login({ username: event.data.employeId, password: event.data.password });
+  loading.value = true;
+  try {
+    const response = await login({
+      username: event.data.employeId,
+      password: event.data.password,
+    });
+    if (!!response?.value?.user) {
+      loading.value = false;
+      await navigateTo("/");
+    }
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -63,7 +78,25 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </UInput>
       </UFormGroup>
 
-      <UButton type="submit" :block="true">Masuk</UButton>
+      <UButton
+        type="submit"
+        :block="true"
+        :disabled="loading"
+        :ui="{
+          strategy: 'override',
+          base: '',
+          padding: {
+            md: 'py-[10px] px-4',
+          },
+          color: {
+            primary: {
+              solid:
+                'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
+            },
+          },
+        }"
+        >{{ loading ? "Tunggu..." : "Masuk" }}</UButton
+      >
     </UForm>
 
     <div class="flex items-start mt-[50px] relative z-10">

@@ -3,6 +3,7 @@ const emits = defineEmits(["update:modelValue", "handleConfirmDelete"]);
 const props = defineProps<{
   modelValue: boolean;
   title: string;
+  isLoading?: boolean;
 }>();
 
 const isOpen = computed({
@@ -57,6 +58,7 @@ const isOpen = computed({
           <button
             @click="$emit('update:modelValue', false)"
             type="button"
+            :disabled="isLoading"
             class="py-[13px] px-4 text-base font-medium leading-6 flex-1 inline-flex items-center justify-center ring-1 ring-[#DFE4EA] rounded-md text-[--app-dark-100]"
           >
             Batal
@@ -64,9 +66,10 @@ const isOpen = computed({
           <button
             @click="$emit('handleConfirmDelete')"
             type="button"
-            class="py-[13px] px-4 text-base font-medium leading-6 flex-1 inline-flex items-center justify-center bg-[--app-danger-200] text-white hover:opacity-75 rounded-md ring-1 ring-[--app-danger-200]"
+            :disabled="isLoading"
+            class="py-[13px] px-4 text-base font-medium leading-6 flex-1 inline-flex items-center justify-center bg-[--app-danger-200] text-white hover:opacity-75 rounded-md ring-1 ring-[--app-danger-200] disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed disabled:ring-[--app-dark-800]"
           >
-            Hapus
+            {{ isLoading ? "Tunggu..." : "Hapus" }}
           </button>
         </div>
       </div>

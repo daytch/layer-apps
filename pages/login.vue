@@ -2,6 +2,9 @@
 useSeoMeta({
   title: "Login | Layer Apps",
 });
+definePageMeta({
+  middleware: ["guest-only"],
+});
 </script>
 
 <template>
@@ -18,13 +21,7 @@ useSeoMeta({
       <div
         class="hidden md:flex items-center flex-col w-1/2 max-w-[504px] relative overflow-hidden"
       >
-        <NuxtImg
-          format="webp"
-          src="/images/layer_apps_potrait.svg"
-          width="185"
-          height="242"
-          alt="Layer Apps Logo"
-        />
+        <LogoByCokroFarm class="w-[180px] h-auto" />
         <NuxtImg
           format="webp"
           src="/images/auth/auth_background.png"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "~/types/user";
+import type { UserType } from "~/types/user";
 
 const columns = [
   {
@@ -11,15 +11,15 @@ const columns = [
     label: "ID User",
   },
   {
-    key: "phoneNumber",
+    key: "phone",
     label: "No Hp",
   },
   {
-    key: "role",
+    key: "role_name",
     label: "Role",
   },
   {
-    key: "status",
+    key: "is_active",
     label: "Status",
   },
   {
@@ -28,94 +28,140 @@ const columns = [
 ];
 
 defineProps<{
-  users: User[];
+  users: Array<UserType>;
+  loading?: boolean;
+  error?: any;
 }>();
+defineEmits<{
+  (e: "handleShowUpdateModal", item: UserType): void;
+}>();
+
 const showDeleteConfirm = ref(false);
-const selected = ref<User | undefined>(undefined);
+const selected = ref<UserType | undefined>(undefined);
+const { isLoading, deleteUserById } = useUser();
+
+const handleDeleteUser = async () => {
+  if (!selected.value?.id) return;
+  try {
+    await deleteUserById(selected.value.id);
+    showDeleteConfirm.value = false;
+  } finally {
+  }
+};
 </script>
 
 <template>
-  <UTable
-    :columns="columns"
-    class="user-table bg-[--app-gray-100] mt-8"
-    :rows="users"
-    :ui="{
-      divide: '',
-      base: 'w-full table-auto',
-      td: {
-        base: 'text-left whitespace-nowrap truncate max-w-0',
-        size: 'text-sm',
-        font: 'font-medium',
-        color: 'text-[--app-dark-100]',
-        padding: 'p-4',
-      },
-      th: {
-        padding: 'py-[18px] px-4',
-        size: 'text-base leading-6',
-        font: 'font-medium',
-        color: 'text-[#1D2433]',
-      },
-      tr: {
-        base: '',
-      },
-    }"
-  >
-    <template #name-data="{ row }">
-      <div class="flex flex-row items-center space-x-4 min-w-[150px]">
-        <NuxtImg
-          format="webp"
-          :src="row.avatar"
-          width="45"
-          height="45"
-          :alt="row?.name"
-          class="w-[45px] h-[45px] rounded-full object-cover"
-        />
-        <p class="text-sm text-[--app-dark-100] font-medium leading-[22px]">
-          {{ row?.name }}
-        </p>
-      </div>
-    </template>
-    <template #status-data="{ row }">
-      <div
-        v-if="row?.status === 'ACTIVE'"
-        class="inline-flex items-center justify-center px-[10px] py-[3px] bg-[--app-primary-700] text-[--app-primary-200] rounded"
-      >
-        Aktif
-      </div>
-      <div
-        v-else
-        class="inline-flex items-center justify-center px-[10px] py-[3px] text-red-700 bg-red-200 rounded"
-      >
-        Tidak Aktif
-      </div>
-    </template>
-    <template #actions-data="{ row }">
-      <div class="flex items-center space-x-5">
-        <button type="button">
-          <IconPencilUpdate />
-        </button>
-        <button
-          type="button"
-          @click="
-            () => {
-              selected = row;
-              showDeleteConfirm = true;
-            }
-          "
-        >
-          <IconTrash />
-        </button>
-      </div>
-    </template>
-  </UTable>
+  <div class="w-full overflow-auto bg-white mt-8">
+    <table class="w-full bg-white">
+      <thead>
+        <tr>
+          <th
+            v-for="column in columns"
+            class="whitespace-nowrap text-left text-base font-medium leading-6 text-[#1D2433] py-[18px] px-4"
+          >
+            {{ column.label }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <template v-if="loading">
+          <td
+            :colspan="columns.length"
+            class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+          >
+            <LoadingSpinner />
+          </td>
+        </template>
+        <template v-else-if="!loading && !!users.length">
+          <tr v-for="user in users" class="border-b">
+            <td
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              <div class="flex flex-row items-center space-x-4 min-w-[150px]">
+                <NuxtImg
+                  format="webp"
+                  :src="user.avatar || '/images/no_photo.png'"
+                  width="45"
+                  height="45"
+                  :alt="user?.name"
+                  class="w-[45px] h-[45px] rounded-full object-cover"
+                />
+                <p
+                  class="text-sm text-[--app-dark-100] font-medium leading-[22px]"
+                >
+                  {{ user?.name }}
+                </p>
+              </div>
+            </td>
+            <td
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              {{ user?.id }}
+            </td>
+            <td
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              {{ user?.phone }}
+            </td>
+            <td
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              {{ user?.role_name }}
+            </td>
+            <td
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              <div
+                v-if="user?.is_active"
+                class="inline-flex items-center justify-center px-[10px] py-[3px] bg-[--app-primary-700] text-[--app-primary-200] rounded"
+              >
+                Aktif
+              </div>
+              <div
+                v-else
+                class="inline-flex items-center justify-center px-[10px] py-[3px] text-red-700 bg-red-200 rounded"
+              >
+                Tidak Aktif
+              </div>
+            </td>
+            <td
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              <div class="flex items-center space-x-5">
+                <button
+                  type="button"
+                  @click="$emit('handleShowUpdateModal', user)"
+                >
+                  <IconPencilUpdate />
+                </button>
+                <button
+                  type="button"
+                  @click="
+                    () => {
+                      selected = user;
+                      showDeleteConfirm = true;
+                    }
+                  "
+                >
+                  <IconTrash />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <td :colspan="columns.length">
+            <NoDataStatus>Data User Tidak Ditemukan</NoDataStatus>
+          </td>
+        </template>
+      </tbody>
+    </table>
+  </div>
   <DeleteConfirmModal
     v-model="showDeleteConfirm"
     :title="'Hapus Karyawan'"
-    @handle-confirm-delete="
-      () => {
-        console.log('delete', selected);
-      }
-    "
+    :is-loading="isLoading"
+    @handle-confirm-delete="handleDeleteUser"
   >
     <template #description>
       <p class="delete-confirm-description">
@@ -125,27 +171,3 @@ const selected = ref<User | undefined>(undefined);
     </template>
   </DeleteConfirmModal>
 </template>
-
-<style>
-.user-table {
-  @apply w-full overflow-x-auto;
-}
-.user-table thead tr th:first-child {
-  min-width: 306px;
-}
-.user-table thead tr th:last-child {
-  min-width: 127px;
-}
-.user-table thead tr th:nth-child(2) {
-  min-width: 136px;
-}
-.user-table thead tr th:nth-child(3) {
-  min-width: 136px;
-}
-.user-table thead tr th:nth-child(4) {
-  min-width: 207px;
-}
-.user-table thead tr th:nth-child(5) {
-  min-width: 141px;
-}
-</style>

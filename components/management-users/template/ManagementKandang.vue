@@ -1,5 +1,16 @@
 <script setup lang="ts">
-import { type Kandang } from "~/types/kandang";
+import { ASYNC_KEY } from "~/constants/api";
+import type { KandangPayload, KandangType } from "~/types/kandang";
+
+const { getAllKandang, createKandang, updateSelectedKandang, isLoading } =
+  useKandang();
+const { data, pending, error } = await useAsyncData(
+  ASYNC_KEY.kandang,
+  async () => getAllKandang(),
+  {
+    lazy: true,
+  }
+);
 
 const FILTER_OPTIONS = [
   {
@@ -8,24 +19,25 @@ const FILTER_OPTIONS = [
   },
 ];
 const activeFilter = ref(undefined);
-const showAddKandangModal = ref(false);
-const DUMMY_KANDANG = ref<Array<Kandang>>([
-  {
-    cageId: "COKRO-1",
-    cageName: "Kandang Jatisari",
-    address: "Jatisari, Blado, Batang",
-  },
-  {
-    cageId: "COKRO-2",
-    cageName: "Kandang Blado",
-    address: "Jatisari, Blado, Batang",
-  },
-  {
-    cageId: "COKRO-3",
-    cageName: "Kandang Batang",
-    address: "Jatisari, Blado, Batang",
-  },
-]);
+const {
+  showModal,
+  handleCloseModal,
+  handleShowModal,
+  selectedItem: selectedKandang,
+} = useModalForm<KandangType>();
+
+const handleSubmitForm = async (
+  data: KandangPayload,
+  id?: number | undefined
+) => {
+  handleCloseModal();
+  if (id) {
+    await updateSelectedKandang(id, data);
+  } else {
+    await createKandang(data);
+  }
+  selectedKandang.value = undefined;
+};
 </script>
 
 <template>
@@ -33,7 +45,7 @@ const DUMMY_KANDANG = ref<Array<Kandang>>([
     class="p-4 border rounded flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center justify-between bg-white"
   >
     <UButton
-      @click="showAddKandangModal = true"
+      @click="() => handleShowModal(undefined)"
       type="button"
       icon="i-heroicons-plus"
       size="md"
@@ -62,8 +74,20 @@ const DUMMY_KANDANG = ref<Array<Kandang>>([
       :input-class="'input-select-trigger'"
     />
   </div>
-  <KandangTable :kandang="DUMMY_KANDANG" />
-  <AppModal v-model="showAddKandangModal">
-    <KandangModalForm @handle-close-modal="showAddKandangModal = false" />
+  <KandangTable
+    :kandang="data || []"
+    @handle-select-update-kandang="(kandang) => handleShowModal(kandang)"
+    :loading="pending || isLoading"
+    :error="error"
+  />
+  <AppModal v-model="showModal">
+    <KandangModalForm
+      :isLoading="isLoading"
+      @handle-close-modal="handleCloseModal"
+      @handle-success-add-kandang="
+        (data) => handleSubmitForm(data, selectedKandang?.id)
+      "
+      :initial-value="selectedKandang"
+    />
   </AppModal>
 </template>

@@ -3,6 +3,7 @@ import type { CashflowDataType } from "~/types/cashflow";
 
 defineProps<{
   items: Array<CashflowDataType>;
+  loading?: boolean;
 }>();
 
 const {
@@ -69,6 +70,7 @@ const range = ref([
   </div>
   <CashflowTable
     :items="items"
+    :loading="loading"
     @handle-show-update-modal="
       (item) => {
         handleShowModal(item);

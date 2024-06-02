@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { isSidebarExpanded, isSidebarSliderOpen, isNotificationSliderOpen } =
   useDashboardSidebar();
+const authUser = useAuthUser();
 
 const items = computed(() => [
   [
@@ -39,7 +40,7 @@ const items = computed(() => [
     <div class="hidden lg:flex flex-1 ml-4 justify-end space-x-8">
       <!-- CCTV Page -->
       <NuxtLink
-        to="/"
+        to="/dashboard/realtime-cctv"
         type="button"
         class="hidden lg:inline-flex items-center space-x-[10px] py-3 px-7 border-[1.5px] border-[--app-primary-100] rounded-[50px] font-medium text-[--app-primary-100]"
       >
@@ -94,16 +95,18 @@ const items = computed(() => [
       <div class="inline-flex items-center space-x-[14px]">
         <div class="text-right">
           <p class="text-sm font-medium leading-[22px] text-[--app-dark-100]">
-            Lukman Hakim
+            {{ authUser?.user?.name || "John Doe" }}
           </p>
-          <p class="text-xs leading-5 text-[--app-dark-500]">Superadmin</p>
+          <p class="text-xs leading-5 text-[--app-dark-500]">
+            {{ authUser?.user?.role_name || "" }}
+          </p>
         </div>
         <NuxtImg
-          src="https://avatars.githubusercontent.com/u/904724?v=4"
+          :src="authUser?.user?.avatar || '/images/no_photo.png'"
+          :alt="authUser?.user?.name || 'John Doe'"
           format="webp"
           width="50"
           height="50"
-          alt="Lukman Hakim"
           class="w-[50px] h-[50px] rounded-full"
         />
       </div>

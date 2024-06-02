@@ -1,44 +1,33 @@
 <script setup lang="ts">
-import type { FoodMedicineStock } from "~/types/food-medicine-stock";
-import { TOAST_SUCCESS_UI } from "~/constants/ui";
+import type {
+  FoodMedicineStockPayloadType,
+  FoodMedicineStockType,
+} from "~/types/food-medicine-stock";
+import { ASYNC_KEY } from "~/constants/api";
 
 const toast = useToast();
-
-const DUMMY_DATA = ref<Array<FoodMedicineStock>>([
+const { getAllFoodMedicineStock, isLoading, createNewStock, updateStockById } =
+  useFetchFoodMedicine();
+const { data, pending } = await useAsyncData(
+  ASYNC_KEY.foodMedicine,
+  async () => getAllFoodMedicineStock(),
   {
-    id: "1",
-    itemID: "G10000000851",
-    cageName: "Kandang Jatisari",
-    itemName: "Stres Block",
-    pricePerItem: 50000,
-    quantityItem: 10,
-    createdDate: new Date(),
-  },
-  {
-    id: "2",
-    itemID: "G10000000851",
-    cageName: "Kandang Jatisari",
-    itemName: "Stres Block",
-    pricePerItem: 50000,
-    quantityItem: 10,
-    createdDate: new Date(),
-  },
-]);
-const { showFormModal } = useFoodMedicineStockForm();
+    lazy: true,
+  }
+);
+const { showModal, handleShowModal, handleCloseModal, selectedItem } =
+  useModalForm<FoodMedicineStockType>();
 
-const handleAddStock = (newStock: Omit<FoodMedicineStock, "id">) => {
-  const addedStock = {
-    ...newStock,
-    id: (DUMMY_DATA.value.length + 1).toString(),
-  };
-  toast.add({
-    icon: "i-heroicons-check-circle-16-solid",
-    title: "Data berhasil ditambahkan",
-    ui: {
-      ...TOAST_SUCCESS_UI,
-    },
-  });
-  DUMMY_DATA.value.push(addedStock);
+const handleSubmitStockForm = (
+  formStockPayload: FoodMedicineStockPayloadType & { coop_name: string }
+) => {
+  if (!!selectedItem.value?.id) {
+    updateStockById(selectedItem.value.id, formStockPayload);
+  } else {
+    createNewStock(formStockPayload);
+  }
+  handleCloseModal();
+  selectedItem.value = undefined;
 };
 </script>
 
@@ -46,8 +35,19 @@ const handleAddStock = (newStock: Omit<FoodMedicineStock, "id">) => {
   <FoodMedicineTableFilter
     :show-add-button="true"
     :add-button-text="'Tambah Data'"
-    @handle-add-data="showFormModal = true"
+    @handle-add-data="() => handleShowModal(undefined)"
   />
-  <FoodMedicineStockTable :items="DUMMY_DATA" />
-  <FoodMedicineModalForm @handle-add-stock="handleAddStock" />
+  <FoodMedicineStockTable
+    :items="data || []"
+    :loading="pending"
+    @handle-select-update-food="(item) => handleShowModal(item)"
+  />
+  <AppModal v-model="showModal">
+    <FoodMedicineForm
+      :default-value="selectedItem"
+      :is-submitting="isLoading"
+      @handle-add-stock="handleSubmitStockForm"
+      @handle-hide-modal="handleCloseModal"
+    />
+  </AppModal>
 </template>

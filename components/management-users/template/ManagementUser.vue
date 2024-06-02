@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { User } from "~/types/user";
+import { ASYNC_KEY } from "~/constants/api";
+import type { FormSubmitType, UserType } from "~/types/user";
 
 const FILTER_OPTIONS = [
   {
@@ -7,26 +8,21 @@ const FILTER_OPTIONS = [
     value: "all",
   },
 ];
-const showUserModal = ref(false);
-const USER_DUMMY = ref<Array<User>>([
-  {
-    id: "COKRO-01",
-    avatar: "/images/user_dummy_avatar.png",
-    name: "Ridwan Hakim",
-    role: "MEMBER",
-    status: "ACTIVE",
-    phoneNumber: "081238213123",
-  },
-  {
-    id: "COKRO-02",
-    avatar: "/images/user_dummy_avatar.png",
-    name: "Ridwan Hakim",
-    role: "MEMBER",
-    status: "INACTIVE",
-    phoneNumber: "081238213123",
-  },
-]);
+const { getAllUsers, isLoading, submitFormUser } = useUser();
+const { handleCloseModal, handleShowModal, selectedItem, showModal } =
+  useModalForm<UserType>();
+const {
+  data: users,
+  pending,
+  error,
+} = await useAsyncData(ASYNC_KEY.user, async () => getAllUsers(), {
+  lazy: true,
+});
 const activeFilter = ref(undefined);
+
+const handleSubmitForm = (data: FormSubmitType) => {
+  submitFormUser(data).then(() => handleCloseModal());
+};
 </script>
 
 <template>
@@ -34,7 +30,7 @@ const activeFilter = ref(undefined);
     class="p-4 border rounded flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 sm:items-center justify-between bg-white"
   >
     <UButton
-      @click="showUserModal = true"
+      @click="handleShowModal(undefined)"
       type="button"
       icon="i-heroicons-plus"
       size="md"
@@ -63,11 +59,18 @@ const activeFilter = ref(undefined);
       :input-class="'input-select-trigger'"
     />
   </div>
-  <UserTable :users="USER_DUMMY" />
-  <AppModal v-model="showUserModal">
+  <UserTable
+    :users="users || []"
+    :loading="pending"
+    :error="error"
+    @handle-show-update-modal="(data) => handleShowModal(data)"
+  />
+  <AppModal v-model="showModal">
     <UserModalForm
-      @handle-close-modal="showUserModal = false"
-      @handle-success-add-user="(data) => console.log(data)"
+      :form-default-value="selectedItem"
+      :is-loading="isLoading"
+      @handle-close-modal="handleCloseModal"
+      @handle-success-add-user="(data) => handleSubmitForm(data)"
     />
   </AppModal>
 </template>
