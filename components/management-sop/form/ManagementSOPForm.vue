@@ -1,27 +1,35 @@
 <script setup lang="ts">
-import { object, array, string, type InferType, mixed, number } from "yup";
-import { ROLE_OPTIONS } from "~/constants/ui";
+import { object, string, type InferType, mixed, number } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
+import type { SOPDataType, SOPFormPayloadType } from "~/types/sop";
+import { ROLES_OPTIONS_FORM } from "~/constants/role";
 
-const emits = defineEmits(["handleCloseModal", "handleSuccessAddData"]);
+const ROLE_OPTIONS_FIELD = ROLES_OPTIONS_FORM.filter(
+  (item) => item.label === "Anak Kandang" || item.label === "Mandor"
+);
 
-const TimeSchema = object({
-  hours: number().test("Required", "Waktu tidak boleh kosong", (value) => {
-    !!value?.toString()?.length;
-  }),
-  minutes: number().test("Required", "Waktu tidak boleh kosong", (value) => {
-    !!value?.toString()?.length;
-  }),
-  seconds: number().test("Required", "Waktu tidak boleh kosong", (value) => {
-    !!value?.toString()?.length;
-  }),
-});
+const emits = defineEmits<{
+  (e: "handleCloseModal"): void;
+  (
+    e: "handleSuccessAddData",
+    formData: { id?: number; roleName: string } & SOPFormPayloadType
+  ): void;
+}>();
+const props = defineProps<{
+  isLoading?: boolean;
+  defaultFormValue?: SOPDataType;
+}>();
 
 const Schema = object({
   userType: mixed().test(
     "Required",
-    "User tidak boleh kosong.",
-    (value: any) => !!value?.value?.length
+    "Role tidak boleh kosong.",
+    (value: any) => !!value?.label?.length
   ),
   time: mixed().test("Required", "Tidak boleh kosong", (value: any) => {
     return value?.length === 2;
@@ -39,6 +47,19 @@ const formState = reactive<FormValueType>({
   description: "",
 });
 
+onMounted(() => {
+  if (!!props?.defaultFormValue) {
+    formState.userType = ROLE_OPTIONS_FIELD.find(
+      (role) => role.value === props.defaultFormValue?.roleId
+    );
+    formState.title = props?.defaultFormValue?.title;
+    formState.description = props?.defaultFormValue?.description;
+    formState.time = changeAPIResponseToValidFormValue(
+      props?.defaultFormValue?.time || ""
+    );
+  }
+});
+
 function handleCloseModal() {
   formState.userType = undefined;
   formState.time = undefined;
@@ -48,8 +69,22 @@ function handleCloseModal() {
 }
 
 async function onSubmit(event: FormSubmitEvent<FormValueType>) {
-  console.log(event.data);
-  emits("handleCloseModal");
+  const { time, title, description, userType } = event.data;
+  const sopTime = time as Array<{
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>;
+  const formatedTime = changeFormValueToValidPayload(sopTime || []);
+  const payload: SOPFormPayloadType & { id?: number; roleName: string } = {
+    id: props?.defaultFormValue?.id,
+    time: formatedTime,
+    title,
+    description: description || "",
+    roleId: (userType as any)?.value,
+    roleName: (userType as any)?.label,
+  };
+  emits("handleSuccessAddData", payload);
 }
 </script>
 
@@ -60,29 +95,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
     :state="formState"
     @submit="onSubmit"
   >
-    <UCard
-      :ui="{
-        ring: '',
-        divide: '',
-        rounded: 'rounded-[14px]',
-        shadow: '',
-        body: {
-          base: 'mb-[50px]',
-          background: '',
-          padding: 'px-10',
-        },
-        header: {
-          base: '',
-          background: '',
-          padding: 'px-10 pt-10',
-        },
-        footer: {
-          base: '',
-          background: '',
-          padding: 'px-10 pb-10',
-        },
-      }"
-    >
+    <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
         <div
           class="w-full flex justify-between items-center pb-6 mb-6 border-b"
@@ -90,7 +103,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
           <h2
             class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
           >
-            Tambah SOP
+            {{ !!defaultFormValue ? "Ubah" : "Tambah" }} SOP
           </h2>
           <UButton
             @click="handleCloseModal"
@@ -110,12 +123,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               size="md"
               :nullable="true"
               v-model="formState.userType"
-              :options="
-                ROLE_OPTIONS.filter(
-                  (item) =>
-                    item.label === 'Anak Kandang' || item.label === 'Mandor'
-                )
-              "
+              :options="ROLE_OPTIONS_FIELD"
               placeholder="Diberikan ke"
               :input-class="'input-select-trigger'"
             />
@@ -167,38 +175,23 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             color="sky"
             variant="ghost"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                sky: {
-                  ghost:
-                    'bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]',
-                },
-              },
-            }"
+            :ui="{ ...UI_GHOST_BUTTON_STYLES }"
           >
             Batal
           </UButton>
           <UButton
             type="submit"
+            :disabled="isLoading"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                primary: {
-                  solid:
-                    'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-                },
-              },
-            }"
+            :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
-            Tambah
+            {{
+              isLoading
+                ? "Menyimpan..."
+                : !!defaultFormValue
+                ? "Ubah"
+                : "Tambah"
+            }}
           </UButton>
         </div>
       </template>
