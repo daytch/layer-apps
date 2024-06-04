@@ -85,7 +85,7 @@ export default defineAppConfig({
       color: {
         white: {
           outline:
-            "bg-white text-[--app-primary-text] ring-1 ring-[#DFE4EA] focus:ring-2 focus:ring-[--app-primary-100] border-0",
+            "bg-white text-[--app-dark-200] ring-1 ring-[#DFE4EA] focus:ring-2 focus:ring-[--app-primary-100] border-0",
         },
       },
       default: {
