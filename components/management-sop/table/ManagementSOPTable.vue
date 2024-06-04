@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import { ASYNC_KEY } from "~/constants/api";
 import { ROLES } from "~/constants/role";
 import type { SOPDataType } from "~/types/sop";
 
-const props = defineProps<{
-  activeTab: string;
+defineProps<{
+  sopItems?: Array<SOPDataType>;
+  pending?: boolean;
 }>();
-const { getAllSopsByRoleId } = useFetchSOP();
-const roleId = computed(
-  () => ROLES.find((role) => role.name === props.activeTab)?.id
-);
+defineEmits<{ (e: "handleSelectItem", sopItem: SOPDataType): void }>();
 
-const { data, error, pending } = await useAsyncData(
-  ASYNC_KEY.sop,
-  async () => getAllSopsByRoleId(roleId?.value),
-  {
-    lazy: true,
-    watch: [roleId],
-  }
-);
+const { deleteSOPById, isLoading } = useFetchSOP();
+
 const selectedSOPItem = ref<SOPDataType | undefined>(undefined);
 const showDeleteSOPMOdal = ref(false);
+
+const handleDeleteItem = () => {
+  if (!selectedSOPItem?.value?.id) return;
+  deleteSOPById(selectedSOPItem.value).then(() => {
+    showDeleteSOPMOdal.value = false;
+    selectedSOPItem.value = undefined;
+  });
+};
 </script>
 
 <template>
@@ -59,8 +58,11 @@ const showDeleteSOPMOdal = ref(false);
             </td>
           </tr>
         </template>
-        <template v-else-if="!pending && !!data?.length">
-          <tr v-for="item in data" class="border-b border-b-[--app-gray-500]">
+        <template v-else-if="!pending && !!sopItems?.length">
+          <tr
+            v-for="item in sopItems"
+            class="border-b border-b-[--app-gray-500]"
+          >
             <td
               class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
             >
@@ -80,7 +82,7 @@ const showDeleteSOPMOdal = ref(false);
               class="text-left py-[18px] px-4 text-sm font-normal leading-[22px] text-[--app-dark-100]"
             >
               <div class="flex items-center space-x-5">
-                <button type="button">
+                <button type="button" @click="$emit('handleSelectItem', item)">
                   <IconPenUpdate />
                 </button>
                 <button
@@ -111,11 +113,8 @@ const showDeleteSOPMOdal = ref(false);
   <DeleteConfirmModal
     v-model="showDeleteSOPMOdal"
     :title="'Hapus SOP?'"
-    @handle-confirm-delete="
-      () => {
-        console.log('delete item');
-      }
-    "
+    :is-loading="isLoading"
+    @handle-confirm-delete="handleDeleteItem"
   >
     <template #description>
       <p class="delete-confirm-description">

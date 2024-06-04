@@ -10,7 +10,8 @@ export const useModalForm = <T>() => {
   };
 
   const handleCloseModal = () => {
-    (selectedItem.value = undefined), (showModal.value = false);
+    showModal.value = false;
+    selectedItem.value = undefined;
   };
 
   watch(
