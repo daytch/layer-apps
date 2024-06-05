@@ -29,7 +29,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     });
     if (!!response?.value?.user) {
       loading.value = false;
-      await navigateTo("/");
+      await navigateTo("/dashboard");
     }
   } finally {
     loading.value = false;
