@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ManagementSOP } from "~/types/sop";
+import type { SOPDataType, SOPFormPayloadType } from "~/types/sop";
 
 const items = [
   {
@@ -13,7 +13,17 @@ const items = [
 ];
 
 const { selectedTab, handleChangeTab } = useAdminSOP(items);
-const showAddModal = ref(false);
+const { isLoading, submitFormData } = useFetchSOP();
+const { selectedItem, handleCloseModal, handleShowModal, showModal } =
+  useModalForm<SOPDataType>();
+
+const handleSubmitForm = (
+  formPayload: { id?: number; roleName: string } & SOPFormPayloadType
+) => {
+  submitFormData(formPayload).then(() => {
+    handleCloseModal();
+  });
+};
 </script>
 
 <template>
@@ -35,7 +45,7 @@ const showAddModal = ref(false);
       </button>
     </div>
     <button
-      @click="showAddModal = true"
+      @click="handleShowModal(undefined)"
       type="button"
       class="inline-flex items-center justify-center py-[13px] px-7 bg-white ring-1 ring-[--app-primary-100] text-[--app-primary-100] rounded-md text-base font-medium leading-6"
     >
@@ -54,12 +64,21 @@ const showAddModal = ref(false);
         : 'Cek progress SOP Anak Kandang'
     "
   />
-  <ManagementSOPTable :active-tab="items[selectedTab]?.label" />
+  <template v-if="selectedTab === 0">
+    <MandorSOPTemplate @handle-select-item="(item) => handleShowModal(item)" />
+  </template>
+  <template v-else-if="selectedTab === 1">
+    <AnakKandangSOPTemplate
+      @handle-select-item="(item) => handleShowModal(item)"
+    />
+  </template>
 
-  <AppModal v-model="showAddModal">
+  <AppModal v-model="showModal">
     <ManagementSOPForm
-      @handle-close-modal="showAddModal = false"
-      @handle-success-add-data="(data) => console.log(data)"
+      :defaultFormValue="selectedItem"
+      :is-loading="isLoading"
+      @handle-close-modal="handleCloseModal"
+      @handle-success-add-data="(data) => handleSubmitForm(data)"
     />
   </AppModal>
 </template>

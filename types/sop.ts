@@ -28,3 +28,15 @@ export type SOPDataType = {
   createdAt: string;
   updateAt: string;
 };
+
+export type SOPFormPayloadType = {
+  roleId: number;
+  title: string;
+  description: string;
+  time: string;
+};
+
+export type SOPCompletePayloadType = {
+  sopId: number;
+  userId: number;
+};
