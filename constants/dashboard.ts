@@ -26,7 +26,7 @@ export const DASHBOARD_MENU: Menu[] = [
   {
     text: "Stok Pakan & Obat",
     icon: IconMedicine,
-    roles: ["Superadmin", "Admin", "Mandor", "Anak Kandang"],
+    roles: ["Superadmin", "Admin", "Mandor"],
     to: "/dashboard/stok-pakan-obat",
   },
   {
@@ -44,7 +44,7 @@ export const DASHBOARD_MENU: Menu[] = [
   {
     text: "Diagnosis Kandang",
     icon: IconWarehouse,
-    roles: ["Superadmin", "Admin", "Mandor", "Anak Kandang"],
+    roles: ["Superadmin", "Admin", "Mandor"],
     to: "/dashboard/diagnosis-kandang",
   },
   {
@@ -83,7 +83,7 @@ export const DASHBOARD_MENU_SP: Menu[] = [
   {
     text: "Stok Pakan & Obat",
     icon: IconMedicine,
-    roles: ["Superadmin", "Admin", "Mandor", "Anak Kandang"],
+    roles: ["Superadmin", "Admin", "Mandor"],
     to: "/dashboard/stok-pakan-obat",
   },
   {
@@ -101,7 +101,7 @@ export const DASHBOARD_MENU_SP: Menu[] = [
   {
     text: "Diagnosis Kandang",
     icon: IconWarehouse,
-    roles: ["Superadmin", "Admin", "Mandor", "Anak Kandang"],
+    roles: ["Superadmin", "Admin", "Mandor"],
     to: "/dashboard/diagnosis-kandang",
   },
   {

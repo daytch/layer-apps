@@ -2,6 +2,7 @@ import type {
   SOPDataType,
   SOPFormPayloadType,
   SOPCompletePayloadType,
+  SOPProgressDataType,
 } from "~/types/sop";
 import type { APIResponse } from "~/types/api";
 import type { FetchType } from "~/types/fetch-repo";
@@ -41,7 +42,10 @@ export const sopRepository = <T>(fetch: FetchType<T>) => ({
       body: JSON.stringify(payload),
     });
   },
-  async checkSOPProgress(roleId: number, date: string): SOPAPIResponse<any> {
+  async checkSOPProgress(
+    roleId: number,
+    date: string
+  ): SOPAPIResponse<Array<SOPProgressDataType>> {
     return fetch(API_LIST.getSOPProggress(roleId, date), {
       method: "GET",
     });

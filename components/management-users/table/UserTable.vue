@@ -74,9 +74,7 @@ const handleDeleteUser = async () => {
         </template>
         <template v-else-if="!loading && !!users.length">
           <tr v-for="user in users" class="border-b">
-            <td
-              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
-            >
+            <td class="p-4 text-[--app-dark-100] font-medium text-sm">
               <div class="flex flex-row items-center space-x-4 min-w-[150px]">
                 <NuxtImg
                   format="webp"
@@ -101,7 +99,7 @@ const handleDeleteUser = async () => {
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
             >
-              {{ user?.phone }}
+              {{ user?.phone || "-" }}
             </td>
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
