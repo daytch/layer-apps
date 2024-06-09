@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { object, string, type InferType, mixed, number } from "yup";
+import { object, string, type InferType, mixed } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
 import {
   UI_CARD_STYLES,
