@@ -26,4 +26,7 @@ const authUser = useAuthUser();
     <ForemanDashboardIndexTemplate />
     <!-- END MANDOR -->
   </template>
+  <template v-else>
+    <MemberDashboardIndexTemplate />
+  </template>
 </template>

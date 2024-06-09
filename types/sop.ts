@@ -40,3 +40,10 @@ export type SOPCompletePayloadType = {
   sopId: number;
   userId: number;
 };
+
+export type SOPProgressDataType = {
+  id: number;
+  name: string;
+  detail: Record<string, boolean>;
+  date: string;
+};
