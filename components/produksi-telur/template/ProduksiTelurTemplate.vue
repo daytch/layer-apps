@@ -1,11 +1,4 @@
-<script setup lang="ts">
-const {
-  visibleColumns,
-  HeaderVisibleToogleColumn,
-  checkAll,
-  checkVisibleColumn,
-} = useDataTable();
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <ProduksiTelurFilter :container-class="'bg-white'" />
