@@ -1,12 +1,16 @@
-import type { CashflowDataType, CashflowPayloadType } from "~/types/cashflow";
+import type {
+  CashflowDataType,
+  CashflowPayloadType,
+  ResponseCashflowDataType,
+} from "~/types/cashflow";
 import type { APIResponse } from "~/types/api";
 import type { FetchType } from "~/types/fetch-repo";
 import { API_LIST } from "~/constants/api";
 
-type CashflowResponse<T> = Promise<APIResponse<T>>;
+export type CashflowResponse<T> = Promise<APIResponse<T>>;
 
 export const cashflowRepository = <T>(fetch: FetchType<T>) => ({
-  async getAllCashflow(): CashflowResponse<Array<CashflowDataType>> {
+  async getAllCashflow(): CashflowResponse<ResponseCashflowDataType> {
     return fetch(API_LIST.cashflow, {
       method: "GET",
     });

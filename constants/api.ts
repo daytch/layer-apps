@@ -18,6 +18,7 @@ export const API_LIST = {
   completeSOPById: "/sop/complete",
   getSOPProggress: (roleId: number, date: string) =>
     `/sop/progress/${roleId}/${date}`,
+  getFCRChart: "/dashboard/FCRChart",
 };
 
 export const ASYNC_KEY = {

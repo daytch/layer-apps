@@ -1,14 +1,27 @@
 <script setup lang="ts">
-const people = [
-  "Semua",
-  "Kandang Satu",
-  "Kandang Dua",
-  "Kandang Tiga",
-  "Kandang Empat",
-  "Kandang Lima",
-];
+const { getDashboardData } = useFetchDashboard();
+const { getAllKandang } = useKandang();
 
-const selected = ref(people[0]);
+const selectedCoop = ref<number | undefined>(undefined);
+const { data, pending } = await useAsyncData(
+  "DASHBOARD_DATA",
+  async () => getDashboardData({ frcParams: { coopId: selectedCoop.value } }),
+  {
+    lazy: true,
+    watch: [selectedCoop],
+  }
+);
+const { data: coops } = await useAsyncData(
+  "FCR_KANDANG",
+  async () => getAllKandang(),
+  {
+    lazy: true,
+    transform: (data) => {
+      if (!data?.length) return [];
+      return data.map((coop) => ({ label: coop?.name, value: coop?.id }));
+    },
+  }
+);
 </script>
 
 <template>
@@ -16,16 +29,19 @@ const selected = ref(people[0]);
     <WelcomeCard />
     <DashboardContainer>
       <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
-        <BalanceCard />
+        <BalanceCard :total-cashflow="data?.totalCashflow || 0" />
         <MonthlyResultCard />
-        <MemberOverviewCard />
+        <MemberOverviewCard :users="data?.userData || []" />
       </div>
-      <FCRChart>
+      <FCRChart :fcr-data="data?.fcrData || []" :is-loading="pending">
         <template #filter>
           <USelectMenu
-            v-model="selected"
-            :options="people"
-            class="select-options relative min-w-[150px]"
+            v-model="selectedCoop"
+            :options="coops || []"
+            class="select-options relative min-w-[200px]"
+            placeholder="Pilih Kandang"
+            value-attribute="value"
+            option-attribute="label"
           />
         </template>
       </FCRChart>

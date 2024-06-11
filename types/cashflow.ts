@@ -4,8 +4,13 @@ export type CashflowDataType = {
   id: number;
   periode: string;
   trans_date: string;
-  tipe: CashflowType;
+  tipe: string;
   nominal: number;
+  total: number;
+};
+
+export type ResponseCashflowDataType = {
+  cashflow: Array<CashflowDataType>;
   total: number;
 };
 
