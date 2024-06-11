@@ -14,7 +14,7 @@ useSeoMeta({
     <DashboardContainer>
       <DashboardHeadingTitle>Grafik FCR</DashboardHeadingTitle>
       <GrafikChartFilter />
-      <FCRChart />
+      <FCRChart :fcr-data="[]" />
     </DashboardContainer>
   </div>
 </template>

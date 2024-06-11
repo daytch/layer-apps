@@ -7,7 +7,7 @@ import type { APIResponse } from "~/types/api";
 import type { FetchType } from "~/types/fetch-repo";
 import { API_LIST } from "~/constants/api";
 
-type UserRepositoryResponse<T> = Promise<APIResponse<T>>;
+export type UserRepositoryResponse<T> = Promise<APIResponse<T>>;
 
 export const userRepository = <T>(fetch: FetchType<T>) => ({
   async uploadUserAvatar(file: File): UserRepositoryResponse<{ path: string }> {
