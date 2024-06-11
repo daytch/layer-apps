@@ -12,7 +12,7 @@
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[14px]">
         <ForemanMemberMenuCard
-          :to="'/'"
+          :to="'/dashboard/report-sop/anak-kandang?tab=Anak%20Kandang'"
           :heading="'SOP Harian'"
           :description="'Mengerjakan sesuai SOP'"
         >

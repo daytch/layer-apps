@@ -51,7 +51,7 @@ export const useFetchSOP = () => {
         ...TOAST_SUCCESS_UI,
       },
     });
-    console.log(roleType);
+
     roleType === "Anak Kandang"
       ? await refreshNuxtData(ASYNC_KEY.SOP_ANAK_KANDANG)
       : await refreshNuxtData(ASYNC_KEY.SOP_MANDOR);
@@ -135,10 +135,11 @@ export const useFetchSOP = () => {
     try {
       const response = await sopRepo.completeSOPById(completePayload);
       if (!!response?.data) {
-        // handleSuccess("Sukses menyimpan data", );
+        handleSuccess("Sukses menyimpan laporan.");
+        return response;
       }
     } catch (error) {
-      // handleError("Gagal menyimpan data");
+      handleError("Gagal menyimpan laporan.");
     } finally {
       isLoading.value = false;
     }
