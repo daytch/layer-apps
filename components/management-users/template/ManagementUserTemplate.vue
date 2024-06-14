@@ -19,6 +19,7 @@ const items = [
       User Management
     </h1>
     <UTabs
+      as="div"
       :items="items"
       class="w-full stock-tab"
       :ui="{

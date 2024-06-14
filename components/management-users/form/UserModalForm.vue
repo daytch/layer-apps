@@ -6,6 +6,7 @@ import {
   UI_CARD_STYLES,
   UI_GHOST_BUTTON_STYLES,
   UI_PRIMARY_BUTTON_STYLES,
+  UI_PRIMARY_GHOST_BUTTON_STYLES,
 } from "~/constants/ui";
 import { UserFormSchema, type UserFormValueType } from "~/schemas/user";
 import type { UserType, FormSubmitType } from "~/types/user";
@@ -32,6 +33,7 @@ const formState = reactive<UserFormValueType>({
   email: "",
   isUpdateMode: false,
 });
+const showFieldPassword = ref(false);
 const previewAvatar = ref("/images/no_photo.png");
 const userAvatar = ref<File | null>(null);
 
@@ -139,7 +141,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
           <h2
             class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
           >
-            Tambah Karyawan
+            {{ formState.isUpdateMode ? "Edit" : "Tambah" }} Karyawan
           </h2>
           <UButton
             @click="handleCloseModal"
@@ -157,7 +159,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
             :src="previewAvatar"
             width="80"
             height="80"
-            class="w-full h-full object-contain"
+            class="w-full h-full object-cover rounded-full"
           />
           <label
             for="avatar"
@@ -210,7 +212,27 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
             />
           </UFormGroup>
           <UFormGroup label="Password" name="password" class="flex-1">
+            <UButton
+              @click="showFieldPassword = true"
+              v-if="
+                formState.isUpdateMode
+                  ? formState.isUpdateMode && !showFieldPassword
+                  : false
+              "
+              type="button"
+              color="primary"
+              variant="ghost"
+              size="md"
+              :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
+            >
+              Ubah Password
+            </UButton>
             <UInput
+              v-if="
+                formState.isUpdateMode
+                  ? formState.isUpdateMode && showFieldPassword
+                  : true
+              "
               :ui="{ icon: { trailing: { pointer: '' } } }"
               v-model="formState.password"
               :type="type"

@@ -40,6 +40,7 @@ const items = computed(() => [
     <div class="hidden lg:flex flex-1 ml-4 justify-end space-x-8">
       <!-- CCTV Page -->
       <NuxtLink
+        v-if="authUser?.user?.role_name !== 'Anak Kandang'"
         to="/dashboard/realtime-cctv"
         type="button"
         class="hidden lg:inline-flex items-center space-x-[10px] py-3 px-7 border-[1.5px] border-[--app-primary-100] rounded-[50px] font-medium text-[--app-primary-100]"

@@ -16,7 +16,7 @@ const { selectedTab, handleChangeTab } = useAdminSOP(items);
 const { isLoading, submitFormData } = useFetchSOP();
 const { selectedItem, handleCloseModal, handleShowModal, showModal } =
   useModalForm<SOPDataType>();
-
+const today = formatDate(new Date(), "yyyy-MM-dd");
 const handleSubmitForm = (
   formPayload: { id?: number; roleName: string } & SOPFormPayloadType
 ) => {
@@ -55,8 +55,8 @@ const handleSubmitForm = (
   <ProgressLink
     :href="
       selectedTab === 0
-        ? '/dashboard/management-sop/mandor'
-        : '/dashboard/management-sop/anak-kandang'
+        ? '/dashboard/management-sop/mandor?tanggal=' + today
+        : '/dashboard/management-sop/anak-kandang?tanggal=' + today
     "
     :text="
       selectedTab === 0

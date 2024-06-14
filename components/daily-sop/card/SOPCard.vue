@@ -1,30 +1,30 @@
 <script setup lang="ts">
 import type { RoleType } from "~/types/dashboard-menu";
+import type { SOPDataType } from "~/types/sop";
 type Role = Extract<RoleType, "Anak Kandang" | "Mandor">;
+
 defineProps<{
   role: Role;
-  activity: string;
-  time: string;
-  isDone: boolean;
-  id: string;
+  sopItem: SOPDataType;
 }>();
 
-const { handleSelectSOPItem } = useSelectSOP();
+defineEmits<{ (e: "handleSelectItem", sopItem: SOPDataType): void }>();
 </script>
 
 <template>
-  <div class="p-4 rounded-[14px] border border-[--app-dark-800]">
-    <p class="text-sm font-normal leading-[22px] text-[--app-dark-500]">
-      {{ role === "Mandor" ? "Mandor" : "Anak Kandang" }}
-    </p>
-    <h4 class="text-lg font-bold leading-[27px] mb-6">{{ activity }}</h4>
-    <p class="text-xs font-normal leading-5 text-[--app-dark-500] mb-5">
-      {{ time }} WIB
-    </p>
+  <div class="p-4 rounded-[14px] border border-[--app-dark-800] flex flex-col">
+    <div class="flex-1">
+      <p class="text-sm font-normal leading-[22px] text-[--app-dark-500]">
+        {{ role }}
+      </p>
+      <h4 class="text-lg font-bold leading-[27px] mb-6">{{ sopItem.title }}</h4>
+      <p class="text-xs font-normal leading-5 text-[--app-dark-500] mb-5">
+        {{ sopItem.time }}
+      </p>
+    </div>
     <UButton
-      @click="() => handleSelectSOPItem({ id, isDone, time, title: activity })"
       type="button"
-      :disabled="isDone"
+      @click="$emit('handleSelectItem', sopItem)"
       block
       size="md"
       :ui="{
@@ -41,7 +41,8 @@ const { handleSelectSOPItem } = useSelectSOP();
         },
       }"
     >
-      {{ isDone ? "SELESAI" : "LAKUKAN" }}
+      LAKUKAN
+      <!-- {{ isDone ? "SELESAI" : "LAKUKAN" }} -->
     </UButton>
   </div>
 </template>

@@ -11,16 +11,11 @@ useSeoMeta({
   description: "Cashflow | Layer Apps",
 });
 const { getAllCashflows } = useFetchCashflow();
-const { data: cashflows, pending: cashflowsLoading } = await useAsyncData(
+const { data, pending: cashflowsLoading } = await useAsyncData(
   ASYNC_KEY.cashflow,
   async () => getAllCashflows(),
   { lazy: true }
 );
-
-const totalCashflow = computed(() => {
-  if (!cashflows?.value?.length) return 0;
-  return cashflows?.value?.reduce((prev, current) => prev + current.total, 0);
-});
 </script>
 
 <template>
@@ -28,9 +23,12 @@ const totalCashflow = computed(() => {
     <DashboardContainer>
       <DashboardHeadingTitle>Cashflow (Rekap Pemasukan)</DashboardHeadingTitle>
       <div class="w-full max-w-[505px] mt-8">
-        <BalanceCard :total-cashflow="totalCashflow" />
+        <BalanceCard :total-cashflow="data?.total || 0" />
       </div>
-      <CashflowTemplate :items="cashflows || []" :loading="cashflowsLoading" />
+      <CashflowTemplate
+        :items="data?.cashflow || []"
+        :loading="cashflowsLoading"
+      />
     </DashboardContainer>
   </div>
 </template>

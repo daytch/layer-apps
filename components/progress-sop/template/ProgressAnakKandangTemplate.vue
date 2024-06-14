@@ -1,9 +1,18 @@
 <script lang="ts" setup>
+import type { SOPDataType, SOPProgressDataType } from "~/types/sop";
+
+type FormatedProgressData = {
+  sopData: Array<SOPDataType>;
+  progressData: Array<SOPProgressDataType>;
+};
 defineProps<{
   backLink: string;
   title: string;
+  data: FormatedProgressData;
+  isLoading?: boolean;
 }>();
-const date = ref<Date | undefined>(new Date());
+const { handleChangeQueryParams } = useQueryParams();
+const date = ref<Date>(new Date());
 </script>
 
 <template>
@@ -25,6 +34,9 @@ const date = ref<Date | undefined>(new Date());
       <div class="flex items-center space-x-4">
         <Datepicker v-model:model-value="date" />
         <button
+          @click="
+            handleChangeQueryParams('tanggal', formatDate(date, 'yyyy-MM-dd'))
+          "
           type="button"
           class="inline-flex items-center justify-center space-x-[14px] px-4 py-3 ring-1 ring-[--app-primary-100] text-[--app-primary-100] text-base font-medium rounded-md"
         >
@@ -32,6 +44,6 @@ const date = ref<Date | undefined>(new Date());
         </button>
       </div>
     </div>
-    <ProgressTableSOP />
+    <ProgressTableSOP :is-loading="isLoading" :items="data" />
   </DashboardContainer>
 </template>

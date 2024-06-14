@@ -39,7 +39,11 @@ defineProps<{
       />
     </template>
     <template #action-preview="{ value }">
-      {{ formatDate(value, "yyyy/MM/dd") }}
+      {{
+        Array.isArray(value)
+          ? value.map((v) => formatDate(v, "dd/MM/yy")).join("-")
+          : formatDate(value, "dd/MM/yy")
+      }}
     </template>
     <template #clear-icon>
       <div class="hidden"></div>

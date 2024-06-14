@@ -40,8 +40,8 @@ export const UserFormSchema = object({
         mixed().test(
           "anak-kandang-users",
           "Tidak boleh kosong",
-          (value: any) => {
-            return !!value?.id;
+          (coopValue: any) => {
+            return !!coopValue?.label;
           }
         ),
     }),

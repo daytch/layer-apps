@@ -7,77 +7,20 @@ import {
   VisCrosshair,
   VisTooltip,
 } from "@unovis/vue";
+import type { FCRChartDataType } from "~/types/fcr-chart";
 
-type DataRecord = { date: string | Date; amount: number };
+type DataRecord = FCRChartDataType;
 
-const data: DataRecord[] = [
-  {
-    date: "2024-03-15T17:00:00.000Z",
-    amount: 4662,
-  },
-  {
-    date: "2024-03-16T17:00:00.000Z",
-    amount: 2340,
-  },
-  {
-    date: "2024-03-17T17:00:00.000Z",
-    amount: 8950,
-  },
-  {
-    date: "2024-03-18T17:00:00.000Z",
-    amount: 7497,
-  },
-  {
-    date: "2024-03-19T17:00:00.000Z",
-    amount: 3777,
-  },
-  {
-    date: "2024-03-20T17:00:00.000Z",
-    amount: 6180,
-  },
-  {
-    date: "2024-03-21T17:00:00.000Z",
-    amount: 1260,
-  },
-  {
-    date: "2024-03-22T17:00:00.000Z",
-    amount: 8776,
-  },
-  {
-    date: "2024-03-23T17:00:00.000Z",
-    amount: 4850,
-  },
-  {
-    date: "2024-03-24T17:00:00.000Z",
-    amount: 2535,
-  },
-  {
-    date: "2024-03-25T17:00:00.000Z",
-    amount: 2382,
-  },
-  {
-    date: "2024-03-26T17:00:00.000Z",
-    amount: 4615,
-  },
-  {
-    date: "2024-03-27T17:00:00.000Z",
-    amount: 3607,
-  },
-  {
-    date: "2024-03-28T17:00:00.000Z",
-    amount: 3946,
-  },
-  {
-    date: "2024-03-29T17:00:00.000Z",
-    amount: 8588,
-  },
-];
+defineProps<{
+  fcrData: Array<FCRChartDataType>;
+  isLoading?: boolean;
+}>();
 
 const x = (_: DataRecord, i: number) => i;
-const y = (d: DataRecord) => d.amount;
+const y = (d: DataRecord) => d.FCR;
 
 const template = (d: DataRecord) =>
-  `${formatDate(d.date, "dd MMMM")}: ${d.amount}`;
+  `${formatDate(d.transDate, "dd MMMM")}: ${d.FCR}`;
 </script>
 
 <template>
@@ -102,43 +45,54 @@ const template = (d: DataRecord) =>
     </template>
 
     <div class="px-4">
-      <VisXYContainer
-        :data="data"
-        :padding="{ top: 10 }"
-        class="h-[383px]"
-        :width="'100%'"
-      >
-        <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
-        <VisArea
-          :x="x"
-          :y="y"
-          color="rgb(var(--color-primary-DEFAULT))"
-          :opacity="0.1"
-        />
-        <VisAxis
-          type="y"
-          :tick-format="(i:any) => {
+      <template v-if="isLoading">
+        <LoadingSpinner />
+      </template>
+      <template v-if="!!fcrData.length && !isLoading">
+        <VisXYContainer
+          :data="fcrData"
+          :padding="{ top: 10 }"
+          class="h-[383px]"
+          :width="'100%'"
+        >
+          <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
+          <VisArea
+            :x="x"
+            :y="y"
+            color="rgb(var(--color-primary-DEFAULT))"
+            :opacity="0.1"
+          />
+          <VisAxis
+            type="y"
+            :tick-format="(i:any) => {
           return i
         }"
-        />
-        <VisAxis
-          type="x"
-          :x="x"
-          :tick-format="(i: number) => {
-            if(!data[i]) {
+          />
+          <VisAxis
+            type="x"
+            :x="x"
+            :tick-format="(i: number) => {
+            if(!fcrData[i]) {
               return ''
             }
-          return formatDate(data[i].date, 'MMM')
+          return formatDate(fcrData[i].transDate, 'MMM')
         }"
-        />
+          />
 
-        <VisCrosshair
-          color="rgb(var(--color-primary-DEFAULT))"
-          :template="template"
-        />
+          <VisCrosshair
+            color="rgb(var(--color-primary-DEFAULT))"
+            :template="template"
+          />
 
-        <VisTooltip />
-      </VisXYContainer>
+          <VisTooltip />
+        </VisXYContainer>
+      </template>
+      <template v-else-if="!isLoading && !fcrData?.length">
+        <NoDataStatus>Data tidak ditemukan.</NoDataStatus>
+      </template>
+      <template v-else>
+        <div class="hidden" />
+      </template>
     </div>
   </UCard>
 </template>

@@ -20,8 +20,9 @@ const {
 });
 const activeFilter = ref(undefined);
 
-const handleSubmitForm = (data: FormSubmitType) => {
-  submitFormUser(data).then(() => handleCloseModal());
+const handleSubmitForm = async (data: FormSubmitType) => {
+  await submitFormUser(data);
+  handleCloseModal();
 };
 </script>
 

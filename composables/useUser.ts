@@ -23,7 +23,7 @@ export const useUser = () => {
         ...TOAST_SUCCESS_UI,
       },
     });
-    await refreshNuxtData(ASYNC_KEY.kandang);
+    await refreshNuxtData(ASYNC_KEY.user);
   };
 
   const handleError = (message: string) => {

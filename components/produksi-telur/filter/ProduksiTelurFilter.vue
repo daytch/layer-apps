@@ -136,6 +136,9 @@ const getPeriodeText = (periodeValue: string) => {
       </div>
     </div>
   </div>
+  <AppModal v-model:model-value="showImportFileModal">
+    <ImportModal />
+  </AppModal>
 </template>
 
 <style>
