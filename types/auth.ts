@@ -15,6 +15,7 @@ export type LoginResponse = {
   is_active: boolean;
   access_token: string;
   role_name: string;
+  coops: Array<{ coopId: number; coop_name: string }>;
 };
 
 export type LoginResponseWithoutToken = Omit<LoginResponse, "access_token">;

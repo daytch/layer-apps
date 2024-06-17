@@ -1,13 +1,9 @@
-import { TOAST_ERROR_UI, TOAST_SUCCESS_UI } from "~/constants/ui";
-
-export const useOptimisticUpdate = <T extends { id: number }>(
-  storageKey: string
-) => {
+export const useOptimisticUpdate = <T extends { id: number }>(storageKey: string) => {
   const isLoading = ref(false);
   const isError = ref(false);
   const { data } = useNuxtData<Array<T>>(storageKey);
   const previousData = ref<any>([]);
-  const toast = useToast();
+  const { handleShowToast } = useShowToast();
 
   const initialFetching = () => {
     isLoading.value = true;
@@ -15,9 +11,7 @@ export const useOptimisticUpdate = <T extends { id: number }>(
   };
 
   const handleRemoveData = (successResponseData: T) => {
-    data.value = (data.value || [])?.filter(
-      (item) => item.id !== successResponseData.id
-    );
+    data.value = (data.value || [])?.filter((item) => item.id !== successResponseData.id);
   };
 
   const handleReplaceData = (successResponseData: T) => {
@@ -44,26 +38,14 @@ export const useOptimisticUpdate = <T extends { id: number }>(
     } else {
       handleAddData(successResponseData);
     }
-    toast.add({
-      icon: "i-heroicons-check-circle-16-solid",
-      title: message,
-      ui: {
-        ...TOAST_SUCCESS_UI,
-      },
-    });
+    handleShowToast({ type: "SUCCESS", message });
   };
 
   const handleError = (message: string) => {
     isError.value = true;
     data.value = previousData.value;
     previousData.value = [];
-    toast.add({
-      icon: "i-heroicons-check-circle-16-solid",
-      title: message,
-      ui: {
-        ...TOAST_ERROR_UI,
-      },
-    });
+    handleShowToast({ type: "ERROR", message });
   };
 
   return {

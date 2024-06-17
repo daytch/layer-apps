@@ -47,3 +47,14 @@ export type SOPProgressDataType = {
   detail: Record<string, boolean>;
   date: string;
 };
+
+export type SOPByUserDataType = {
+  id: number;
+  roleId: number;
+  title: string;
+  time: string;
+  description: string;
+  createdAt: string;
+  updateAt: string;
+  status: boolean;
+};

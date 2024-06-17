@@ -12,10 +12,7 @@ const authUser = useAuthUser();
 
 <template>
   <template
-    v-if="
-      authUser?.user?.role_name === 'Admin' ||
-      authUser?.user?.role_name === 'Superadmin'
-    "
+    v-if="authUser?.user?.role_name === 'Admin' || authUser?.user?.role_name === 'Superadmin'"
   >
     <!-- ADMIN/SUPERADMIN -->
     <AdminDashboardIndexTemplate />

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import VueDatePicker from "@vuepic/vue-datepicker";
+import VueDatePicker, { type ModelValue } from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { id } from "date-fns/locale";
 
 defineEmits<{
-  (e: "update:modelValue", value: Date | Date[]): void;
+  (e: "update:modelValue", value: ModelValue): void;
 }>();
 
 defineProps<{
-  modelValue: Date | Date[] | undefined;
+  modelValue?: ModelValue;
   placeholder?: string;
   errorState?: string;
   range?: boolean;
@@ -16,11 +17,15 @@ defineProps<{
 
 <template>
   <VueDatePicker
+    :format-locale="id"
     :model-value="modelValue"
     :teleport="true"
     :range="range"
     :enable-time-picker="false"
     @update:model-value="(value) => $emit('update:modelValue', value)"
+    :select-text="'Pilih'"
+    :cancel-text="'Batal'"
+    v-bind="$attrs"
   >
     <template #dp-input="{ value }">
       <input
@@ -33,20 +38,14 @@ defineProps<{
       />
     </template>
     <template #input-icon>
-      <UIcon
-        name="i-heroicons-calendar-days"
-        class="w-4 h-4 text-[--app-dark-100]"
-      />
+      <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 text-[--app-dark-100]" />
     </template>
     <template #action-preview="{ value }">
       {{
         Array.isArray(value)
-          ? value.map((v) => formatDate(v, "dd/MM/yy")).join("-")
-          : formatDate(value, "dd/MM/yy")
+          ? value.map((v) => formatDate(v, "dd MMM yy")).join("-")
+          : formatDate(value, "dd MMM yy")
       }}
-    </template>
-    <template #clear-icon>
-      <div class="hidden"></div>
     </template>
   </VueDatePicker>
 </template>

@@ -34,31 +34,6 @@ const showModal = ref(false);
 </script>
 
 <template>
-  <div class="mb-[14px]">
-    <DateRangeFilter
-      containerClass="bg-white rounded-lg"
-      :show-add-button="true"
-      :add-button-text="'Tambah Laporan'"
-    >
-      <template #additional>
-        <UInput
-          icon="i-heroicons-magnifying-glass-20-solid"
-          size="md"
-          color="white"
-          :trailing="false"
-          placeholder="Masukkan ID Pelanggan"
-          :ui="{
-            padding: {
-              md: 'py-3',
-            },
-            size: {
-              md: 'text-base',
-            },
-          }"
-        />
-      </template>
-    </DateRangeFilter>
-  </div>
   <MonthlyReportBaseTable :header-columns="COLUMNS">
     <template #content>
       <tr v-for="item in [...data, ...data, ...data, ...data]">

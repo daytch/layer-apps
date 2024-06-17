@@ -7,6 +7,9 @@ const TOAST_BASE_UI = {
   progress: {
     base: "hidden",
   },
+  icon: {
+    base: "hidden",
+  },
 };
 
 export const TOAST_SUCCESS_UI = {
@@ -69,8 +72,7 @@ export const UI_GHOST_BUTTON_STYLES = {
   },
   color: {
     sky: {
-      ghost:
-        "bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]",
+      ghost: "bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]",
     },
   },
 };

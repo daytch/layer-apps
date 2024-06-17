@@ -8,5 +8,9 @@ export const useQueryParams = () => {
     router.push({ query: { ...queryParams.value, [key]: value } });
   };
 
-  return { handleChangeQueryParams, queryParams };
+  const handleNewQueryParams = (newQuery: Record<string, string | number | undefined>) => {
+    router.push({ query: { ...route.query, ...newQuery } });
+  };
+
+  return { handleChangeQueryParams, queryParams, handleNewQueryParams };
 };

@@ -27,15 +27,13 @@ const formState = reactive<FormValue>({
   coop: undefined,
   file: undefined,
 });
-const { getAllKandang } = useKandang();
+const { getKandangOptions } = useKandang();
 
 const { data } = await useAsyncData(
-  ASYNC_KEY.kandang,
-  async () => getAllKandang(),
+  ASYNC_KEY.KANDANG_OPTIONS,
+  async () => getKandangOptions(),
   {
     lazy: true,
-    transform: (data) =>
-      !!data ? data.map(({ name, id }) => ({ label: name, value: id })) : [],
   }
 );
 

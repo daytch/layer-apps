@@ -16,8 +16,18 @@ export type ResponseCashflowDataType = {
 
 export type CashflowPayloadType = {
   periode: string;
+  tipe: string;
+  nominal: number;
+};
+
+export type CashflowUpdateResponseType = {
+  id: number;
+  periode: string;
+  userId: number;
   trans_date: string;
-  tipe: CashflowType;
+  tipe: string;
   nominal: number;
   total: number;
+  createdAt: string;
+  updateAt: string;
 };

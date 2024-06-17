@@ -65,7 +65,7 @@ export default defineAppConfig({
       container: "mt-[10px]",
     },
     inputMenu: {
-      base: "border-0",
+      base: "border-0 overflow-y-auto",
       option: {
         size: "text-base",
       },

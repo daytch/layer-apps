@@ -23,11 +23,12 @@ const { data, pending: cashflowsLoading } = await useAsyncData(
     <DashboardContainer>
       <DashboardHeadingTitle>Cashflow (Rekap Pemasukan)</DashboardHeadingTitle>
       <div class="w-full max-w-[505px] mt-8">
-        <BalanceCard :total-cashflow="data?.total || 0" />
+        <BalanceCard :total-cashflow="data?.total ?? 0" />
       </div>
       <CashflowTemplate
         :items="data?.cashflow || []"
         :loading="cashflowsLoading"
+        :total="data?.total ?? 0"
       />
     </DashboardContainer>
   </div>

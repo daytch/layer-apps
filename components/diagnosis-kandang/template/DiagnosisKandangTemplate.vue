@@ -1,69 +1,65 @@
 <script setup lang="ts">
-import { type DiagnosisKandang } from "~/types/report";
-import type { SelectOptionType } from "~/types/ui";
+import { ASYNC_KEY } from "~/constants/api";
+import type { DiagnosisKandangPayload, DiagnosisKandangType } from "~/types/report";
+
+const {
+  getAllDianosisKandang,
+  isLoading: isLoadingForm,
+  createNewDiagnosisKandang,
+} = useFetchDiagnosisKandang();
+const authUser = useAuthUser();
+const { queryParams } = useQueryParams();
+const { data: allDianosisKandang, pending: isLoading } = await useAsyncData(
+  ASYNC_KEY.DIAGNOSIS_KANDANG,
+  async () =>
+    getAllDianosisKandang({
+      userId: queryParams.value["userId"]?.length ? Number(queryParams.value["userId"]) : undefined,
+      from: queryParams.value["from"]?.toString(),
+      to: queryParams.value["to"]?.toString(),
+    }),
+  {
+    lazy: true,
+    watch: [queryParams],
+  }
+);
+
+const roleName = computed(() => (authUser.value?.user?.role_name ?? "").toLocaleLowerCase());
 
 const {
   showModal: showAddReportModal,
   handleCloseModal: handleCloseReportModal,
   handleShowModal: handleShowReportModal,
-} = useModalForm<any>();
+} = useModalForm<DiagnosisKandangType>();
 
-const DUMMY_DATA = ref<Array<DiagnosisKandang>>([
-  {
-    id: "1",
-    cageName: "Kandang Jatisari",
-    cageID: "100000051",
-    date: new Date(),
-    reporter: "AHMAD ROZIKIN",
-    diseaseHistory: "Ayam Stres",
-    medicationAdministered: "Stres Blok",
-    progress: "UNHANDLED",
-    doses: undefined,
-  },
-  {
-    id: "2",
-    cageName: "Kandang Jatisari",
-    cageID: "100000051",
-    date: new Date(),
-    reporter: "AHMAD ROZIKIN",
-    diseaseHistory: "Ayam Stres",
-    medicationAdministered: "Stres Blok",
-    progress: "HANDLED",
-    doses: undefined,
-  },
-]);
-const EMPLOYEE_OPTIONS = [
-  { label: "AHMAD ROZIKIN", value: "ahmad-rozikin" },
-  { label: "TATAK", value: "tatak" },
-];
-const employe = ref<SelectOptionType | undefined>(undefined);
+const handleAddNewReport = (payload: DiagnosisKandangPayload) => {
+  createNewDiagnosisKandang(payload).then((data) => {
+    if (!!data?.id) {
+      handleCloseReportModal();
+    }
+  });
+};
 </script>
 
 <template>
-  <DashboardContainer>
-    <DateRangeFilter
-      :show-add-button="true"
-      :add-button-text="'Tambah Laporan'"
-      @handle-add-data="handleShowReportModal(undefined)"
-    >
-      <template v-slot:additional>
-        <UInputMenu
-          size="md"
-          :nullable="true"
-          v-model="employe"
-          :options="EMPLOYEE_OPTIONS"
-          placeholder="Pilih Pekerja"
-          :input-class="'input-select-trigger'"
-        />
-      </template>
-    </DateRangeFilter>
-
-    <ReportTable :reports="DUMMY_DATA" />
-  </DashboardContainer>
+  <template v-if="roleName.includes('admin')">
+    <DiagnosisKandangAdminTemplate
+      :all-dianosis-kandang="allDianosisKandang || []"
+      :is-loading="isLoading"
+      @handle-show-add-modal="handleShowReportModal(undefined)"
+    />
+  </template>
+  <template v-else-if="roleName.includes('mandor')">
+    <DiagnosisKandangMandorTemplate
+      @handle-show-add-modal="handleShowReportModal(undefined)"
+      :all-diagnosis-kandang="allDianosisKandang || []"
+      :is-loading="isLoading"
+    />
+  </template>
   <AppModal v-model="showAddReportModal">
     <AddReportForm
+      :is-loading="isLoadingForm"
       @handle-close-modal="handleCloseReportModal"
-      @handle-add-report="(data) => console.log(data)"
+      @handle-add-report="handleAddNewReport"
     />
   </AppModal>
 </template>
