@@ -49,3 +49,12 @@ body {
 .dp__input_icon {
   transform: translate(12px, -50%) !important;
 }
+body .card-header {
+  padding: 40px 40px 0;
+}
+body .card-body {
+  padding: 0 40px 40px;
+}
+body .card-footer {
+  padding: 0 40px 40px;
+}

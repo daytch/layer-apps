@@ -48,7 +48,6 @@ async function onSubmit(event: FormSubmitEvent<FormValue>) {
 
 <template>
   <UForm class="space-y-4" :schema="FormSchema" :state="formState" @submit="onSubmit">
-    <pre>{{ JSON.stringify(formState, null, 2) }}</pre>
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
         <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
@@ -128,9 +127,9 @@ async function onSubmit(event: FormSubmitEvent<FormValue>) {
           </UButton>
           <UButton
             type="submit"
-            :disabled="isLoadingUploadData"
             size="md"
             color="primary"
+            :disabled="isLoadingUploadData"
             :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
             >{{ isLoadingUploadData ? "Mengunggah..." : "Upload" }}</UButton
           >
