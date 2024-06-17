@@ -2,6 +2,7 @@
 import { object, string, type InferType } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
 import type { KandangPayload, KandangType } from "~/types/kandang";
+import { UI_PRIMARY_BUTTON_STYLES, UI_GHOST_BUTTON_STYLES, UI_CARD_STYLES } from "~/constants/ui";
 
 const emits = defineEmits<{
   (e: "handleSuccessAddKandang", item: KandangPayload): void;
@@ -52,42 +53,11 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
 </script>
 
 <template>
-  <UForm
-    class="space-y-4"
-    :schema="Schema"
-    :state="formState"
-    @submit="onSubmit"
-  >
-    <UCard
-      :ui="{
-        ring: '',
-        divide: '',
-        rounded: 'rounded-[14px]',
-        shadow: '',
-        body: {
-          base: 'mb-[50px]',
-          background: '',
-          padding: 'px-10',
-        },
-        header: {
-          base: '',
-          background: '',
-          padding: 'px-10 pt-10',
-        },
-        footer: {
-          base: '',
-          background: '',
-          padding: 'px-10 pb-10',
-        },
-      }"
-    >
+  <UForm class="space-y-4" :schema="Schema" :state="formState" @submit="onSubmit">
+    <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div
-          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
-        >
-          <h2
-            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
-          >
+        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
+          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
             {{ !!initialValue ? "Update" : "Tambah" }} Kandang
           </h2>
           <UButton
@@ -103,31 +73,19 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
           <template #label>
             <FormLabel>Nama Kandang</FormLabel>
           </template>
-          <UInput
-            variant="outline"
-            placeholder="Nama Kandang"
-            v-model="formState.name"
-          />
+          <UInput variant="outline" placeholder="Nama Kandang" v-model="formState.name" />
         </UFormGroup>
         <UFormGroup name="nik" label="ID Kandang">
           <template #label>
             <FormLabel>ID Kandang</FormLabel>
           </template>
-          <UInput
-            variant="outline"
-            placeholder="ID Kandang"
-            v-model="formState.nik"
-          />
+          <UInput variant="outline" placeholder="ID Kandang" v-model="formState.nik" />
         </UFormGroup>
         <UFormGroup name="address" label="Alamat Kandang">
           <template #label>
             <FormLabel>Alamat Kandang</FormLabel>
           </template>
-          <UTextarea
-            variant="outline"
-            placeholder="Alamat Kandang"
-            v-model="formState.address"
-          />
+          <UTextarea variant="outline" placeholder="Alamat Kandang" v-model="formState.address" />
         </UFormGroup>
       </div>
       <template #footer>
@@ -138,18 +96,7 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
             color="sky"
             variant="ghost"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                sky: {
-                  ghost:
-                    'bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]',
-                },
-              },
-            }"
+            :ui="{ ...UI_GHOST_BUTTON_STYLES }"
           >
             Batal
           </UButton>
@@ -158,16 +105,7 @@ async function onSubmit(event: FormSubmitEvent<FormValuesType>) {
             size="md"
             :disabled="isLoading"
             :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                primary: {
-                  solid:
-                    'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-                },
-              },
+              ...UI_PRIMARY_BUTTON_STYLES,
             }"
           >
             {{ isLoading ? "Tunggu..." : !!initialValue ? "Update" : "Tambah" }}

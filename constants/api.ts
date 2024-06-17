@@ -21,6 +21,11 @@ export const API_LIST = {
   getFCRChart: "/dashboard/FCRChart",
   getAllDiagnosis: "/diagnostic",
   getSingleDiagnosis: (id: number) => `/diagnostic/${id}`,
+  uploadEggDataByCoop: "/egg/upload",
+  getEggDataByCoopAndDate: (coopId: number, date: string) => `/egg/download/${coopId}/${date}`,
+  confirmConflictPostEggData: "/egg/duplicate-confirm",
+  downloadEggDataByCoopAndData: "/egg",
+  deleteEggDataByIds: "/egg/delete",
 };
 
 export const ASYNC_KEY = {
@@ -36,4 +41,5 @@ export const ASYNC_KEY = {
   sopProgress: (roleId: number, date?: string) => `progress-sop-${roleId}-${date || ""}`,
   DIAGNOSIS_KANDANG: "diagnosis-kandang",
   FCR_CHART: "fcr-chart",
+  EGG_DATA: "egg_data",
 };

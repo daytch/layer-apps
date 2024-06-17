@@ -72,7 +72,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               :nullable="true"
               :model-value="state.coopName"
               @update:model-value="
-                (value) => {
+                (value: any) => {
                   const coopId = data?.find((d) => d.label === value)?.value;
                   state.coopId = coopId;
                   state.coopName = value;

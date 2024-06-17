@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ASYNC_KEY } from "~/constants/api";
+import { UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
 import type { FormSubmitType, UserType } from "~/types/user";
 
 const FILTER_OPTIONS = [
@@ -9,8 +10,7 @@ const FILTER_OPTIONS = [
   },
 ];
 const { getAllUsers, isLoading, submitFormUser } = useUser();
-const { handleCloseModal, handleShowModal, selectedItem, showModal } =
-  useModalForm<UserType>();
+const { handleCloseModal, handleShowModal, selectedItem, showModal } = useModalForm<UserType>();
 const {
   data: users,
   pending,
@@ -35,19 +35,7 @@ const handleSubmitForm = async (data: FormSubmitType) => {
       type="button"
       icon="i-heroicons-plus"
       size="md"
-      :ui="{
-        strategy: 'override',
-        base: '',
-        padding: {
-          md: 'py-[13px] px-4',
-        },
-        color: {
-          primary: {
-            solid:
-              'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-          },
-        },
-      }"
+      :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
     >
       Tambah User
     </UButton>

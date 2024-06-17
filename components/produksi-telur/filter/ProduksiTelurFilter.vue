@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { ASYNC_KEY } from "~/constants/api";
+import { UI_PRIMARY_GHOST_BUTTON_STYLES } from "~/constants/ui";
+
 defineProps<{
   containerClass?: string;
 }>();
-const KandangOptions = [
-  { label: "Kandang Jatisari", value: "100000051" },
-  { label: "Kandang Wanaraya", value: "100000052" },
-];
-const { checkAll, HeaderVisibleToogleColumn, visibleColumns, isUpdateView } =
-  useDataTable();
+const { getKandangOptions } = useKandang();
+const { data: KandangOptions } = await useAsyncData(
+  ASYNC_KEY.KANDANG_OPTIONS,
+  async () => getKandangOptions(),
+  { lazy: true }
+);
+const { checkAll, HeaderVisibleToogleColumn, visibleColumns, isUpdateView } = useDataTable();
 const filterState = ref({
   periode: undefined,
   cage: undefined,
@@ -16,18 +20,16 @@ const showImportFileModal = ref(false);
 
 const getPeriodeText = (periodeValue: string) => {
   if (!periodeValue?.length) return "";
-  return `${getMonthName(
-    getDateMonthIndex({ type: "string", date: periodeValue })
-  )} ${periodeValue.split("/")[1]}`;
+  return `${getMonthName(getDateMonthIndex({ type: "string", date: periodeValue }))} ${
+    periodeValue.split("/")[1]
+  }`;
 };
 </script>
 
 <template>
   <div class="p-4 border rounded mb-8" :class="containerClass">
     <div class="flex justify-between space-x-4">
-      <div
-        class="space-y-2 sm:space-y-0 sm:space-x-6 flex flex-col sm:flex-row"
-      >
+      <div class="space-y-2 sm:space-y-0 sm:space-x-6 flex flex-col sm:flex-row">
         <button
           type="button"
           class="btn primary data-table-add-button"
@@ -36,11 +38,7 @@ const getPeriodeText = (periodeValue: string) => {
           <IconImport />
           <span>Import Data</span>
         </button>
-        <button
-          v-if="!isUpdateView"
-          type="button"
-          class="btn secondary data-table-add-button"
-        >
+        <button v-if="!isUpdateView" type="button" class="btn secondary data-table-add-button">
           <IconImport :stroke="'#1A8245'" />
           <span>Export Data .xls</span>
         </button>
@@ -51,16 +49,15 @@ const getPeriodeText = (periodeValue: string) => {
             size="md"
             :nullable="true"
             v-model="filterState.cage"
-            :options="KandangOptions"
+            :options="KandangOptions || []"
             placeholder="Pilih Nama Kandang"
             :input-class="'py-[10px]'"
+            :option-attribute="'label'"
+            :value-attribute="'value'"
           />
         </div>
         <div class="max-w-[166px]">
-          <DateTimePicker
-            v-model:model-value="filterState.periode"
-            :month-picker="true"
-          >
+          <DateTimePicker v-model:model-value="filterState.periode" :month-picker="true">
             <template #input="{ value }">
               <UInput
                 :ui="{
@@ -82,19 +79,9 @@ const getPeriodeText = (periodeValue: string) => {
         <UButton
           type="button"
           size="md"
-          :ui="{
-            strategy: 'override',
-            base: '',
-            padding: {
-              md: 'py-[10px] px-4',
-            },
-            color: {
-              primary: {
-                solid:
-                  'bg-white ring-1 ring-[--app-primary-100] text-[--app-primary-100] disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-              },
-            },
-          }"
+          color="primary"
+          variant="ghost"
+          :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
         >
           Tampilkan
         </UButton>
@@ -126,18 +113,14 @@ const getPeriodeText = (periodeValue: string) => {
           <IconPencilUpdate class="w-[18px] h-[18px]" :stroke="'#637381'" />
           <span>Edit Data</span>
         </button>
-        <button
-          v-else
-          class="btn primary data-table-add-button"
-          @click="isUpdateView = false"
-        >
+        <button v-else class="btn primary data-table-add-button" @click="isUpdateView = false">
           Selesai
         </button>
       </div>
     </div>
   </div>
   <AppModal v-model:model-value="showImportFileModal">
-    <ImportModal />
+    <ImportModal @handle-close-modal="showImportFileModal = false" />
   </AppModal>
 </template>
 
