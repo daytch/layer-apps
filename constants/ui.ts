@@ -49,19 +49,19 @@ export const UI_CARD_STYLES = {
   rounded: "rounded-[14px]",
   shadow: "",
   body: {
-    base: "mb-[50px]",
+    base: "mb-[50px] card-body",
     background: "",
-    padding: "px-10",
+    padding: "p-0",
   },
   header: {
-    base: "",
+    base: "card-header",
     background: "",
-    padding: "px-10 pt-10",
+    padding: "p-0",
   },
   footer: {
-    base: "",
+    base: "card-footer",
     background: "",
-    padding: "px-10 pb-10",
+    padding: "p-0",
   },
 };
 
