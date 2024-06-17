@@ -1,27 +1,69 @@
 <script setup lang="ts">
+import { ASYNC_KEY } from "~/constants/api";
+import {
+  UI_PRIMARY_BUTTON_STYLES,
+  UI_PRIMARY_GHOST_BUTTON_STYLES,
+} from "~/constants/ui";
+
 type RangeDate = {
   from: string;
   to: string;
 };
 defineEmits<{
   (e: "handleAddData"): void;
-  (e: "handleChangeCageFilter", cageName: string): void;
-  (e: "handleChangeRangeDate", range: RangeDate): void;
 }>();
+
 defineProps<{
   showAddButton: boolean;
   addButtonText?: string;
 }>();
-const KandangOptions = [
-  { label: "Kandang Jatisari", value: "kandang-jatisari" },
-  { label: "Kandang Wanaraya", value: "kandang-wanaraya" },
-];
-const filterState = reactive({
+
+const { getKandangOptions } = useKandang();
+
+const { data: kandangOptions } = await useAsyncData(
+  ASYNC_KEY.KANDANG_OPTIONS,
+  async () => getKandangOptions(),
+  { lazy: true }
+);
+const { handleNewQueryParams, queryParams } = useQueryParams();
+
+const filterState = reactive<{
+  cageName?: string | number;
+  rageDate?: Array<Date> | Array<string>;
+}>({
   cageName: undefined,
-  rageDate: [
-    new Date(),
-    new Date(new Date().setDate(new Date().getDate() + 7)),
-  ],
+  rageDate: undefined,
+});
+
+const handleApplyFilter = () => {
+  const newQuery: Record<string, string> = {};
+  if (!!filterState?.cageName?.toString()?.length) {
+    newQuery["coop"] = filterState.cageName.toString();
+  }
+  if (!!filterState?.rageDate?.[0]) {
+    newQuery["from"] = formatDate(filterState?.rageDate?.[0], "yyyy-MM-dd");
+  }
+  if (!!filterState?.rageDate?.[1]) {
+    newQuery["to"] = formatDate(filterState?.rageDate?.[1], "yyyy-MM-dd");
+  }
+
+  if (!!Object.keys(newQuery)?.length) {
+    handleNewQueryParams(newQuery);
+  }
+};
+
+onMounted(() => {
+  let range = [] as Array<Date>;
+  if (!!queryParams.value?.["from"]?.length) {
+    range.push(new Date(queryParams.value?.["from"] as string));
+  }
+  if (!!queryParams.value?.["to"]?.length) {
+    range.push(new Date(queryParams.value?.["to"] as string));
+  }
+  (filterState.cageName = (queryParams.value?.["coop"] || undefined) as
+    | string
+    | undefined),
+    (filterState.rageDate = range);
 });
 </script>
 
@@ -40,20 +82,7 @@ const filterState = reactive({
         type="button"
         icon="i-heroicons-plus"
         size="md"
-        :ui="{
-          strategy: 'override',
-          base: 'whitespace-nowrap',
-          padding: {
-            md: 'py-[13px] px-4',
-          },
-          inline: 'inline-flex items-center justify-center',
-          color: {
-            primary: {
-              solid:
-                'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-            },
-          },
-        }"
+        :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
       >
         {{ addButtonText || "" }}
       </UButton>
@@ -64,33 +93,31 @@ const filterState = reactive({
           size="md"
           :nullable="true"
           v-model="filterState.cageName"
-          :options="KandangOptions"
+          :options="
+            kandangOptions?.map((p) => ({
+              label: p?.label,
+              value: p?.value?.toString(),
+            }))
+          "
           placeholder="Pilih Nama Kandang"
           :input-class="'input-select-trigger'"
+          value-attribute="value"
+          option-attribute="label"
         />
         <div class="max-w-full lg:max-w-[248px]">
           <Datepicker
             :range="true"
             v-model:model-value="filterState.rageDate"
+            :placeholder="'Pilih Tanggal'"
           />
         </div>
         <UButton
           type="button"
           size="md"
-          :ui="{
-            strategy: 'override',
-            base: 'text-center',
-            padding: {
-              md: 'py-[13px] px-4',
-            },
-            inline: 'inline-flex items-center justify-center',
-            color: {
-              primary: {
-                solid:
-                  'bg-white ring-1 ring-[--app-primary-100] text-[--app-primary-100] disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-              },
-            },
-          }"
+          color="primary"
+          variant="ghost"
+          @click="handleApplyFilter"
+          :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
         >
           Tampilkan
         </UButton>

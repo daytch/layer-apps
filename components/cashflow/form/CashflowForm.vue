@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { object, string, number, mixed, type InferType } from "yup";
-import type { CashflowDataType } from "~/types/cashflow";
+import { object, number, mixed, type InferType } from "yup";
+import type { CashflowDataType, CashflowPayloadType } from "~/types/cashflow";
 import type { FormSubmitEvent } from "#ui/types";
+import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
 
 const props = defineProps<{
   defaultValue: CashflowDataType | undefined;
+  totalCashflowValue: number;
+  isLoading?: boolean;
 }>();
 const emits = defineEmits<{
   (e: "handleCloseModal"): void;
-  (e: "handleSuccessAddCashflow", item: CashflowDataType): void;
+  (e: "handleSuccessAddCashflow", item: CashflowPayloadType): void;
 }>();
 
 const TIPE_OPTIONS = [
@@ -17,94 +20,80 @@ const TIPE_OPTIONS = [
 ];
 
 const Schema = object({
-  periode: string().required("Periode tidak boleh kosong."),
+  periode: mixed().test("Required", "Periode tidak boleh kosong", (value) => {
+    const periodeValue = value as any;
+    return !!periodeValue?.month?.toString()?.length;
+  }),
   tipe: mixed().test(
     "Required",
     "Nama Kandang tidak boleh kosong.",
-    (value: any) => !!value?.value?.length
+    (value: any) => !!value?.length
   ),
-  amount: number()
-    .required("Jumlah tidak boleh kosong")
-    .positive("Jumlah tidak boleh negatif.")
-    .integer(),
-  balance: number()
-    .required("Saldo tidak boleh kosong")
-    .positive("Saldo tidak boleh negatif.")
-    .integer(),
+  amount: number().min(0, "Jumlah tidak boleh kosong.").typeError("Jumlah tidak valid."),
 });
 type CashflowFormType = InferType<typeof Schema>;
 
 const formState = reactive<CashflowFormType>({
-  periode: "",
+  periode: undefined,
   tipe: undefined,
   amount: 0,
-  balance: 0,
 });
+
+const balance = computed(() => {
+  let total = props.totalCashflowValue;
+  if (!formState?.amount?.toString()?.length || formState.amount <= 0) return total;
+  if (formState.tipe === props.defaultValue?.tipe) return total;
+  if (formState.tipe === "KREDIT") {
+    total = total - formState.amount;
+  } else if (formState.tipe === "DEBIT") {
+    total = total + formState.amount;
+  }
+
+  return total;
+});
+
 const form = ref();
 
 onMounted(() => {
-  if (!!props?.defaultValue) {
-    formState.amount = props?.defaultValue?.nominal;
-    formState.balance = props?.defaultValue?.total;
-    (formState.periode = props?.defaultValue?.periode),
-      (formState.tipe = TIPE_OPTIONS?.find(
-        (item) => item.value === props?.defaultValue?.tipe
-      ));
+  if (!!props.defaultValue) {
+    formState.amount = props.defaultValue.nominal;
+    formState.tipe = props.defaultValue.tipe;
+    if (isValidDate(props?.defaultValue?.periode)) {
+      const periodeDate = new Date(props.defaultValue?.periode);
+      formState.periode = {
+        month: periodeDate.getMonth(),
+        year: periodeDate.getFullYear(),
+      };
+    }
   }
 });
 
 async function onSubmit(event: FormSubmitEvent<CashflowFormType>) {
   const { data } = event;
-  console.log(data);
+  const monthValue = (data?.periode as any)?.month + 1;
+  const month = monthValue < 10 ? `0${monthValue}` : monthValue;
+  const periode = `${(data.periode as any)?.year}-${month}-01`;
+  const tipe = data.tipe as any;
+  const payload: CashflowPayloadType = {
+    periode,
+    tipe,
+    nominal: data?.amount || 0,
+  };
+  emits("handleSuccessAddCashflow", payload);
 }
 
 const onCloseModal = () => {
-  (formState.periode = ""), (formState.tipe = undefined);
-  formState.amount = 0;
-  formState.balance = 0;
   emits("handleCloseModal");
 };
 </script>
 
 <template>
-  <UForm
-    ref="form"
-    :schema="Schema"
-    :state="formState"
-    class="space-y-4"
-    @submit="onSubmit"
-  >
-    <UCard
-      :ui="{
-        ring: '',
-        divide: '',
-        rounded: 'rounded-[14px]',
-        shadow: '',
-        body: {
-          base: 'mb-[50px]',
-          background: '',
-          padding: 'px-10',
-        },
-        header: {
-          base: '',
-          background: '',
-          padding: 'px-10 pt-10',
-        },
-        footer: {
-          base: '',
-          background: '',
-          padding: 'px-10 pb-10',
-        },
-      }"
-    >
+  <UForm ref="form" :schema="Schema" :state="formState" class="space-y-4" @submit="onSubmit">
+    <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div
-          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
-        >
-          <h2
-            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
-          >
-            {{ !!defaultValue ? "Update" : "Tambah" }} Cashflow
+        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
+          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
+            {{ !!defaultValue ? "Ubah" : "Tambah" }} Cashflow
           </h2>
           <UButton
             @click="onCloseModal"
@@ -123,8 +112,9 @@ const onCloseModal = () => {
             <template #default="{ error }">
               <Datepicker
                 v-model:model-value="(formState.periode as any)"
-                placeholder="Pilih Tanggal"
+                placeholder="Pilih Periode"
                 :errorState="error"
+                month-picker
               />
             </template>
             <template #error="{ error }">
@@ -144,6 +134,8 @@ const onCloseModal = () => {
               :options="TIPE_OPTIONS"
               placeholder="Pilih Tipe"
               :input-class="'input-select-trigger'"
+              :value-attribute="'value'"
+              :option-attribute="'label'"
             />
           </UFormGroup>
         </div>
@@ -151,12 +143,7 @@ const onCloseModal = () => {
           <template #label>
             <FormLabel>Jumlah</FormLabel>
           </template>
-          <UInput
-            variant="outline"
-            placeholder="Jumlah"
-            v-model="formState.amount"
-            type="number"
-          />
+          <UInput variant="outline" placeholder="Jumlah" v-model="formState.amount" type="number" />
         </UFormGroup>
         <UFormGroup name="balance" label="Saldo Sekarang">
           <template #label>
@@ -165,7 +152,7 @@ const onCloseModal = () => {
           <UInput
             variant="outline"
             placeholder="Saldo Sekarang"
-            v-model="formState.balance"
+            :model-value="balance"
             type="number"
             :disabled="true"
           />
@@ -179,38 +166,17 @@ const onCloseModal = () => {
             color="sky"
             variant="ghost"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                sky: {
-                  ghost:
-                    'bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]',
-                },
-              },
-            }"
+            :ui="{ ...UI_GHOST_BUTTON_STYLES }"
           >
             Batal
           </UButton>
           <UButton
             type="submit"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                primary: {
-                  solid:
-                    'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-                },
-              },
-            }"
+            :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
+            :disabled="isLoading"
           >
-            Tambah
+            {{ isLoading ? "Menyimpan" : !!defaultValue ? "Ubah" : "Tambah" }}
           </UButton>
         </div>
       </template>

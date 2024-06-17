@@ -10,7 +10,6 @@ import {
 } from "~/constants/ui";
 import { UserFormSchema, type UserFormValueType } from "~/schemas/user";
 import type { UserType, FormSubmitType } from "~/types/user";
-["handleCloseModal", "handleSuccessAddUser"];
 
 const emits = defineEmits<{
   (e: "handleCloseModal"): void;
@@ -21,9 +20,8 @@ const props = defineProps<{
   isLoading?: boolean;
 }>();
 
-const { getAllKandang } = useKandang();
-const { type, handleChangeVisibility, iconClassName } =
-  usePasswordInputVisibility();
+const { getKandangOptions } = useKandang();
+const { type, handleChangeVisibility, iconClassName } = usePasswordInputVisibility();
 const formState = reactive<UserFormValueType>({
   name: "",
   password: "",
@@ -37,24 +35,16 @@ const showFieldPassword = ref(false);
 const previewAvatar = ref("/images/no_photo.png");
 const userAvatar = ref<File | null>(null);
 
-const { data } = await useAsyncData(
-  ASYNC_KEY.kandang,
-  async () => getAllKandang(),
-  {
-    lazy: true,
-    transform: (data) =>
-      !!data ? data.map(({ name, id }) => ({ label: name, value: id })) : [],
-  }
-);
+const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () => getKandangOptions(), {
+  lazy: true,
+});
 
 const showCoopField = computed(
   () =>
     !!(formState?.role as any)?.label &&
     !(formState?.role as any)?.label?.toLowerCase()?.includes("admin")
 );
-const isCoopMultiple = computed(
-  () => (formState.role as any)?.label === "Mandor"
-);
+const isCoopMultiple = computed(() => (formState.role as any)?.label === "Mandor");
 
 onMounted(() => {
   if (!!props?.formDefaultValue) {
@@ -69,9 +59,7 @@ onMounted(() => {
     formState.email = email;
     formState.phoneNumber = phone;
     formState.name = name;
-    formState.role = ROLES_OPTIONS_FORM.find(
-      ({ label }) => label === role_name
-    );
+    formState.role = ROLES_OPTIONS_FORM.find(({ label }) => label === role_name);
     if (role_name === "Mandor") {
       formState.coop = coopsDefaultValue;
     } else if (role_name === "Anak Kandang") {
@@ -127,20 +115,11 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
 </script>
 
 <template>
-  <UForm
-    class="space-y-4"
-    :schema="UserFormSchema"
-    :state="formState"
-    @submit="onSubmit"
-  >
+  <UForm class="space-y-4" :schema="UserFormSchema" :state="formState" @submit="onSubmit">
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div
-          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
-        >
-          <h2
-            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
-          >
+        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
+          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
             {{ formState.isUpdateMode ? "Edit" : "Tambah" }} Karyawan
           </h2>
           <UButton
@@ -152,9 +131,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
         </div>
       </template>
       <div class="space-y-6">
-        <div
-          class="w-[80px] h-[80px] border border-[--app-primary-100] rounded-full relative"
-        >
+        <div class="w-[80px] h-[80px] border border-[--app-primary-100] rounded-full relative">
           <img
             :src="previewAvatar"
             width="80"
@@ -166,12 +143,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
             class="absolute w-8 h-8 bg-[--app-primary-100] border-2 border-gray-400 rounded-full inline-flex items-center justify-center cursor-pointer bottom-0 -right-1"
           >
             <IconPhoto class="size-5" style="margin-top: -3px" />
-            <input
-              type="file"
-              class="hidden"
-              id="avatar"
-              @change="handleSelectFile($event)"
-            />
+            <input type="file" class="hidden" id="avatar" @change="handleSelectFile($event)" />
           </label>
         </div>
         <div class="flex flex-col md:flex-row gap-x-6 gap-y-6">
@@ -179,29 +151,17 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
             <template #label>
               <FormLabel>Nama</FormLabel>
             </template>
-            <UInput
-              variant="outline"
-              placeholder="Nama"
-              v-model="formState.name"
-            />
+            <UInput variant="outline" placeholder="Nama" v-model="formState.name" />
           </UFormGroup>
           <UFormGroup name="email" label="Email" class="flex-1">
             <template #label>
               <FormLabel>Email User</FormLabel>
             </template>
-            <UInput
-              variant="outline"
-              placeholder="Email User"
-              v-model="formState.email"
-            />
+            <UInput variant="outline" placeholder="Email User" v-model="formState.email" />
           </UFormGroup>
         </div>
         <div class="flex flex-col md:flex-row gap-x-6 gap-y-6">
-          <UFormGroup
-            name="phoneNumber"
-            label="No. Handphone (opsional)"
-            class="flex-1"
-          >
+          <UFormGroup name="phoneNumber" label="No. Handphone (opsional)" class="flex-1">
             <template #label>
               <FormLabel>No. Handphone (opsional)</FormLabel>
             </template>
@@ -214,11 +174,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
           <UFormGroup label="Password" name="password" class="flex-1">
             <UButton
               @click="showFieldPassword = true"
-              v-if="
-                formState.isUpdateMode
-                  ? formState.isUpdateMode && !showFieldPassword
-                  : false
-              "
+              v-if="formState.isUpdateMode ? formState.isUpdateMode && !showFieldPassword : false"
               type="button"
               color="primary"
               variant="ghost"
@@ -228,11 +184,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
               Ubah Password
             </UButton>
             <UInput
-              v-if="
-                formState.isUpdateMode
-                  ? formState.isUpdateMode && showFieldPassword
-                  : true
-              "
+              v-if="formState.isUpdateMode ? formState.isUpdateMode && showFieldPassword : true"
               :ui="{ icon: { trailing: { pointer: '' } } }"
               v-model="formState.password"
               :type="type"
@@ -298,9 +250,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
                 class="truncate text-[--app-dark-200]"
                 >{{ (formState?.coop as any)?.label }}</span
               >
-              <span v-else class="text-[--app-primary-text]"
-                >Pilih Kandang</span
-              >
+              <span v-else class="text-[--app-primary-text]">Pilih Kandang</span>
             </template>
           </USelectMenu>
         </UFormGroup>
@@ -323,13 +273,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
             size="md"
             :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
-            {{
-              isLoading
-                ? "Menyimpan..."
-                : !!formDefaultValue
-                ? "Update"
-                : "Tambah"
-            }}
+            {{ isLoading ? "Menyimpan..." : !!formDefaultValue ? "Update" : "Tambah" }}
           </UButton>
         </div>
       </template>

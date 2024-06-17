@@ -14,11 +14,7 @@ export const useFetchDashboard = () => {
     return fcrRepo.getCoopFCRChartByPeriod(fcrParams);
   };
 
-  const getDashboardData = async ({
-    frcParams,
-  }: {
-    frcParams: FCRChartParams;
-  }) => {
+  const getDashboardData = async ({ frcParams }: { frcParams: FCRChartParams }) => {
     const response = await Promise.all([
       getFCRChartData(frcParams),
       userRepo.getAllUsers(),
@@ -33,5 +29,5 @@ export const useFetchDashboard = () => {
     }
   };
 
-  return { getDashboardData };
+  return { getDashboardData, getFCRChartData };
 };

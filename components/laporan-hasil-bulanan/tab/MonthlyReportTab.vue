@@ -38,6 +38,6 @@ const { selectedTab, handleChangeTab } = useTab(tabs);
       </div>
     </div>
     <!-- Child -->
-    <slot name="child" :activeKey="tabs[selectedTab].key" />
+    <slot name="child" />
   </div>
 </template>

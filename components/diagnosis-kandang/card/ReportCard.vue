@@ -1,83 +1,61 @@
 <script setup lang="ts">
-import { type DiagnosisKandang } from "~/types/report";
+import { UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import { type DiagnosisKandangType } from "~/types/report";
 
-defineProps<{ report: DiagnosisKandang }>();
+defineProps<{ report: DiagnosisKandangType }>();
 
-const { showFormModal } = useHandleReportModal();
+defineEmits<{ (e: "handleShowHandleReport", report: DiagnosisKandangType): void }>();
 </script>
 
 <template>
-  <div class="w-full pr-2 py-2">
+  <div
+    class="w-full pr-2 py-2 border-b border-[--app-gray-500]"
+    :class="!!report?.progres?.length ? 'bg-white' : 'bg-[--app-danger-600]'"
+  >
     <table>
       <tbody>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
-            ID Kandang
-          </th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">ID Kandang</th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            {{ report?.cageID || "" }}
+            {{ report?.coop_id || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
-            Tanggal
-          </th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Tanggal</th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            {{ formatDate(report.date, "dd MMM yyyy") }}
+            {{ formatDate(report.trans_date, "dd MMM yyyy") }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
-            Pelapor
-          </th>
-          <td
-            class="py-2 px-6 text-left text-sm font-normal text-[#1D2433] uppercase"
-          >
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Pelapor</th>
+          <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433] uppercase">
             {{ report?.reporter || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
-            Riwayat Penyakit
-          </th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Riwayat Penyakit</th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            {{ report?.diseaseHistory || "" }}
+            {{ report?.disease || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
-            Obat yg diberikan
-          </th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Obat yg diberikan</th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            {{ report?.medicationAdministered || "" }}
+            {{ report?.medicine || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
-            Progress
-          </th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Progress</th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            <span v-if="report?.progress === 'HANDLED'">Sudah Lapor PPL</span>
-            <UButton
+            <span v-if="!!report?.progres?.length">{{ report?.progres }}</span>
+            <button
               v-else
+              class="py-1 px-2 text-sm font-normal leading-[22px] text-center inline-flex items-center justify-center text-white rounded-md bg-[--app-primary-100] ring-1 ring-[--app-primary-100]"
               type="button"
-              @click="showFormModal = true"
-              size="md"
-              :ui="{
-                strategy: 'override',
-                padding: {
-                  md: 'py-[4px] px-7',
-                },
-                color: {
-                  primary: {
-                    solid:
-                      'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-                  },
-                },
-              }"
+              @click="$emit('handleShowHandleReport', report)"
             >
-              Tambah
-            </UButton>
+              Tangani
+            </button>
           </td>
         </tr>
       </tbody>

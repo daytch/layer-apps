@@ -5,7 +5,6 @@ import type {
 } from "~/types/food-medicine-stock";
 import { ASYNC_KEY } from "~/constants/api";
 
-const toast = useToast();
 const { getAllFoodMedicineStock, isLoading, createNewStock, updateStockById } =
   useFetchFoodMedicine();
 const { data, pending } = await useAsyncData(

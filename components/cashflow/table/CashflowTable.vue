@@ -10,16 +10,15 @@ defineEmits<{
   (e: "handleShowUpdateModal", item: CashflowDataType): void;
 }>();
 
-const { handleDeleteCashflowById, isLoading } = useFetchCashflow();
-const showDeleteConfirmModal = ref(false);
-const selectedCashflow = ref<CashflowDataType | undefined>(undefined);
+const { handleDeleteCashflow, isLoading } = useFetchCashflow();
+const { handleShowModal, handleCloseModal, selectedItem, showModal } =
+  useModalForm<CashflowDataType>();
 
-const handleDeleteCashflow = async () => {
-  if (!!selectedCashflow.value?.id) {
-    showDeleteConfirmModal.value = false;
-    await handleDeleteCashflowById(selectedCashflow.value.id);
+const handleDeleteCashflowById = async () => {
+  if (!!selectedItem?.value?.id) {
+    await handleDeleteCashflow(selectedItem.value.id);
+    handleCloseModal();
   }
-  selectedCashflow.value = undefined;
 };
 </script>
 
@@ -28,29 +27,19 @@ const handleDeleteCashflow = async () => {
     <table class="w-full">
       <thead>
         <tr>
-          <th
-            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
-          >
+          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
             Tanggal
           </th>
-          <th
-            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
-          >
+          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
             Periode
           </th>
-          <th
-            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
-          >
+          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
             Tipe
           </th>
-          <th
-            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
-          >
+          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
             Jumlah
           </th>
-          <th
-            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
-          >
+          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
             Total Saldo
           </th>
           <th
@@ -89,9 +78,7 @@ const handleDeleteCashflow = async () => {
             <td
               class="p-4 bg-white text-left text-sm font-normal leading-[22px]"
               :class="
-                (item?.nominal || 0) > 50000
-                  ? 'text-[--app-blue-100]'
-                  : 'text-[--app-danger-300]'
+                (item?.nominal || 0) > 50000 ? 'text-[--app-blue-100]' : 'text-[--app-danger-300]'
               "
             >
               {{ formatMoney(item?.nominal || 0) }}
@@ -105,21 +92,10 @@ const handleDeleteCashflow = async () => {
               class="p-4 bg-white text-left text-sm font-normal leading-[22px] text-[--app-dark-100] uppercase"
             >
               <div class="flex items-center space-x-5">
-                <button
-                  type="button"
-                  @click="$emit('handleShowUpdateModal', item)"
-                >
+                <button type="button" @click="$emit('handleShowUpdateModal', item)">
                   <IconPencilUpdate :width="24" :height="24" />
                 </button>
-                <button
-                  type="button"
-                  @click="
-                    () => [
-                      (selectedCashflow = item),
-                      (showDeleteConfirmModal = true),
-                    ]
-                  "
-                >
+                <button type="button" @click="handleShowModal(item)">
                   <IconTrash :width="24" :height="24" />
                 </button>
               </div>
@@ -138,14 +114,14 @@ const handleDeleteCashflow = async () => {
   </div>
   <DeleteConfirmModal
     title="Hapus Cashflow"
-    v-model="showDeleteConfirmModal"
-    @handle-confirm-delete="handleDeleteCashflow"
+    v-model="showModal"
+    @handle-confirm-delete="handleDeleteCashflowById"
     :is-loading="isLoading"
   >
     <template #description>
       <p class="delete-confirm-description">
         Apakah anda yakin, untuk menghapus periode:<br />
-        {{ formatDate(selectedCashflow?.periode || "", "MMMM yyyy") }}
+        {{ formatDate(selectedItem?.periode || "", "MMMM yyyy") }}
       </p>
     </template>
   </DeleteConfirmModal>
