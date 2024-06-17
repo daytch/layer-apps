@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ASYNC_KEY } from "~/constants/api";
+import { UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
 import type { KandangPayload, KandangType } from "~/types/kandang";
 
-const { getAllKandang, createKandang, updateSelectedKandang, isLoading } =
-  useKandang();
+const { getAllKandang, createKandang, updateSelectedKandang, isLoading } = useKandang();
 const { data, pending, error } = await useAsyncData(
   ASYNC_KEY.kandang,
   async () => getAllKandang(),
@@ -26,10 +26,7 @@ const {
   selectedItem: selectedKandang,
 } = useModalForm<KandangType>();
 
-const handleSubmitForm = async (
-  data: KandangPayload,
-  id?: number | undefined
-) => {
+const handleSubmitForm = async (data: KandangPayload, id?: number | undefined) => {
   handleCloseModal();
   if (id) {
     await updateSelectedKandang(id, data);
@@ -49,19 +46,7 @@ const handleSubmitForm = async (
       type="button"
       icon="i-heroicons-plus"
       size="md"
-      :ui="{
-        strategy: 'override',
-        base: '',
-        padding: {
-          md: 'py-[13px] px-4',
-        },
-        color: {
-          primary: {
-            solid:
-              'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-          },
-        },
-      }"
+      :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
     >
       Tambah Kandang
     </UButton>
@@ -84,9 +69,7 @@ const handleSubmitForm = async (
     <KandangModalForm
       :isLoading="isLoading"
       @handle-close-modal="handleCloseModal"
-      @handle-success-add-kandang="
-        (data) => handleSubmitForm(data, selectedKandang?.id)
-      "
+      @handle-success-add-kandang="(data) => handleSubmitForm(data, selectedKandang?.id)"
       :initial-value="selectedKandang"
     />
   </AppModal>
