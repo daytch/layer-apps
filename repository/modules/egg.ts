@@ -8,8 +8,9 @@ type EggAPIReponse<T> = Promise<APIResponse<T>>;
 export const eggRepository = <T>(fetch: FetchType<T>) => ({
   async uploadEggDataByCoop(uploadPayload: EggUploadDataPayload): EggAPIReponse<any> {
     const formData = new FormData();
+    formData.append("coopId", uploadPayload.coopId.toString());
     formData.append("file", uploadPayload.file);
-    return fetch(API_LIST.uploadEggDataByCoop + `/${uploadPayload.coopId}`, {
+    return fetch(API_LIST.uploadEggDataByCoop, {
       method: "POST",
       headers: {
         Accept: "application/json",

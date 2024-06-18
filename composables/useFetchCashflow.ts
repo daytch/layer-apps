@@ -20,7 +20,7 @@ export const useFetchCashflow = () => {
   };
 
   const handleErrorUpdateCashflowData = (message: string) => {
-    handleShowToast({ type: "SUCCESS", message });
+    handleShowToast({ type: "ERROR", message });
   };
 
   const handleCreateNewCashflow = async (createPayload: CashflowPayloadType) => {
