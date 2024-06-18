@@ -1,23 +1,32 @@
 <script setup lang="ts">
-import { mixed, type InferType, string, object } from "yup";
+import { mixed, type InferType, string, object, number } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
+import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import { ASYNC_KEY } from "~/constants/api";
+import type { DiagnosisKandangPayload } from "~/types/report";
 
 const emits = defineEmits<{
   (e: "handleCloseModal"): void;
-  (e: "handleSubmitForm", data: FormValueType): void;
+  (e: "handleSubmitForm", data: DiagnosisKandangPayload): void;
+}>();
+defineProps<{
+  isLoading?: boolean;
 }>();
 
 const schema = object({
-  medicine: mixed().test(
-    "Required",
-    "Obat tidak boleh kosong.",
-    (value: any) => !!value?.value?.length
-  ),
-  dosis: string().required("Dosis tidak boleh kosong."),
+  medicine: mixed().test("required", "Jenis obat tidak boleh kosong", (value) => {
+    const jenisObatValue = value as number;
+    return !!jenisObatValue?.toString().length;
+  }),
+  dosis: mixed().test("required", "Dosis obat tidak boleh kosong", (value) => {
+    const dosisObatValue = value as number;
+
+    return dosisObatValue > 0 && !!dosisObatValue?.toString().length;
+  }),
   progress: mixed().test(
     "Required",
     "Progress tidak boleh kosong.",
-    (value: any) => !!value?.value?.length
+    (value: any) => !!value?.length
   ),
 });
 
@@ -29,57 +38,42 @@ const formState = reactive({
   progress: undefined,
 });
 
-const KandangOptions = [
-  { label: "Kandang Jatisari", value: "100000051" },
-  { label: "Kandang Wanaraya", value: "100000052" },
+const { getAllFoodMedicineStock } = useFetchFoodMedicine();
+
+const { data: foods } = await useAsyncData(
+  ASYNC_KEY.foodMedicine,
+  async () => getAllFoodMedicineStock(),
+  { lazy: true }
+);
+const PROGRESS_OPTIONS = [
+  {
+    label: "Belum Lapor PPL",
+    value: "Belum Lapor PPL",
+  },
+  {
+    label: "Sudah Lapor PPL",
+    value: "Sudah Lapor PPL",
+  },
 ];
 const form = ref();
 
 async function onSubmit(event: FormSubmitEvent<FormValueType>) {
   const { data } = event;
-  emits("handleSubmitForm", data);
-  emits("handleCloseModal");
+  const payload: DiagnosisKandangPayload = {
+    medicineId: data.medicine as any,
+    dose: data.dosis as any,
+    status: data.progress as any,
+  };
+  emits("handleSubmitForm", payload);
 }
 </script>
 
 <template>
-  <UForm
-    ref="form"
-    :schema="schema"
-    :state="formState"
-    class="space-y-4"
-    @submit="onSubmit"
-  >
-    <UCard
-      :ui="{
-        ring: '',
-        divide: '',
-        rounded: 'rounded-[14px]',
-        shadow: '',
-        body: {
-          base: 'mb-[50px]',
-          background: '',
-          padding: 'px-10',
-        },
-        header: {
-          base: '',
-          background: '',
-          padding: 'px-10 pt-10',
-        },
-        footer: {
-          base: '',
-          background: '',
-          padding: 'px-10 pb-10',
-        },
-      }"
-    >
+  <UForm ref="form" :schema="schema" :state="formState" class="space-y-4" @submit="onSubmit">
+    <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div
-          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
-        >
-          <h2
-            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
-          >
+        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
+          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
             Tangani Laporan
           </h2>
           <UButton
@@ -100,9 +94,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               size="md"
               :nullable="true"
               v-model="formState.medicine"
-              :options="KandangOptions"
+              :options="foods || []"
               placeholder="Pilih Obat yg diberikan"
               :input-class="'input-select-trigger'"
+              :value-attribute="'id'"
+              :option-attribute="'name'"
             />
           </UFormGroup>
           <UFormGroup name="dosis" label="Dosis yg diberikan" class="flex-1">
@@ -112,7 +108,9 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             <UInput
               variant="outline"
               placeholder="Dosis yg diberikan"
+              type="number"
               v-model="formState.dosis"
+              :min="0"
             />
           </UFormGroup>
         </div>
@@ -125,9 +123,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               size="md"
               :nullable="true"
               v-model="formState.progress"
-              :options="KandangOptions"
+              :options="PROGRESS_OPTIONS"
               placeholder="Pilih Progress"
               :input-class="'input-select-trigger'"
+              :value-attribute="'value'"
+              :option-attribute="'label'"
             />
           </UFormGroup>
           <div class="opacity-0 invisible flex-1 h-0"></div>
@@ -141,38 +141,17 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             color="sky"
             variant="ghost"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                sky: {
-                  ghost:
-                    'bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]',
-                },
-              },
-            }"
+            :ui="{ ...UI_GHOST_BUTTON_STYLES }"
           >
             Batal
           </UButton>
           <UButton
+            :disabled="isLoading"
             type="submit"
             size="md"
-            :ui="{
-              strategy: 'override',
-              padding: {
-                md: 'py-[13px] px-7',
-              },
-              color: {
-                primary: {
-                  solid:
-                    'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-                },
-              },
-            }"
+            :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
-            Tambah
+            {{ isLoading ? "Menyimpang..." : "Tambah" }}
           </UButton>
         </div>
       </template>

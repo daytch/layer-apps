@@ -7,6 +7,9 @@ const TOAST_BASE_UI = {
   progress: {
     base: "hidden",
   },
+  icon: {
+    base: "hidden",
+  },
 };
 
 export const TOAST_SUCCESS_UI = {
@@ -46,19 +49,19 @@ export const UI_CARD_STYLES = {
   rounded: "rounded-[14px]",
   shadow: "",
   body: {
-    base: "mb-[50px]",
+    base: "mb-[50px] card-body",
     background: "",
-    padding: "px-10",
+    padding: "p-0",
   },
   header: {
-    base: "",
+    base: "card-header",
     background: "",
-    padding: "px-10 pt-10",
+    padding: "p-0",
   },
   footer: {
-    base: "",
+    base: "card-footer",
     background: "",
-    padding: "px-10 pb-10",
+    padding: "p-0",
   },
 };
 
@@ -69,8 +72,7 @@ export const UI_GHOST_BUTTON_STYLES = {
   },
   color: {
     sky: {
-      ghost:
-        "bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]",
+      ghost: "bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]",
     },
   },
 };

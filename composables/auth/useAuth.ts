@@ -1,19 +1,14 @@
-import type {
-  LoginPayload,
-  LoginResponse,
-  LoginResponseWithoutToken,
-} from "~/types/auth";
+import type { LoginPayload, LoginResponse, LoginResponseWithoutToken } from "~/types/auth";
 import { useAuthUser, type ReturnAuthUser } from "./useAuthUser";
 import { authRepository } from "~/repository/modules/auth";
 import { useAuthCookie } from "./useAuthCookie";
-import { TOAST_ERROR_UI } from "~/constants/ui";
 
 export const useAuth = () => {
   const { $api } = useNuxtApp();
   const authRepo = authRepository($api);
   const authUser = useAuthUser();
-  const { setToken, accessToken } = useAuthCookie();
-  const toast = useToast();
+  const { setToken } = useAuthCookie();
+  const { handleShowToast } = useShowToast();
 
   const setUser = (userState: ReturnAuthUser) => {
     authUser.value = userState;
@@ -38,10 +33,7 @@ export const useAuth = () => {
         return authUser;
       }
     } catch (error: any) {
-      toast.add({
-        title: error?.data?.message || "",
-        ui: { ...TOAST_ERROR_UI },
-      });
+      handleShowToast({ type: "ERROR", message: error?.data?.message });
       setUser({
         loading: false,
         error: true,

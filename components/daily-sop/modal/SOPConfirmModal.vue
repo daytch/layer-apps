@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UI_PRIMARY_BUTTON_STYLES, UI_GHOST_BUTTON_STYLES } from "~/constants/ui";
 import type { SOPDataType } from "~/types/sop";
 defineEmits<{
   (e: "handleCloseModal"): void;
@@ -18,9 +19,7 @@ defineProps<{ selectedSOPItem?: SOPDataType; isLoading?: boolean }>();
       height="120"
       class="block mx-auto mb-6"
     />
-    <h3
-      class="text-lg text-black font-semibold leading-[26px] mb-3 text-center"
-    >
+    <h3 class="text-lg text-black font-semibold leading-[26px] mb-3 text-center">
       Sudah mengerjakan SOP ini?
     </h3>
     <p
@@ -36,17 +35,7 @@ defineProps<{ selectedSOPItem?: SOPDataType; isLoading?: boolean }>();
       block
       size="md"
       :ui="{
-        strategy: 'override',
-        base: 'uppercase',
-        padding: {
-          md: 'py-[13px] px-7',
-        },
-        color: {
-          primary: {
-            solid:
-              'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-          },
-        },
+        ...UI_PRIMARY_BUTTON_STYLES,
       }"
     >
       {{ isLoading ? "MENYIMPAN.." : "SUDAH" }}
@@ -59,18 +48,7 @@ defineProps<{ selectedSOPItem?: SOPDataType; isLoading?: boolean }>();
       block
       class="mt-[10px]"
       size="md"
-      :ui="{
-        strategy: 'override',
-        base: 'uppercase',
-        padding: {
-          md: 'py-[13px] px-7',
-        },
-        color: {
-          sky: {
-            ghost: 'bg-white text-[--app-dark-100] disabled:cursor-not-allowed',
-          },
-        },
-      }"
+      :ui="{ ...UI_GHOST_BUTTON_STYLES }"
     >
       BATAL
     </UButton>

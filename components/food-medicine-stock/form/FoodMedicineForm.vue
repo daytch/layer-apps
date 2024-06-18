@@ -35,16 +35,12 @@ const formState = reactive<FormValueObat>({
   SKU: "",
 });
 const authUser = useAuthUser();
-const { getAllKandang } = useKandang();
+const { getKandangOptions } = useKandang();
 const { data } = await useAsyncData(
-  ASYNC_KEY.kandang,
-  async () => getAllKandang(),
+  ASYNC_KEY.KANDANG_OPTIONS,
+  async () => getKandangOptions(),
   {
     lazy: true,
-    transform: (data): Array<SelectOptionType> => {
-      if (!data) return [];
-      return data.map(({ name, id }) => ({ label: name, value: id }));
-    },
   }
 );
 
@@ -97,7 +93,7 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
           <h2
             class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
           >
-            Tambah Data
+            {{ !!defaultValue ? "Ubah" : "Tambah" }} Data
           </h2>
           <UButton
             @click="$emit('handleHideModal')"

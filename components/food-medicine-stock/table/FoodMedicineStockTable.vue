@@ -9,10 +9,6 @@ type Column = {
 };
 const columns: Array<Column> = [
   {
-    key: "createdAt",
-    label: "Tanggal",
-  },
-  {
     key: "name",
     label: "Nama Kandang",
   },
@@ -86,11 +82,6 @@ const handleDeleteStock = async () => {
         </template>
         <template v-else-if="!loading && !!items.length">
           <tr v-for="item in items" class="border-b">
-            <td
-              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
-            >
-              {{ formatDate(item?.createdAt) }}
-            </td>
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
             >

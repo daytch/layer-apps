@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import VueDatePicker, { type ModelValue } from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { id } from "date-fns/locale";
 
 defineEmits<{
   (e: "update:modelValue", value: ModelValue): void;
@@ -15,7 +16,10 @@ defineProps<{
   <VueDatePicker
     :model-value="modelValue"
     @update:model-value="(value) => $emit('update:modelValue', value)"
+    :select-text="'Pilih'"
+    :cancel-text="'Batal'"
     v-bind="$attrs"
+    :format-locale="id"
   >
     <template #dp-input="props">
       <slot name="input" v-bind="props" />

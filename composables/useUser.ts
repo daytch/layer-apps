@@ -1,12 +1,12 @@
 import { ASYNC_KEY } from "~/constants/api";
-import { TOAST_ERROR_UI, TOAST_SUCCESS_UI } from "~/constants/ui";
 import { userRepository } from "~/repository/modules/user";
-import type { CreateUserPayload, FormSubmitType } from "~/types/user";
+import type { CreateUserPayload, FormSubmitType, UserType } from "~/types/user";
 
 export const useUser = () => {
   const { $api } = useNuxtApp();
-  const toast = useToast();
+  const { handleShowToast } = useShowToast();
   const userRepo = userRepository($api);
+  const { data } = useNuxtData<Array<UserType>>(ASYNC_KEY.user);
   const isLoading = ref(false);
   const isError = ref(false);
 
@@ -16,25 +16,13 @@ export const useUser = () => {
   };
 
   const handleSuccess = async (message: string) => {
-    toast.add({
-      icon: "i-heroicons-check-circle-16-solid",
-      title: message,
-      ui: {
-        ...TOAST_SUCCESS_UI,
-      },
-    });
+    handleShowToast({ type: "SUCCESS", message });
     await refreshNuxtData(ASYNC_KEY.user);
   };
 
   const handleError = (message: string) => {
     isError.value = true;
-    toast.add({
-      icon: "i-heroicons-check-circle-16-solid",
-      title: message,
-      ui: {
-        ...TOAST_ERROR_UI,
-      },
-    });
+    handleShowToast({ type: "ERROR", message });
   };
 
   const uploadUserAvatar = (file: File) => userRepo.uploadUserAvatar(file);
@@ -43,6 +31,16 @@ export const useUser = () => {
     const response = await userRepo.getAllUsers();
     if (response?.data) {
       return response?.data;
+    }
+  };
+
+  const getAllUserOptions = async () => {
+    if (!!data.value?.length) {
+      return data.value?.map((d) => ({ label: d.name, value: d.id }));
+    }
+    const response = await getAllUsers();
+    if (!!response?.length) {
+      return response.map((d) => ({ label: d.name, value: d.id }));
     }
   };
 
@@ -60,10 +58,7 @@ export const useUser = () => {
     }
   };
 
-  const updateUserById = async (
-    id: number,
-    updateUserPayload: CreateUserPayload
-  ) => {
+  const updateUserById = async (id: number, updateUserPayload: CreateUserPayload) => {
     initialFetch();
     try {
       const response = await userRepo.updateUserById(id, updateUserPayload);
@@ -120,18 +115,14 @@ export const useUser = () => {
           if (!!data?.path?.length) {
             parsingPayload["avatar"] = data?.path;
           }
-          id !== undefined
-            ? updateUserById(id, parsingPayload)
-            : createNewUser(parsingPayload);
+          id !== undefined ? updateUserById(id, parsingPayload) : createNewUser(parsingPayload);
         })
         .catch(() => {
           handleError("Gagal mengupload avatar.");
           isLoading.value = false;
         });
     } else {
-      id !== undefined
-        ? updateUserById(id, parsingPayload)
-        : createNewUser(parsingPayload);
+      id !== undefined ? updateUserById(id, parsingPayload) : createNewUser(parsingPayload);
     }
   };
 
@@ -141,5 +132,6 @@ export const useUser = () => {
     isError,
     deleteUserById,
     submitFormUser,
+    getAllUserOptions,
   };
 };

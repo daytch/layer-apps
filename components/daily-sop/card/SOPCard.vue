@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import { UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
 import type { RoleType } from "~/types/dashboard-menu";
-import type { SOPDataType } from "~/types/sop";
+import type { SOPByUserDataType } from "~/types/sop";
 type Role = Extract<RoleType, "Anak Kandang" | "Mandor">;
 
 defineProps<{
   role: Role;
-  sopItem: SOPDataType;
+  sopItem: SOPByUserDataType;
 }>();
 
-defineEmits<{ (e: "handleSelectItem", sopItem: SOPDataType): void }>();
+defineEmits<{ (e: "handleSelectItem", sopItem: SOPByUserDataType): void }>();
 </script>
 
 <template>
@@ -24,25 +25,13 @@ defineEmits<{ (e: "handleSelectItem", sopItem: SOPDataType): void }>();
     </div>
     <UButton
       type="button"
+      :disabled="sopItem.status"
       @click="$emit('handleSelectItem', sopItem)"
       block
       size="md"
-      :ui="{
-        strategy: 'override',
-        base: 'uppercase',
-        padding: {
-          md: 'py-[13px] px-7',
-        },
-        color: {
-          primary: {
-            solid:
-              'bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed',
-          },
-        },
-      }"
+      :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
     >
-      LAKUKAN
-      <!-- {{ isDone ? "SELESAI" : "LAKUKAN" }} -->
+      {{ sopItem.status ? "SELESAI" : "LAKUKAN" }}
     </UButton>
   </div>
 </template>

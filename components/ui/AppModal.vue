@@ -22,6 +22,7 @@ const isOpen = computed({
       width: 'w-full max-w-[644px] md:max-w-[644px]',
       container: 'flex min-h-full items-center justify-center text-center',
     }"
+    v-bind="$attrs"
   >
     <slot />
   </UModal>

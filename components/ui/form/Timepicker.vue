@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import VueDatePicker, { type TimeModel } from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { id } from "date-fns/locale";
 
 defineEmits<{
   (e: "update:modelValue", value: any): void;
@@ -20,6 +21,10 @@ defineProps<{
     time-picker
     range
     @update:model-value="(value) => $emit('update:modelValue', value)"
+    :select-text="'Pilih'"
+    :cancel-text="'Batal'"
+    v-bind="$attrs"
+    :format-locale="id"
   >
     <template #dp-input="{ value }">
       <input

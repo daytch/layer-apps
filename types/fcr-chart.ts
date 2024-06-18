@@ -4,6 +4,6 @@ export type FCRChartDataType = {
 };
 
 export type FCRChartParams = {
-  coopId: number | undefined;
+  coopId?: number | undefined;
   period?: string;
 };

@@ -1,7 +1,7 @@
 import type {
-  CashflowDataType,
   CashflowPayloadType,
   ResponseCashflowDataType,
+  CashflowUpdateResponseType,
 } from "~/types/cashflow";
 import type { APIResponse } from "~/types/api";
 import type { FetchType } from "~/types/fetch-repo";
@@ -15,9 +15,7 @@ export const cashflowRepository = <T>(fetch: FetchType<T>) => ({
       method: "GET",
     });
   },
-  async createNewCashflow(
-    data: CashflowPayloadType
-  ): CashflowResponse<CashflowDataType> {
+  async createNewCashflow(data: CashflowPayloadType): CashflowResponse<CashflowUpdateResponseType> {
     return fetch(API_LIST.cashflow, {
       method: "POST",
       body: JSON.stringify(data),
@@ -26,13 +24,13 @@ export const cashflowRepository = <T>(fetch: FetchType<T>) => ({
   async updateCashflowById(
     id: number,
     data: CashflowPayloadType
-  ): CashflowResponse<CashflowDataType> {
+  ): CashflowResponse<CashflowUpdateResponseType> {
     return fetch(API_LIST.cashflowById(id), {
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
-  async deleteCashflowById(id: number): CashflowResponse<CashflowDataType> {
+  async deleteCashflowById(id: number): CashflowResponse<CashflowUpdateResponseType> {
     return fetch(API_LIST.cashflowById(id), {
       method: "DELETE",
     });

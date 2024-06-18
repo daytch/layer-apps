@@ -1,12 +1,11 @@
 import { ASYNC_KEY } from "~/constants/api";
-import { TOAST_ERROR_UI, TOAST_SUCCESS_UI } from "~/constants/ui";
 import { sopRepository } from "~/repository/modules/sop";
 import type {
   SOPDataType,
   SOPFormPayloadType,
   SOPCompletePayloadType,
+  SOPByUserDataType,
 } from "~/types/sop";
-import { ROLES_OPTIONS_FORM } from "~/constants/role";
 
 const items = [
   {
@@ -21,12 +20,13 @@ const items = [
 
 export const useFetchSOP = () => {
   const { $api } = useNuxtApp();
-  const toast = useToast();
+  const { handleShowToast } = useShowToast();
   const sopRepo = sopRepository($api);
   const isLoading = ref(false);
   const isError = ref(false);
   const { data: sopsAnakKandang } = useNuxtData(ASYNC_KEY.SOP_ANAK_KANDANG);
   const { data: sopsMandor } = useNuxtData(ASYNC_KEY.SOP_MANDOR);
+  const { data: sopByUser } = useNuxtData<Array<SOPByUserDataType>>(ASYNC_KEY.SOP_BY_USER);
   const previousSops = ref<Array<any> | undefined>(undefined);
   const { selectedTab } = useAdminSOP(items);
 
@@ -44,13 +44,7 @@ export const useFetchSOP = () => {
     const index = selectedTab.value as keyof typeof ROLE;
     const roleType = ROLE[index];
 
-    toast.add({
-      icon: "i-heroicons-check-circle-16-solid",
-      title: message,
-      ui: {
-        ...TOAST_SUCCESS_UI,
-      },
-    });
+    handleShowToast({ type: "SUCCESS", message });
 
     roleType === "Anak Kandang"
       ? await refreshNuxtData(ASYNC_KEY.SOP_ANAK_KANDANG)
@@ -65,13 +59,7 @@ export const useFetchSOP = () => {
       ? (sopsAnakKandang.value = previousSops.value || [])
       : (sopsMandor.value = previousSops.value || []);
     previousSops.value = undefined;
-    toast.add({
-      icon: "i-heroicons-check-circle-16-solid",
-      title: message,
-      ui: {
-        ...TOAST_ERROR_UI,
-      },
-    });
+    handleShowToast({ type: "ERROR", message });
   };
 
   const getAllSopsByRoleId = async (roleId: number | undefined) => {
@@ -105,9 +93,7 @@ export const useFetchSOP = () => {
         ? await sopRepo.updateSOPById(id, { ...restPayload, roleId })
         : await sopRepo.createNewSOP({ ...restPayload, roleId });
       if (!!response?.data) {
-        handleSuccess(
-          `Berhasil ${isUpdateMode ? "mengubah" : "menyimpan"} data.`
-        );
+        handleSuccess(`Berhasil ${isUpdateMode ? "mengubah" : "menyimpan"} data.`);
       }
     } catch (error) {
       handleError(`Gagal ${isUpdateMode ? "mengubah" : "menyimpan"} data.`);
@@ -132,16 +118,29 @@ export const useFetchSOP = () => {
 
   const completeSOPById = async (completePayload: SOPCompletePayloadType) => {
     initialFetch();
+    let previousSopByUser = (sopByUser.value || []) as SOPByUserDataType[];
+    sopByUser.value = previousSopByUser.map((sop) =>
+      sop.id === completePayload.sopId ? { ...sop, status: true } : sop
+    );
     try {
       const response = await sopRepo.completeSOPById(completePayload);
       if (!!response?.data) {
-        handleSuccess("Sukses menyimpan laporan.");
+        handleShowToast({ type: "SUCCESS", message: "Berhasil menyimpan progress." });
+        previousSopByUser = [];
         return response;
       }
     } catch (error) {
-      handleError("Gagal menyimpan laporan.");
+      sopByUser.value = previousSopByUser;
+      handleShowToast({ type: "ERROR", message: "Gagal menyimpan progress." });
     } finally {
       isLoading.value = false;
+    }
+  };
+
+  const getSOPByUser = async () => {
+    const response = await sopRepo.getSOPByUser();
+    if (!!response?.data) {
+      return response.data;
     }
   };
 
@@ -153,5 +152,6 @@ export const useFetchSOP = () => {
     deleteSOPById,
     checkSOPProgress,
     completeSOPById,
+    getSOPByUser,
   };
 };

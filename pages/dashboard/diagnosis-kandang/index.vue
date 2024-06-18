@@ -10,7 +10,10 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="content-wrapper-height pb-10 pt-[14px] bg-white">
-    <DiagnosisKandangTemplate />
+  <div class="content-wrapper-height pb-10 pt-[14px] bg-[--app-gray-200]">
+    <DashboardContainer>
+      <DashboardHeadingTitle>Diagnosis Kandang</DashboardHeadingTitle>
+      <DiagnosisKandangTemplate />
+    </DashboardContainer>
   </div>
 </template>
