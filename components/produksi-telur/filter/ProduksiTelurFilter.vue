@@ -4,14 +4,19 @@ import { UI_PRIMARY_GHOST_BUTTON_STYLES } from "~/constants/ui";
 
 defineProps<{
   containerClass?: string;
+  isFetchingData?: boolean;
 }>();
+
 const { getKandangOptions } = useKandang();
+const { queryParams, handleNewQueryParams } = useQueryParams();
+
 const { data: KandangOptions } = await useAsyncData(
   ASYNC_KEY.KANDANG_OPTIONS,
   async () => getKandangOptions(),
   { lazy: true }
 );
 const { checkAll, HeaderVisibleToogleColumn, visibleColumns, isUpdateView } = useDataTable();
+
 const filterState = ref({
   periode: undefined,
   cage: undefined,
@@ -24,6 +29,44 @@ const getPeriodeText = (periodeValue: string) => {
     periodeValue.split("/")[1]
   }`;
 };
+
+const handleApplyFilter = () => {
+  const newQuery: Record<string, string> = {};
+  if (!!filterState.value.cage) {
+    newQuery["coopId"] = filterState.value.cage;
+  }
+  if (!!filterState.value.periode) {
+    const month = (filterState.value.periode as any).month + 1;
+    newQuery["period"] = `${(filterState.value.periode as any)?.year}-${
+      month < 10 ? "0" + month : month
+    }-01`;
+  }
+
+  if (!!Object.keys(newQuery)?.length) {
+    handleNewQueryParams(newQuery);
+  }
+};
+
+onMounted(() => {
+  const queryCoopId = queryParams.value["coopId"];
+  const queryPeriod = queryParams.value["period"];
+  let filter: Record<string, any> = {
+    periode: undefined,
+    cage: undefined,
+  };
+  if (!!queryCoopId?.toString()?.length && !isNaN(Number(queryCoopId?.toString()))) {
+    filter["cage"] = Number(queryCoopId.toString());
+  }
+  if (!!queryPeriod?.toString().length && isValidDate(queryPeriod?.toString())) {
+    const appliedDate = new Date(queryPeriod?.toString());
+
+    filter["periode"] = {
+      month: appliedDate.getMonth(),
+      year: appliedDate.getFullYear(),
+    };
+  }
+  filterState.value = filter as any;
+});
 </script>
 
 <template>
@@ -78,12 +121,14 @@ const getPeriodeText = (periodeValue: string) => {
         </div>
         <UButton
           type="button"
+          :disabled="isFetchingData"
           size="md"
           color="primary"
           variant="ghost"
+          @click="handleApplyFilter"
           :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
         >
-          Tampilkan
+          {{ isFetchingData ? "Menampilkan.." : "Tampilkan" }}
         </UButton>
         <div class="w-[1px] h-12 bg-[--app-gray-500]" />
         <UPopover mode="click">
