@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { EggResponseDataType } from "~/types/egg";
+
+defineProps<{ eggData: Array<EggResponseDataType>; isLoadingData?: boolean }>();
 const { checkVisibleColumn, isUpdateView } = useDataTable();
 const dummy = {
   date: "1 Jan 2024",
@@ -209,140 +212,133 @@ const dummy = {
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(item, index) in Array(10).fill(dummy)"
-          class="bg-white even:bg-[#F8F9FC]"
-        >
-          <td
-            v-if="isUpdateView"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            <UCheckbox />
-          </td>
-          <td
-            v-if="checkVisibleColumn('date')"
-            class="whitespace-nowrap p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item.date }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('age_day')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ index + 1 }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('age_week')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.age_week }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('pop')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.pop }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('m')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.m }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('afk')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.afk }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('sell')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.sell }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('last_pop')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.last_pop }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.foodType }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.foodKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.foodFIT }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.nItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.pItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.BSItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.totalItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.nKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.pKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.BSKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.totalKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.HD }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.FCR }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.eggWeight }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.ovk }}
-          </td>
-        </tr>
+        <template v-if="isLoadingData">
+          <tr class="border-b border-b-[--app-gray-500]">
+            <td
+              :colspan="23"
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              <LoadingSpinner />
+            </td>
+          </tr>
+        </template>
+        <template v-else-if="!isLoadingData && !!eggData.length">
+          <tr v-for="(item, index) in eggData" class="bg-white even:bg-[#F8F9FC]">
+            <td
+              v-if="isUpdateView"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              <UCheckbox />
+            </td>
+            <td
+              v-if="checkVisibleColumn('date')"
+              class="whitespace-nowrap p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{
+                !!item?.transDate?.length && isValidDate(item?.transDate)
+                  ? formatDate(item.transDate, "dd MMM yyyy")
+                  : item.transDate
+              }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('age_day')"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item.ageInDay }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('age_week')"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.ageInWeek }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('pop')"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.pop }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('m')"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.m }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('afk')"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.afk }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('sell')"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.sell }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('last_pop')"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.finalPop }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.feedType }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.feedWeight }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.feedFIT }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodPieceN }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodPieceP }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodPieceBS }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodTotalPiece }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodWeightN }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodWeightP }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodWeightBS }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.prodTotalWeight }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.HD }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.FCR }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.EggWeight }}
+            </td>
+            <td class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]">
+              {{ item?.OVK }}
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr class="border-b border-b-[--app-gray-500]">
+            <td
+              :colspan="23"
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              <NoDataStatus>Data Telur tidak ditemukan.</NoDataStatus>
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>

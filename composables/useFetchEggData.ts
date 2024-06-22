@@ -1,5 +1,5 @@
 import { eggRepository } from "~/repository/modules/egg";
-import type { EggUploadDataPayload } from "~/types/egg";
+import type { EggUploadDataPayload, GetEggParams } from "~/types/egg";
 
 export const useFetchEggData = () => {
   const { $api } = useNuxtApp();
@@ -11,6 +11,14 @@ export const useFetchEggData = () => {
   const initialFetch = () => {
     isLoading.value = true;
     isError.value = false;
+  };
+
+  const getEggDataByCoopAndPeriode = async (params: GetEggParams) => {
+    if (!params.coopId) return;
+    const response = await eggRepo.getEggDataByCoopAndPeriode(params);
+    if (!!response?.data?.length) {
+      return response.data;
+    }
   };
 
   const uploadEggDataByCoop = async (uploadPayload: EggUploadDataPayload) => {
@@ -32,5 +40,6 @@ export const useFetchEggData = () => {
   return {
     isLoading,
     uploadEggDataByCoop,
+    getEggDataByCoopAndPeriode,
   };
 };

@@ -22,10 +22,11 @@ export const API_LIST = {
   getAllDiagnosis: "/diagnostic",
   getSingleDiagnosis: (id: number) => `/diagnostic/${id}`,
   uploadEggDataByCoop: "/egg/upload",
-  getEggDataByCoopAndDate: (coopId: number, date: string) => `/egg/download/${coopId}/${date}`,
+  downloadEggDataByCoopAndDate: (coopId: number, date: string) => `/egg/download/${coopId}/${date}`,
   confirmConflictPostEggData: "/egg/duplicate-confirm",
   downloadEggDataByCoopAndData: "/egg",
   deleteEggDataByIds: "/egg/delete",
+  getEggDataByCoopAndPeriode: "/egg",
 };
 
 export const ASYNC_KEY = {
