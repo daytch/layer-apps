@@ -77,6 +77,7 @@ const _useUploadEggData = () => {
         }
       } else {
         handleShowToast({ type: "ERROR", message: "Gagal konfirmasi data." });
+        isLoading.value = false;
       }
     });
 
@@ -89,6 +90,7 @@ const _useUploadEggData = () => {
       !duplicateDateState.value?.duplicateDates?.length
     )
       return;
+    isLoading.value = true;
     try {
       const response = await eggRepo.duplicateConfirm({
         status,
@@ -109,6 +111,8 @@ const _useUploadEggData = () => {
       }
     } catch (error) {
       handleShowToast({ type: "ERROR", message: "Gagal konfirmasi data." });
+    } finally {
+      isLoading.value = false;
     }
   };
 
