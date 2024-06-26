@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { type InferType, mixed, object } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
-import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
 import { ASYNC_KEY } from "~/constants/api";
+import type { UploadEggResponse } from "~/types/egg";
 
-defineEmits<{ (e: "handleCloseModal"): void }>();
+const emit = defineEmits<{
+  (e: "handleCloseModal"): void;
+}>();
 
 const FormSchema = object({
-  coop: mixed().test("required", "Nama Kandang tidak boleh kosong", (value: any) => {
-    console.log("s", value);
-    return value > 0 && !!value?.toString()?.length;
-  }),
+  coop: mixed().test(
+    "required",
+    "Nama Kandang tidak boleh kosong",
+    (value: any) => {
+      return value > 0 && !!value?.toString()?.length;
+    }
+  ),
   file: mixed().test("required", "File tidak boleh kosong", (value?: any) => {
     const file = value as File;
     return !!file?.name?.length;
@@ -23,11 +33,20 @@ const formState = reactive<FormValue>({
   file: undefined,
 });
 const { getKandangOptions } = useKandang();
-const { isLoading: isLoadingUploadData, uploadEggDataByCoop } = useFetchEggData();
+const {
+  isLoading: isLoadingUploadData,
+  handleUploadEggDataByCoop,
+  formStep,
+  progress,
+} = useUploadEggData();
 
-const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () => getKandangOptions(), {
-  lazy: true,
-});
+const { data } = await useAsyncData(
+  ASYNC_KEY.KANDANG_OPTIONS,
+  async () => getKandangOptions(),
+  {
+    lazy: true,
+  }
+);
 
 const handleSelectFile = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -37,21 +56,30 @@ const handleSelectFile = (event: Event) => {
 
 async function onSubmit(event: FormSubmitEvent<FormValue>) {
   if (!formState.coop || !formState.file) return;
-  uploadEggDataByCoop({
-    file: formState.file as any,
-    coopId: formState.coop as any,
-  }).then((response) => {
-    console.log(response);
+  handleUploadEggDataByCoop({
+    coopId: event.data?.coop as any,
+    file: event.data?.file as any,
   });
 }
 </script>
 
 <template>
-  <UForm class="space-y-4" :schema="FormSchema" :state="formState" @submit="onSubmit">
+  <UForm
+    class="space-y-4"
+    :schema="FormSchema"
+    :state="formState"
+    @submit="onSubmit"
+  >
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
-          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">Import Data</h2>
+        <div
+          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
+        >
+          <h2
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
+          >
+            Import Data
+          </h2>
           <UButton
             @click="$emit('handleCloseModal')"
             type="button"
@@ -95,7 +123,10 @@ async function onSubmit(event: FormSubmitEvent<FormValue>) {
               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             />
           </UFormGroup>
-          <div class="p-5 rounded-lg border border-[#E5E7EB] flex items-center space-x-4" v-else>
+          <div
+            class="p-5 rounded-lg border border-[#E5E7EB] flex items-center space-x-4"
+            v-else
+          >
             <IconExcel />
             <div class="flex-1 max-w-[411px]">
               <p
@@ -103,8 +134,15 @@ async function onSubmit(event: FormSubmitEvent<FormValue>) {
               >
                 {{ (formState.file as any)?.name || "" }}
               </p>
-              <div class="relative overflow-hidden h-1 bg-[#DFE4EA] rounded-full w-full">
-                <div class="absolute top-0 left-0 bottom-0 bg-[#22AD5C]" style="width: 50%" />
+              <div
+                class="relative overflow-hidden h-1 bg-[#DFE4EA] rounded-full w-full"
+              >
+                <div
+                  class="absolute top-0 left-0 bottom-0 bg-[#22AD5C]"
+                  :style="{
+                    width: progress + '%',
+                  }"
+                />
               </div>
             </div>
             <button type="button" @click="formState.file = undefined">

@@ -38,3 +38,27 @@ export type EggResponseDataType = {
   createdAt: string;
   updateAt: string;
 };
+
+export type UpdateRowFormType = {
+  type: "number" | "date" | "string";
+  value: number | string;
+  id: number;
+  key: string;
+};
+
+type EggDuplicateResponse = {
+  statusCode: number;
+  message: string;
+  data: {
+    isAnyDuplicate: boolean;
+    duplicateDate: Array<string>;
+    code: string;
+  };
+};
+
+export type UploadEggResponse = EggDuplicateResponse;
+
+export type DuplicateConfirmPayload = {
+  code: string;
+  status: number;
+};

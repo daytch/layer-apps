@@ -15,19 +15,20 @@ const { data: KandangOptions } = await useAsyncData(
   async () => getKandangOptions(),
   { lazy: true }
 );
-const { checkAll, HeaderVisibleToogleColumn, visibleColumns, isUpdateView } = useDataTable();
+const { checkAll, HeaderVisibleToogleColumn, visibleColumns, isUpdateView } =
+  useDataTable();
 
 const filterState = ref({
   periode: undefined,
   cage: undefined,
 });
-const showImportFileModal = ref(false);
+const { showModal, formStep, duplicateDateMessage } = useUploadEggData();
 
 const getPeriodeText = (periodeValue: string) => {
   if (!periodeValue?.length) return "";
-  return `${getMonthName(getDateMonthIndex({ type: "string", date: periodeValue }))} ${
-    periodeValue.split("/")[1]
-  }`;
+  return `${getMonthName(
+    getDateMonthIndex({ type: "string", date: periodeValue })
+  )} ${periodeValue.split("/")[1]}`;
 };
 
 const handleApplyFilter = () => {
@@ -54,10 +55,16 @@ onMounted(() => {
     periode: undefined,
     cage: undefined,
   };
-  if (!!queryCoopId?.toString()?.length && !isNaN(Number(queryCoopId?.toString()))) {
+  if (
+    !!queryCoopId?.toString()?.length &&
+    !isNaN(Number(queryCoopId?.toString()))
+  ) {
     filter["cage"] = Number(queryCoopId.toString());
   }
-  if (!!queryPeriod?.toString().length && isValidDate(queryPeriod?.toString())) {
+  if (
+    !!queryPeriod?.toString().length &&
+    isValidDate(queryPeriod?.toString())
+  ) {
     const appliedDate = new Date(queryPeriod?.toString());
 
     filter["periode"] = {
@@ -71,17 +78,26 @@ onMounted(() => {
 
 <template>
   <div class="p-4 border rounded mb-8" :class="containerClass">
+    <pre>{{
+      JSON.stringify({ formStep, showModal, duplicateDateMessage })
+    }}</pre>
     <div class="flex justify-between space-x-4">
-      <div class="space-y-2 sm:space-y-0 sm:space-x-6 flex flex-col sm:flex-row">
+      <div
+        class="space-y-2 sm:space-y-0 sm:space-x-6 flex flex-col sm:flex-row"
+      >
         <button
           type="button"
           class="btn primary data-table-add-button"
-          @click="showImportFileModal = !showImportFileModal"
+          @click="showModal = true"
         >
           <IconImport />
           <span>Import Data</span>
         </button>
-        <button v-if="!isUpdateView" type="button" class="btn secondary data-table-add-button">
+        <button
+          v-if="!isUpdateView"
+          type="button"
+          class="btn secondary data-table-add-button"
+        >
           <IconImport :stroke="'#1A8245'" />
           <span>Export Data .xls</span>
         </button>
@@ -100,7 +116,10 @@ onMounted(() => {
           />
         </div>
         <div class="max-w-[166px]">
-          <DateTimePicker v-model:model-value="filterState.periode" :month-picker="true">
+          <DateTimePicker
+            v-model:model-value="filterState.periode"
+            :month-picker="true"
+          >
             <template #input="{ value }">
               <UInput
                 :ui="{
@@ -128,7 +147,7 @@ onMounted(() => {
           @click="handleApplyFilter"
           :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
         >
-          {{ isFetchingData ? "Menampilkan.." : "Tampilkan" }}
+          Tampilkan
         </UButton>
         <div class="w-[1px] h-12 bg-[--app-gray-500]" />
         <UPopover mode="click">
@@ -158,14 +177,28 @@ onMounted(() => {
           <IconPencilUpdate class="w-[18px] h-[18px]" :stroke="'#637381'" />
           <span>Edit Data</span>
         </button>
-        <button v-else class="btn primary data-table-add-button" @click="isUpdateView = false">
+        <button
+          v-else
+          class="btn primary data-table-add-button"
+          @click="isUpdateView = false"
+        >
           Selesai
         </button>
       </div>
     </div>
   </div>
-  <AppModal v-model:model-value="showImportFileModal">
-    <ImportModal @handle-close-modal="showImportFileModal = false" />
+  <AppModal
+    :model-value="showModal"
+    @update:model-value="
+      () => {
+        formStep = 'UPLOAD';
+        showModal = false;
+      }
+    "
+  >
+    <ImportModal v-if="formStep === 'UPLOAD'" />
+    <DuplicateConfirm v-else-if="formStep === 'DUPLICATE-CONFIRM'" />
+    <p v-else>No show</p>
   </AppModal>
 </template>
 
