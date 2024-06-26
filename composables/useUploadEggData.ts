@@ -1,6 +1,6 @@
 import { API_LIST, ASYNC_KEY } from "~/constants/api";
 import { eggRepository } from "~/repository/modules/egg";
-import type { EggUploadDataPayload, UploadEggResponse } from "~/types/egg";
+import type { EggUploadDataPayload } from "~/types/egg";
 
 type DuplicateDateState = {
   code: string;
@@ -50,12 +50,11 @@ const _useUploadEggData = () => {
       progress.value = Number(width);
     });
 
-    request.addEventListener("load", (e) => {
+    request.addEventListener("load", async (e) => {
       if (request.status === 201) {
         const target = e.target as XMLHttpRequest;
         const jsonResponse = JSON.parse(target?.response || "{}");
         if (jsonResponse?.data?.isAnyDuplicate) {
-          console.log("haha", jsonResponse);
           duplicateDateState.value = {
             code: jsonResponse?.data?.code || "",
             duplicateDates:
@@ -64,10 +63,20 @@ const _useUploadEggData = () => {
           formStep.value = "DUPLICATE-CONFIRM";
           isLoading.value = false;
         } else {
-          console.log(jsonResponse);
+          await refreshNuxtData(ASYNC_KEY.EGG_DATA);
+          isLoading.value = false;
+          showModal.value = false;
+          duplicateDateState.value = {
+            code: "",
+            duplicateDates: [],
+          };
+          handleShowToast({
+            type: "SUCCESS",
+            message: "Berhasil menyimpan data.",
+          });
         }
       } else {
-        console.log("test");
+        handleShowToast({ type: "ERROR", message: "Gagal konfirmasi data." });
       }
     });
 

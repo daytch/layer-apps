@@ -78,9 +78,6 @@ onMounted(() => {
 
 <template>
   <div class="p-4 border rounded mb-8" :class="containerClass">
-    <pre>{{
-      JSON.stringify({ formStep, showModal, duplicateDateMessage })
-    }}</pre>
     <div class="flex justify-between space-x-4">
       <div
         class="space-y-2 sm:space-y-0 sm:space-x-6 flex flex-col sm:flex-row"
