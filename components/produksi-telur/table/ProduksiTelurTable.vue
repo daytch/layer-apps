@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { EggResponseDataType, UpdateRowFormType } from "~/types/egg";
 
-defineProps<{
+const props = defineProps<{
   eggData: Array<EggResponseDataType>;
   isLoadingData?: boolean;
 }>();
 const { checkVisibleColumn, isUpdateView } = useDataTable();
+const selectedItems = ref<Array<number>>([]);
 
 const {
   handleShowModal: handleShowUpdateRowModal,
@@ -13,6 +14,23 @@ const {
   showModal: isShowUpdateRowModal,
   selectedItem: selectedRow,
 } = useModalForm<UpdateRowFormType>();
+
+const checkAll = computed({
+  get() {
+    return (
+      selectedItems.value?.length > 0 &&
+      selectedItems.value?.length === props.eggData?.length
+    );
+  },
+  set() {
+    const alreadyCheckedAll =
+      selectedItems.value?.length > 0 &&
+      selectedItems.value?.length === props.eggData?.length;
+    selectedItems.value = alreadyCheckedAll
+      ? []
+      : props.eggData.map((item) => item.id);
+  },
+});
 
 const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
   if (!isUpdateView.value) return;
@@ -30,7 +48,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
             v-if="isUpdateView"
             class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
           >
-            <UCheckbox />
+            <UCheckbox v-model="checkAll" />
           </th>
           <th
             v-if="checkVisibleColumn('date')"
@@ -218,7 +236,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
               v-if="isUpdateView"
               class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
             >
-              <UCheckbox />
+              <UCheckbox :value="item.id" v-model="selectedItems" />
             </td>
             <td
               v-if="checkVisibleColumn('date')"

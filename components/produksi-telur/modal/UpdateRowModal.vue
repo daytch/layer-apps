@@ -1,8 +1,20 @@
 <script setup lang="ts">
-import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
-import { mixed, type InferType, object, string, number } from "yup";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
+import { type InferType, object, string, number } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
-import { type UpdateRowFormType } from "~/types/egg";
+import { type UpdateRowFormType, type UpdateRowPayload } from "~/types/egg";
+
+const emits = defineEmits<{
+  (e: "handleCloseModal"): void;
+  (e: "handleUpdateData", newValue: UpdateRowFormType): void;
+}>();
+const props = defineProps<{
+  defaultValue: UpdateRowFormType;
+}>();
 
 const Schema = object({
   inputType: string().nullable().default(""),
@@ -14,20 +26,18 @@ const Schema = object({
     })
     .when(["inputValue"], {
       is: (value: string) => {
-        console.log(value);
         return value === "date";
       },
-      then: () => string().required("Tidak boleh kosong").typeError("Tidak boleh kosong."),
+      then: () =>
+        string()
+          .required("Tidak boleh kosong")
+          .typeError("Tidak boleh kosong."),
     }),
 });
 type FormType = InferType<typeof Schema>;
 
-defineEmits<{
-  (e: "handleCloseModal"): void;
-  (e: "handleUpdateData", newValue: UpdateRowFormType): void;
-}>();
-const props = defineProps<{ defaultValue: UpdateRowFormType; isLoadingUpdateData?: boolean }>();
-
+const { isLoading: isLoadingUpdateData, updateEggDataByRowId } =
+  useFetchEggData();
 const inputValue = reactive<FormType>({
   newValue: "",
   inputType: "",
@@ -35,9 +45,15 @@ const inputValue = reactive<FormType>({
 
 onMounted(() => {
   inputValue.inputType = props.defaultValue?.type || "";
-  if (props.defaultValue?.type === "date" && isValidDate(props.defaultValue?.value as string)) {
+  if (
+    props.defaultValue?.type === "date" &&
+    isValidDate(props.defaultValue?.value as string)
+  ) {
     inputValue.newValue = new Date(props.defaultValue?.value) as any;
-  } else if (props.defaultValue?.type === "number" && !isNaN(Number(props.defaultValue?.value))) {
+  } else if (
+    props.defaultValue?.type === "number" &&
+    !isNaN(Number(props.defaultValue?.value))
+  ) {
     inputValue.newValue = Number(props.defaultValue?.value) as any;
   } else {
     inputValue.newValue = props.defaultValue?.value as any;
@@ -45,7 +61,18 @@ onMounted(() => {
 });
 
 async function onSubmit(event: FormSubmitEvent<FormType>) {
-  console.log(event.data);
+  if (!props?.defaultValue) return;
+  const payloadData: UpdateRowPayload = [
+    {
+      id: props.defaultValue.id,
+      [props.defaultValue.key]: event.data.newValue,
+    },
+  ];
+  await updateEggDataByRowId(payloadData).then((data) => {
+    if (data) {
+      emits("handleCloseModal");
+    }
+  });
 }
 </script>
 
@@ -59,8 +86,14 @@ async function onSubmit(event: FormSubmitEvent<FormType>) {
   >
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
-          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">Ubah Data</h2>
+        <div
+          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
+        >
+          <h2
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
+          >
+            Ubah Data
+          </h2>
           <UButton
             @click="$emit('handleCloseModal')"
             type="button"

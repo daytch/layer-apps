@@ -26,6 +26,9 @@ const { data, pending } = await useAsyncData(
 </script>
 
 <template>
-  <ProduksiTelurFilter :container-class="'bg-white'" :is-fetching-data="pending" />
+  <ProduksiTelurFilter
+    :container-class="'bg-white'"
+    :is-fetching-data="pending"
+  />
   <ProduksiTelurTable :egg-data="data || []" :is-loading-data="pending" />
 </template>
