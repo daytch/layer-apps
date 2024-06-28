@@ -3,6 +3,8 @@ import type {
   EggUploadDataPayload,
   GetEggParams,
   DuplicateConfirmPayload,
+  UpdateRowPayload,
+  DeletePayloadEggData,
 } from "~/types/egg";
 import type { APIResponse } from "~/types/api";
 import type { FetchType } from "~/types/fetch-repo";
@@ -40,6 +42,22 @@ export const eggRepository = <T>(fetch: FetchType<T>) => ({
     return fetch(API_LIST.confirmConflictPostEggData, {
       method: "POST",
       body: JSON.stringify(confirmPayload),
+    });
+  },
+  async updateDataRowById(
+    updateRowPayload: UpdateRowPayload
+  ): EggAPIReponse<any> {
+    return fetch(API_LIST.updateEggDataByRowId, {
+      method: "POST",
+      body: JSON.stringify(updateRowPayload),
+    });
+  },
+  async deleteDataByRowByIds(
+    deletePayload: DeletePayloadEggData
+  ): EggAPIReponse<any> {
+    return fetch(API_LIST.deleteEggDataByIds, {
+      method: "POST",
+      body: JSON.stringify(deletePayload),
     });
   },
 });

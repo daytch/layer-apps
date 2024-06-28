@@ -62,3 +62,11 @@ export type DuplicateConfirmPayload = {
   code: string;
   status: number;
 };
+
+export type UpdateRowPayload = Array<
+  { id: number } & Record<string, number | string>
+>;
+
+export type DeletePayloadEggData = {
+  ids: Array<number>;
+};
