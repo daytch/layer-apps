@@ -116,6 +116,41 @@ const _useUploadEggData = () => {
     }
   };
 
+  const downloadDocumentEggData = async ({
+    coopId,
+    date,
+  }: {
+    coopId?: number;
+    date?: string;
+  }) => {
+    if ((!date?.length && !coopId) || !coopId?.toString()?.length)
+      return handleShowToast({
+        type: "ERROR",
+        message: "Pilih kandang dan tanggal terlebih dahulu.",
+      });
+    if (!coopId || !coopId?.toString()?.length)
+      return handleShowToast({
+        type: "ERROR",
+        message: "Pilih tanggal terlebih dahulu.",
+      });
+    if (!date?.length)
+      return handleShowToast({
+        type: "ERROR",
+        message: "Pilih tanggal terlebih dahulu.",
+      });
+    isLoading.value = true;
+    return fetch(
+      useRuntimeConfig().public.apiUrl +
+        API_LIST.downloadEggDataByCoopAndDate(coopId, date),
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${cookie.accessToken.value}`,
+        },
+      }
+    );
+  };
+
   return {
     isLoading,
     progress,
@@ -124,6 +159,7 @@ const _useUploadEggData = () => {
     formStep,
     handleUploadEggDataByCoop,
     handleConfirmDuplicateEggData,
+    downloadDocumentEggData,
   };
 };
 

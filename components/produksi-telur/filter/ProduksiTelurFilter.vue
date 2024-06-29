@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ASYNC_KEY } from "~/constants/api";
+import { API_LIST, ASYNC_KEY } from "~/constants/api";
 import { UI_PRIMARY_GHOST_BUTTON_STYLES } from "~/constants/ui";
 
 defineProps<{
   containerClass?: string;
   isFetchingData?: boolean;
+  disableDeleteButton?: boolean;
+}>();
+defineEmits<{
+  (e: "handleShowModalConfirm"): void;
 }>();
 
 const { getKandangOptions } = useKandang();
@@ -22,7 +26,13 @@ const filterState = ref({
   periode: undefined,
   cage: undefined,
 });
-const { showModal, formStep } = useUploadEggData();
+const {
+  showModal,
+  formStep,
+  downloadDocumentEggData,
+  isLoading: loadingUpdateData,
+} = useUploadEggData();
+const { handleShowToast } = useShowToast();
 
 const getPeriodeText = (periodeValue: string) => {
   if (!periodeValue?.length) return "";
@@ -74,16 +84,45 @@ onMounted(() => {
   }
   filterState.value = filter as any;
 });
+const handleDownloadEggDataOnCoopAndDate = async () => {
+  const coopId = queryParams.value["coopId"];
+  const date = queryParams.value["period"];
+  let params = {} as { coopId: number; date: string };
+  if (!isNaN(Number(coopId)) && Number(coopId) !== 0) {
+    params.coopId = Number(coopId);
+  }
+  if (!!date?.toString()?.length && isValidDate(date?.toString())) {
+    params.date = date.toString();
+  }
+
+  await downloadDocumentEggData(params)
+    .then((res: any) => res.blob())
+    .then((blob: any) => URL.createObjectURL(blob))
+    .then((href: any) => {
+      const filename = `report-${formatDate(new Date(), "yyyy-MM-dd hh-mm")}`;
+      Object.assign(document.createElement("a"), {
+        href,
+        download: filename + ".xlsx",
+      }).click();
+    })
+    .catch(() => {
+      handleShowToast({ type: "ERROR", message: "Gagal mengunduh dokumen." });
+    });
+};
 </script>
 
 <template>
   <div class="border rounded mb-8 pt-4 px-4" :class="containerClass">
-    <div class="overflow-auto pb-4 px-0.5">
-      <div class="flex justify-between space-x-6 mt-0.5">
-        <div class="space-x-4 sm:space-x-6 flex flex-row">
+    <div class="pb-4 px-0.5">
+      <div
+        class="flex space-y-5 2xl:flex-row flex-col 2xl:justify-between 2xl:space-x-6 2xl:space-y-0 mt-0.5"
+      >
+        <div
+          class="space-y-4 xs:space-y-0 xs:space-x-6 flex flex-col xs:flex-row"
+        >
           <button
             type="button"
-            class="btn primary data-table-add-button"
+            class="btn primary data-table-add-button xs:flex-1"
             @click="showModal = true"
           >
             <IconImport />
@@ -92,101 +131,128 @@ onMounted(() => {
           <button
             v-if="!isUpdateView"
             type="button"
-            class="btn secondary data-table-add-button"
+            :disabled="loadingUpdateData"
+            @click="handleDownloadEggDataOnCoopAndDate"
+            class="btn secondary data-table-add-button xs:flex-1"
           >
             <IconImport :stroke="'#1A8245'" />
             <span class="whitespace-nowrap">Export Data .xls</span>
           </button>
         </div>
-        <div class="flex items-center justify-end space-x-4 flex-1 px-0.5">
-          <div class="md:max-w-[250px] min-w-[250px]">
-            <UInputMenu
+        <div
+          class="flex flex-col 2xl:flex-row items-center justify-end space-y-5 2xl:space-y-0 flex-1 px-0.5 2xl:space-x-4"
+        >
+          <div
+            class="space-y-4 sm:space-y-0 w-full sm:grid sm:grid-cols-2 sm:gap-4 md:flex md:justify-end 2xl:flex-1 2xl:w-auto"
+          >
+            <!-- Opsi Kandang -->
+            <div class="flex-1 2xl:max-w-[250px]">
+              <UInputMenu
+                size="md"
+                :nullable="true"
+                v-model="filterState.cage"
+                :options="KandangOptions || []"
+                placeholder="Pilih Nama Kandang"
+                :input-class="'py-[12px]'"
+                :option-attribute="'label'"
+                :value-attribute="'value'"
+              />
+            </div>
+            <!-- End Opsi Kandang -->
+            <!-- Date picker -->
+            <div class="flex-1 2xl:max-w-[166px]">
+              <DateTimePicker
+                v-model:model-value="filterState.periode"
+                :month-picker="true"
+              >
+                <template #input="{ value }">
+                  <UInput
+                    :ui="{
+                      padding: {
+                        md: 'py-[12px] px-5',
+                      },
+                    }"
+                    variant="outline"
+                    :value="getPeriodeText(value)"
+                    placeholder="Pilih Periode"
+                  >
+                    <template #trailing>
+                      <IconCalendar />
+                    </template>
+                  </UInput>
+                </template>
+              </DateTimePicker>
+            </div>
+            <!-- End Date picker -->
+            <!-- Tampilkan -->
+            <UButton
+              type="button"
+              :disabled="isFetchingData"
               size="md"
-              :nullable="true"
-              v-model="filterState.cage"
-              :options="KandangOptions || []"
-              placeholder="Pilih Nama Kandang"
-              :input-class="'py-[12px]'"
-              :option-attribute="'label'"
-              :value-attribute="'value'"
-            />
-          </div>
-          <div class="max-w-[166px] min-w-[166px]">
-            <DateTimePicker
-              v-model:model-value="filterState.periode"
-              :month-picker="true"
+              color="primary"
+              variant="ghost"
+              @click="handleApplyFilter"
+              :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
+              class="w-full justify-center col-span-2 md:w-auto"
             >
-              <template #input="{ value }">
-                <UInput
-                  :ui="{
-                    padding: {
-                      md: 'py-[12px] px-5',
-                    },
-                  }"
-                  variant="outline"
-                  :value="getPeriodeText(value)"
-                  placeholder="Pilih Periode"
-                >
-                  <template #trailing>
-                    <IconCalendar />
-                  </template>
-                </UInput>
+              Tampilkan
+            </UButton>
+            <!-- End Tampilkan -->
+          </div>
+
+          <div
+            class="space-y-4 w-full xs:flex xs:space-x-4 xs:space-y-0 2xl:w-auto"
+          >
+            <div class="w-[1px] h-12 bg-[--app-gray-500] hidden 2xl:block" />
+            <UPopover
+              mode="click"
+              class="xs:w-auto xs:flex-1 2xl:flex-none relative !ml-0 2xl:!ml-4"
+            >
+              <button
+                type="button"
+                class="btn outlined w-full xs:w-auto xs:flex-1"
+              >
+                <IconMenuBoard class="w-[18px] h-[18px]" :stroke="'#637381'" />
+                <span class="whitespace-nowrap">View Table</span>
+              </button>
+              <template #panel>
+                <div class="p-[10px] space-y-[10px]">
+                  <UCheckbox v-model="checkAll" name="all" label="Semua" />
+                  <UCheckbox
+                    v-for="toggleColumn in HeaderVisibleToogleColumn"
+                    :value="toggleColumn.key"
+                    v-model="visibleColumns"
+                    :name="toggleColumn.key"
+                    :label="toggleColumn.label"
+                  />
+                </div>
               </template>
-            </DateTimePicker>
-          </div>
-          <UButton
-            type="button"
-            :disabled="isFetchingData"
-            size="md"
-            color="primary"
-            variant="ghost"
-            @click="handleApplyFilter"
-            :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
-          >
-            Tampilkan
-          </UButton>
-          <div class="w-[1px] h-12 bg-[--app-gray-500]" />
-          <UPopover mode="click">
-            <button type="button" class="btn outlined">
-              <IconMenuBoard class="w-[18px] h-[18px]" :stroke="'#637381'" />
-              <span class="whitespace-nowrap">View Table</span>
+            </UPopover>
+            <button
+              v-if="!isUpdateView"
+              type="button"
+              class="btn outlined w-full xs:w-auto xs:flex-1 2xl:flex-none"
+              @click="isUpdateView = true"
+            >
+              <IconPencilUpdate class="w-[18px] h-[18px]" :stroke="'#637381'" />
+              <span class="whitespace-nowrap">Edit Data</span>
             </button>
-            <template #panel>
-              <div class="p-[10px] space-y-[10px]">
-                <UCheckbox v-model="checkAll" name="all" label="Semua" />
-                <UCheckbox
-                  v-for="toggleColumn in HeaderVisibleToogleColumn"
-                  :value="toggleColumn.key"
-                  v-model="visibleColumns"
-                  :name="toggleColumn.key"
-                  :label="toggleColumn.label"
-                />
-              </div>
+            <template v-else>
+              <button
+                :disabled="disableDeleteButton"
+                class="btn danger data-table-add-button btn-text-center w-full xs:w-auto xs:flex-1"
+                @click="$emit('handleShowModalConfirm')"
+              >
+                Hapus
+              </button>
+              <button
+                class="btn primary data-table-add-button btn-text-center w-full xs:w-auto xs:flex-1"
+                @click="isUpdateView = false"
+              >
+                Selesai
+              </button>
             </template>
-          </UPopover>
-          <button
-            v-if="!isUpdateView"
-            type="button"
-            class="btn outlined"
-            @click="isUpdateView = true"
-          >
-            <IconPencilUpdate class="w-[18px] h-[18px]" :stroke="'#637381'" />
-            <span class="whitespace-nowrap">Edit Data</span>
-          </button>
-          <template v-else>
-            <button
-              class="btn danger data-table-add-button"
-              @click="isUpdateView = false"
-            >
-              Hapus
-            </button>
-            <button
-              class="btn primary data-table-add-button"
-              @click="isUpdateView = false"
-            >
-              Selesai
-            </button>
-          </template>
+          </div>
         </div>
       </div>
     </div>
@@ -216,6 +282,9 @@ onMounted(() => {
 .btn {
   @apply py-3 px-4 inline-flex items-center space-x-2 ring-1 rounded-md disabled:cursor-not-allowed font-medium whitespace-nowrap;
 }
+.btn.btn-text-center {
+  @apply justify-center;
+}
 .btn.primary {
   @apply text-white bg-[--app-primary-100] ring-[--app-primary-100];
 }
@@ -226,6 +295,6 @@ onMounted(() => {
   @apply bg-white text-[--app-primary-text] ring-[#DFE4EA];
 }
 .btn.danger {
-  @apply text-white bg-[--app-danger-300] ring-[--app-danger-300];
+  @apply text-white bg-[--app-danger-300] ring-[--app-danger-300] disabled:bg-[--app-gray-200] disabled:ring-[--app-gray-200] disabled:text-[--app-dark-600];
 }
 </style>
