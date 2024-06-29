@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { EggResponseDataType, UpdateRowFormType } from "~/types/egg";
 
-const props = defineProps<{
+defineProps<{
   eggData: Array<EggResponseDataType>;
   isLoadingData?: boolean;
 }>();
+
+const checkAll = defineModel<boolean>("checkAll");
+const selectedItems = defineModel<Array<number>>("selectedItems");
+
 const { checkVisibleColumn, isUpdateView } = useDataTable();
-const selectedItems = ref<Array<number>>([]);
 
 const {
   handleShowModal: handleShowUpdateRowModal,
@@ -14,23 +17,6 @@ const {
   showModal: isShowUpdateRowModal,
   selectedItem: selectedRow,
 } = useModalForm<UpdateRowFormType>();
-
-const checkAll = computed({
-  get() {
-    return (
-      selectedItems.value?.length > 0 &&
-      selectedItems.value?.length === props.eggData?.length
-    );
-  },
-  set() {
-    const alreadyCheckedAll =
-      selectedItems.value?.length > 0 &&
-      selectedItems.value?.length === props.eggData?.length;
-    selectedItems.value = alreadyCheckedAll
-      ? []
-      : props.eggData.map((item) => item.id);
-  },
-});
 
 const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
   if (!isUpdateView.value) return;

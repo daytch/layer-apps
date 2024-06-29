@@ -65,10 +65,13 @@ export const useFetchEggData = () => {
     }
   };
 
-  const deleteDataByRowByIds = async (deletePayload: DeletePayloadEggData) => {
+  const deleteDataByRowByIds = async () => {
+    if (!selectedItems.value.length) return;
     initialFetch();
     try {
-      const response = await eggRepo.deleteDataByRowByIds(deletePayload);
+      const response = await eggRepo.deleteDataByRowByIds({
+        ids: selectedItems.value,
+      });
       if (!!response?.data) {
         await refreshNuxtData(ASYNC_KEY.EGG_DATA);
         handleShowToast({

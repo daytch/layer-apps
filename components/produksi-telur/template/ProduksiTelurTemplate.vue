@@ -3,7 +3,13 @@ import { ASYNC_KEY } from "~/constants/api";
 import type { GetEggParams } from "~/types/egg";
 
 const { queryParams } = useQueryParams();
-const { getEggDataByCoopAndPeriode } = useFetchEggData();
+const {
+  getEggDataByCoopAndPeriode,
+  selectedItems,
+  deleteDataByRowByIds,
+  checkAll,
+  isLoading,
+} = useFetchEggData();
 
 const { data, pending } = await useAsyncData(
   ASYNC_KEY.EGG_DATA,
@@ -23,12 +29,39 @@ const { data, pending } = await useAsyncData(
   },
   { lazy: true, watch: [queryParams] }
 );
+const showDeleteConfirmModal = ref(false);
+
+const handleDelete = async () => {
+  const response = await deleteDataByRowByIds();
+  if (!!response) {
+    showDeleteConfirmModal.value = false;
+  }
+};
 </script>
 
 <template>
   <ProduksiTelurFilter
     :container-class="'bg-white'"
     :is-fetching-data="pending"
+    :disable-delete-button="!selectedItems.length"
+    @handle-show-modal-confirm="showDeleteConfirmModal = true"
   />
-  <ProduksiTelurTable :egg-data="data || []" :is-loading-data="pending" />
+  <ProduksiTelurTable
+    :egg-data="data || []"
+    :is-loading-data="pending"
+    v-model:check-all="checkAll"
+    v-model:selected-items="selectedItems"
+  />
+  <DeleteConfirmModal
+    v-model:model-value="showDeleteConfirmModal"
+    title="Hapus data?"
+    :is-loading="isLoading"
+    @handle-confirm-delete="handleDelete"
+  >
+    <template #description>
+      <p class="delete-confirm-description">
+        Apakah anda yakin, untuk menghapus data yang anda pilih?
+      </p>
+    </template>
+  </DeleteConfirmModal>
 </template>
