@@ -1,29 +1,26 @@
 <script setup lang="ts">
+import type { EggResponseDataType, UpdateRowFormType } from "~/types/egg";
+
+defineProps<{
+  eggData: Array<EggResponseDataType>;
+  isLoadingData?: boolean;
+}>();
+
+const checkAll = defineModel<boolean>("checkAll");
+const selectedItems = defineModel<Array<number>>("selectedItems");
+
 const { checkVisibleColumn, isUpdateView } = useDataTable();
-const dummy = {
-  date: "1 Jan 2024",
-  age_week: 1,
-  pop: 3800,
-  m: "",
-  afk: "",
-  sell: "",
-  last_pop: 3800,
-  foodType: "",
-  foodKG: "",
-  foodFIT: 475,
-  nItem: "",
-  pItem: "",
-  BSItem: 120,
-  totalItem: 120,
-  nKG: "",
-  pKG: "",
-  BSKG: 20.05,
-  totalKG: 20.05,
-  HD: "3.2%",
-  FCR: 23.17,
-  eggWeight: 170.83,
-  eggMass: 5.39,
-  ovk: "-",
+
+const {
+  handleShowModal: handleShowUpdateRowModal,
+  handleCloseModal: handleCloseUpdateRowModal,
+  showModal: isShowUpdateRowModal,
+  selectedItem: selectedRow,
+} = useModalForm<UpdateRowFormType>();
+
+const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
+  if (!isUpdateView.value) return;
+  handleShowUpdateRowModal(showModalParams);
 };
 </script>
 
@@ -37,7 +34,7 @@ const dummy = {
             v-if="isUpdateView"
             class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
           >
-            <UCheckbox />
+            <UCheckbox v-model="checkAll" />
           </th>
           <th
             v-if="checkVisibleColumn('date')"
@@ -209,141 +206,354 @@ const dummy = {
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(item, index) in Array(10).fill(dummy)"
-          class="bg-white even:bg-[#F8F9FC]"
-        >
-          <td
-            v-if="isUpdateView"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            <UCheckbox />
-          </td>
-          <td
-            v-if="checkVisibleColumn('date')"
-            class="whitespace-nowrap p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item.date }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('age_day')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ index + 1 }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('age_week')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.age_week }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('pop')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.pop }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('m')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.m }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('afk')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.afk }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('sell')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.sell }}
-          </td>
-          <td
-            v-if="checkVisibleColumn('last_pop')"
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.last_pop }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.foodType }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.foodKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.foodFIT }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.nItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.pItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.BSItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.totalItem }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.nKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.pKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.BSKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.totalKG }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.HD }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.FCR }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.eggWeight }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.ovk }}
-          </td>
-        </tr>
+        <template v-if="isLoadingData">
+          <tr class="border-b border-b-[--app-gray-500]">
+            <td
+              :colspan="23"
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              <LoadingSpinner />
+            </td>
+          </tr>
+        </template>
+        <template v-else-if="!isLoadingData && !!eggData.length">
+          <tr v-for="item in eggData" class="bg-white even:bg-[#F8F9FC]">
+            <td
+              v-if="isUpdateView"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              <UCheckbox :value="item.id" v-model="selectedItems" />
+            </td>
+            <td
+              v-if="checkVisibleColumn('date')"
+              @click="
+                showUpdateRowModal({
+                  type: 'date',
+                  value: item.transDate,
+                  id: item.id,
+                  key: 'transDate',
+                })
+              "
+              class="whitespace-nowrap p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{
+                !!item?.transDate?.length && isValidDate(item?.transDate)
+                  ? formatDate(item.transDate, "dd MMM yyyy")
+                  : item.transDate
+              }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('age_day')"
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item.ageInDay,
+                  id: item.id,
+                  key: 'ageInDay',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item.ageInDay }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('age_week')"
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item.ageInWeek,
+                  id: item.id,
+                  key: 'ageInWeek',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.ageInWeek }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('pop')"
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item.pop,
+                  id: item.id,
+                  key: 'pop',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.pop }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('m')"
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.m,
+                  id: item.id,
+                  key: 'm',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.m }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('afk')"
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.afk,
+                  id: item.id,
+                  key: 'afk',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.afk }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('sell')"
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.sell,
+                  id: item.id,
+                  key: 'sell',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.sell }}
+            </td>
+            <td
+              v-if="checkVisibleColumn('last_pop')"
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.finalPop,
+                  id: item.id,
+                  key: 'finalPop',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.finalPop }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.feedType,
+                  id: item.id,
+                  key: 'feedType',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.feedType }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item.pop,
+                  id: item.id,
+                  key: 'pop',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.feedWeight }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item.feedFIT,
+                  id: item.id,
+                  key: 'feedFIT',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.feedFIT }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodPieceN,
+                  id: item.id,
+                  key: 'prodPieceN',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodPieceN }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodPieceP,
+                  id: item.id,
+                  key: 'prodPieceP',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodPieceP }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodPieceBS,
+                  id: item.id,
+                  key: 'prodPieceBS',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodPieceBS }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodTotalPiece,
+                  id: item.id,
+                  key: 'prodTotalPiece',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodTotalPiece }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodWeightN,
+                  id: item.id,
+                  key: 'prodWeightN',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodWeightN }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodWeightP,
+                  id: item.id,
+                  key: 'prodWeightP',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodWeightP }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodWeightBS,
+                  id: item.id,
+                  key: 'prodWeightBS',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodWeightBS }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.prodTotalWeight,
+                  id: item.id,
+                  key: 'prodTotalWeight',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.prodTotalWeight }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.HD,
+                  id: item.id,
+                  key: 'HD',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.HD }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.FCR,
+                  id: item.id,
+                  key: 'FCR',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.FCR }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.EggWeight,
+                  id: item.id,
+                  key: 'EggWeight',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.EggWeight }}
+            </td>
+            <td
+              @click="
+                showUpdateRowModal({
+                  type: 'number',
+                  value: item?.OVK,
+                  id: item.id,
+                  key: 'OVK',
+                })
+              "
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.OVK }}
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr class="border-b border-b-[--app-gray-500]">
+            <td
+              :colspan="23"
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              <NoDataStatus>Data Telur tidak ditemukan.</NoDataStatus>
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>
+  <AppModal v-model="isShowUpdateRowModal">
+    <UpdateRowModal
+      :default-value="(selectedRow || {} as UpdateRowFormType) "
+      @handle-close-modal="handleCloseUpdateRowModal"
+    />
+  </AppModal>
 </template>

@@ -20,6 +20,7 @@ defineProps<{
     :cancel-text="'Batal'"
     v-bind="$attrs"
     :format-locale="id"
+    :teleport="true"
   >
     <template #dp-input="props">
       <slot name="input" v-bind="props" />

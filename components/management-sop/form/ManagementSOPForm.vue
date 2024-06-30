@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { object, string, type InferType, mixed } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
-import {
-  UI_CARD_STYLES,
-  UI_GHOST_BUTTON_STYLES,
-  UI_PRIMARY_BUTTON_STYLES,
-} from "~/constants/ui";
+import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
 import type { SOPDataType, SOPFormPayloadType } from "~/types/sop";
 import { ROLES_OPTIONS_FORM } from "~/constants/role";
 
@@ -54,9 +50,7 @@ onMounted(() => {
     );
     formState.title = props?.defaultFormValue?.title;
     formState.description = props?.defaultFormValue?.description;
-    formState.time = changeAPIResponseToValidFormValue(
-      props?.defaultFormValue?.time || ""
-    );
+    formState.time = changeAPIResponseToValidFormValue(props?.defaultFormValue?.time || "");
   }
 });
 
@@ -89,20 +83,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
 </script>
 
 <template>
-  <UForm
-    class="space-y-4"
-    :schema="Schema"
-    :state="formState"
-    @submit="onSubmit"
-  >
+  <UForm class="space-y-4" :schema="Schema" :state="formState" @submit="onSubmit">
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div
-          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
-        >
-          <h2
-            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
-          >
+        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
+          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
             {{ !!defaultFormValue ? "Ubah" : "Tambah" }} SOP
           </h2>
           <UButton
@@ -150,11 +135,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
           <template #label>
             <FormLabel>Judul Kegiatan</FormLabel>
           </template>
-          <UInput
-            variant="outline"
-            placeholder="Tulis Judul Kegiatan"
-            v-model="formState.title"
-          />
+          <UInput variant="outline" placeholder="Tulis Judul Kegiatan" v-model="formState.title" />
         </UFormGroup>
         <UFormGroup name="description" label="Deskripsi Kegiatan (opsional)">
           <template #label>
@@ -163,7 +144,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
           <UTextarea
             variant="outline"
             placeholder="Tulis Deskripsi Kegiatan"
-            v-model="formState.description as string"
+            v-model="(formState.description as string)"
           />
         </UFormGroup>
       </div>
@@ -185,13 +166,7 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             size="md"
             :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
-            {{
-              isLoading
-                ? "Menyimpan..."
-                : !!defaultFormValue
-                ? "Ubah"
-                : "Tambah"
-            }}
+            {{ isLoading ? "Menyimpan..." : !!defaultFormValue ? "Ubah" : "Tambah" }}
           </UButton>
         </div>
       </template>

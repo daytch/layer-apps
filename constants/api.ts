@@ -16,16 +16,20 @@ export const API_LIST = {
   singleSOP: `/sop`,
   selectSOPById: (id: number) => `/sop/${id}`,
   completeSOPById: "/sop/complete",
-  getSOPProggress: (roleId: number, date: string) => `/sop/progress/${roleId}/${date}`,
+  getSOPProggress: (roleId: number, date: string) =>
+    `/sop/progress/${roleId}/${date}`,
   getSopByUser: "/sop/getsopbyuser",
   getFCRChart: "/dashboard/FCRChart",
   getAllDiagnosis: "/diagnostic",
   getSingleDiagnosis: (id: number) => `/diagnostic/${id}`,
   uploadEggDataByCoop: "/egg/upload",
-  getEggDataByCoopAndDate: (coopId: number, date: string) => `/egg/download/${coopId}/${date}`,
+  downloadEggDataByCoopAndDate: (coopId: number, date: string) =>
+    `/egg/download/${coopId}/${date}`,
   confirmConflictPostEggData: "/egg/duplicate-confirm",
   downloadEggDataByCoopAndData: "/egg",
   deleteEggDataByIds: "/egg/delete",
+  getEggDataByCoopAndPeriode: "/egg",
+  updateEggDataByRowId: "/egg/update",
 };
 
 export const ASYNC_KEY = {
@@ -38,7 +42,8 @@ export const ASYNC_KEY = {
   SOP_BY_USER: "sop-by-user",
   cashflow: "cashflow",
   foodMedicine: "food-medicine",
-  sopProgress: (roleId: number, date?: string) => `progress-sop-${roleId}-${date || ""}`,
+  sopProgress: (roleId: number, date?: string) =>
+    `progress-sop-${roleId}-${date || ""}`,
   DIAGNOSIS_KANDANG: "diagnosis-kandang",
   FCR_CHART: "fcr-chart",
   EGG_DATA: "egg_data",

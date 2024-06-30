@@ -15,8 +15,8 @@ const emits = defineEmits<{
 }>();
 
 const TIPE_OPTIONS = [
-  { label: "KREDIT", value: "KREDIT" },
-  { label: "DEBIT", value: "DEBIT" },
+  { label: "KREDIT", value: "kredit" },
+  { label: "DEBIT", value: "debit" },
 ];
 
 const Schema = object({
@@ -43,12 +43,11 @@ const balance = computed(() => {
   let total = props.totalCashflowValue;
   if (!formState?.amount?.toString()?.length || formState.amount <= 0) return total;
   if (formState.tipe === props.defaultValue?.tipe) return total;
-  if (formState.tipe === "KREDIT") {
+  if (formState.tipe === "kredit") {
     total = total - formState.amount;
-  } else if (formState.tipe === "DEBIT") {
+  } else if (formState.tipe === "kredit") {
     total = total + formState.amount;
   }
-
   return total;
 });
 
@@ -57,7 +56,7 @@ const form = ref();
 onMounted(() => {
   if (!!props.defaultValue) {
     formState.amount = props.defaultValue.nominal;
-    formState.tipe = props.defaultValue.tipe;
+    formState.tipe = props.defaultValue.tipe?.toLowerCase();
     if (isValidDate(props?.defaultValue?.periode)) {
       const periodeDate = new Date(props.defaultValue?.periode);
       formState.periode = {
