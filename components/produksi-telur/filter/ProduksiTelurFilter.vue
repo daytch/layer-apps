@@ -26,6 +26,7 @@ const filterState = ref({
   periode: undefined,
   cage: undefined,
 });
+
 const {
   showModal,
   formStep,
@@ -33,6 +34,12 @@ const {
   isLoading: loadingUpdateData,
 } = useUploadEggData();
 const { handleShowToast } = useShowToast();
+const selectedCageName = computed(() => {
+  if (!filterState.value.cage || !KandangOptions?.value?.length) return "";
+  return KandangOptions.value.find(
+    (opt) => opt.value === Number(filterState.value.cage)
+  )?.label;
+});
 
 const getPeriodeText = (periodeValue: string) => {
   if (!periodeValue?.length) return "";
@@ -109,17 +116,18 @@ const handleDownloadEggDataOnCoopAndDate = async () => {
       handleShowToast({ type: "ERROR", message: "Gagal mengunduh dokumen." });
     });
 };
+
+const handleCloseModal = () => {
+  formStep.value = "UPLOAD";
+  showModal.value = false;
+};
 </script>
 
 <template>
   <div class="border rounded mb-8 pt-4 px-4" :class="containerClass">
-    <div class="pb-4 px-0.5">
-      <div
-        class="flex space-y-5 2xl:flex-row flex-col 2xl:justify-between 2xl:space-x-6 2xl:space-y-0 mt-0.5"
-      >
-        <div
-          class="space-y-4 xs:space-y-0 xs:space-x-6 flex flex-col xs:flex-row"
-        >
+    <div class="pb-4 px-0.5 overflow-x-auto">
+      <div class="flex flex-row space-x-6 mt-0.5 justify-between">
+        <div class="space-x-6 flex flex-row">
           <button
             type="button"
             class="btn primary data-table-add-button xs:flex-1"
@@ -139,28 +147,44 @@ const handleDownloadEggDataOnCoopAndDate = async () => {
             <span class="whitespace-nowrap">Export Data .xls</span>
           </button>
         </div>
-        <div
-          class="flex flex-col 2xl:flex-row items-center justify-end space-y-5 2xl:space-y-0 flex-1 px-0.5 2xl:space-x-4"
-        >
-          <div
-            class="space-y-4 sm:space-y-0 w-full sm:grid sm:grid-cols-2 sm:gap-4 md:flex md:justify-end 2xl:flex-1 2xl:w-auto"
-          >
+        <div class="flex flex-row space-y-0 px-0.5 space-x-4 !ml-10">
+          <div class="flex space-x-4">
             <!-- Opsi Kandang -->
-            <div class="flex-1 2xl:max-w-[250px]">
-              <UInputMenu
+            <div class="w-[250px]" id="filter-cage">
+              <UDropdown
                 size="md"
-                :nullable="true"
-                v-model="filterState.cage"
-                :options="KandangOptions || []"
-                placeholder="Pilih Nama Kandang"
-                :input-class="'py-[12px]'"
-                :option-attribute="'label'"
-                :value-attribute="'value'"
-              />
+                :items="([(KandangOptions)?.map((opt) => ({
+                  label: opt.label,
+                  click: () => {
+                    if(opt) {
+                      filterState.cage = opt.value as any
+                    }
+                  },
+                   icon: 'i-heroicons-pencil-square-20-solid',
+                   shortcuts: ['E']
+                }))] as any)"
+                :ui="{
+                  wrapper: 'relative inline-flex text-left w-full',
+                  ring: 'ring-1 ring-[#DFE4EA]',
+                  width: '',
+                }"
+              >
+                <UButton
+                  color="white"
+                  :label="
+                    !selectedCageName ? 'Pilih Kandang' : selectedCageName
+                  "
+                  trailing-icon="i-heroicons-chevron-down-20-solid"
+                  class="w-full justify-between [&>span]:whitespace-nowrap"
+                />
+                <template #item="{ item }">
+                  <span class="inline-block truncate">{{ item?.label }}</span>
+                </template>
+              </UDropdown>
             </div>
             <!-- End Opsi Kandang -->
             <!-- Date picker -->
-            <div class="flex-1 2xl:max-w-[166px]">
+            <div class="w-[166px]">
               <DateTimePicker
                 v-model:model-value="filterState.periode"
                 :month-picker="true"
@@ -193,16 +217,14 @@ const handleDownloadEggDataOnCoopAndDate = async () => {
               variant="ghost"
               @click="handleApplyFilter"
               :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
-              class="w-full justify-center col-span-2 md:w-auto"
+              class="w-auto"
             >
               Tampilkan
             </UButton>
             <!-- End Tampilkan -->
           </div>
 
-          <div
-            class="space-y-4 w-full xs:flex xs:space-x-4 xs:space-y-0 2xl:w-auto"
-          >
+          <div class="flex space-x-4 w-auto">
             <div class="w-[1px] h-12 bg-[--app-gray-500] hidden 2xl:block" />
             <UPopover
               mode="click"
@@ -257,16 +279,11 @@ const handleDownloadEggDataOnCoopAndDate = async () => {
       </div>
     </div>
   </div>
-  <AppModal
-    :model-value="showModal"
-    @update:model-value="
-      () => {
-        formStep = 'UPLOAD';
-        showModal = false;
-      }
-    "
-  >
-    <ImportModal v-if="formStep === 'UPLOAD'" />
+  <AppModal :model-value="showModal" @update:model-value="handleCloseModal">
+    <ImportModal
+      v-if="formStep === 'UPLOAD'"
+      @handle-close-modal="handleCloseModal"
+    />
     <DuplicateConfirm v-else-if="formStep === 'DUPLICATE-CONFIRM'" />
     <p v-else>No show</p>
   </AppModal>

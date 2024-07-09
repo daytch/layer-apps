@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
-import type { DiagnosisKandangPayload, DiagnosisKandangType } from "~/types/report";
+import type {
+  DiagnosisKandangPayload,
+  DiagnosisKandangType,
+} from "~/types/report";
 
 const props = defineProps<{
   allDiagnosisKandang: Array<DiagnosisKandangType>;
@@ -11,9 +14,14 @@ defineEmits<{
 }>();
 
 const accordionData = computed(() =>
-  props.allDiagnosisKandang.map((d) => ({ ...d, label: d.coop_name, content: "" }))
+  props.allDiagnosisKandang.map((d) => ({
+    ...d,
+    label: d.coop_name,
+    content: "",
+  }))
 );
-const { isLoading: isLoadingUpdate, updateDiagnosisKandangById } = useFetchDiagnosisKandang();
+const { isLoading: isLoadingUpdate, updateDiagnosisKandangById } =
+  useFetchDiagnosisKandang();
 const {
   showModal: showHandleReportModal,
   handleCloseModal: handleCloseReportModal,
@@ -56,19 +64,31 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
           <button
             type="button"
             class="inline-flex px-2 py-[10px] items-center space-x-2"
-            :class="!!item?.progres?.length ? 'bg-white' : 'bg-[--app-danger-600]'"
+            :class="
+              !!item?.progres?.toLowerCase()?.includes('sudah')
+                ? 'bg-white'
+                : 'bg-[--app-danger-600]'
+            "
           >
             <UIcon
               v-if="open"
               class="w-[22px] h-[22px]"
               name="i-heroicons-minus-circle"
-              :class="!!item?.progres?.length ? 'text-[--app-primary-100]' : 'text-red-500'"
+              :class="
+                !!item?.progres?.toLowerCase()?.includes('sudah')
+                  ? 'text-[--app-primary-100]'
+                  : 'text-red-500'
+              "
             />
             <UIcon
               v-else
               name="i-heroicons-plus-circle"
               class="w-[22px] h-[22px]"
-              :class="!!item?.progres?.length ? 'text-[--app-primary-100]' : 'text-red-500'"
+              :class="
+                !!item?.progres?.toLowerCase()?.includes('sudah')
+                  ? 'text-[--app-primary-100]'
+                  : 'text-red-500'
+              "
             />
             <span class="inline-block">{{ item?.label }}</span>
           </button></template
@@ -76,7 +96,9 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
         <template #item="{ item }">
           <ReportCard
             :report="item"
-            @handle-show-handle-report="(report) => handleShowReportModal(report)"
+            @handle-show-handle-report="
+              (report) => handleShowReportModal(report)
+            "
           />
         </template>
       </UAccordion>

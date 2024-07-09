@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { mixed, type InferType, string, object, number } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
-import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
 import { ASYNC_KEY } from "~/constants/api";
 import type { DiagnosisKandangPayload } from "~/types/report";
 
@@ -14,10 +18,14 @@ defineProps<{
 }>();
 
 const schema = object({
-  medicine: mixed().test("required", "Jenis obat tidak boleh kosong", (value) => {
-    const jenisObatValue = value as number;
-    return !!jenisObatValue?.toString().length;
-  }),
+  medicine: mixed().test(
+    "required",
+    "Jenis obat tidak boleh kosong",
+    (value) => {
+      const jenisObatValue = value as number;
+      return !!jenisObatValue?.toString().length;
+    }
+  ),
   dosis: mixed().test("required", "Dosis obat tidak boleh kosong", (value) => {
     const dosisObatValue = value as number;
 
@@ -47,10 +55,6 @@ const { data: foods } = await useAsyncData(
 );
 const PROGRESS_OPTIONS = [
   {
-    label: "Belum Lapor PPL",
-    value: "Belum Lapor PPL",
-  },
-  {
     label: "Sudah Lapor PPL",
     value: "Sudah Lapor PPL",
   },
@@ -69,11 +73,21 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
 </script>
 
 <template>
-  <UForm ref="form" :schema="schema" :state="formState" class="space-y-4" @submit="onSubmit">
+  <UForm
+    ref="form"
+    :schema="schema"
+    :state="formState"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
-          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
+        <div
+          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
+        >
+          <h2
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
+          >
             Tangani Laporan
           </h2>
           <UButton
