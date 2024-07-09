@@ -30,6 +30,10 @@ export const API_LIST = {
   deleteEggDataByIds: "/egg/delete",
   getEggDataByCoopAndPeriode: "/egg",
   updateEggDataByRowId: "/egg/update",
+  NOTIFICATION: {
+    GET: "/notification",
+    MARK_DONE: (id: number) => `/notification/${id}`,
+  },
 };
 
 export const ASYNC_KEY = {
@@ -47,4 +51,5 @@ export const ASYNC_KEY = {
   DIAGNOSIS_KANDANG: "diagnosis-kandang",
   FCR_CHART: "fcr-chart",
   EGG_DATA: "egg_data",
+  NOTIFICATION: "egg_notification",
 };

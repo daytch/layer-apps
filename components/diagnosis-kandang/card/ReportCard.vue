@@ -4,7 +4,9 @@ import { type DiagnosisKandangType } from "~/types/report";
 
 defineProps<{ report: DiagnosisKandangType }>();
 
-defineEmits<{ (e: "handleShowHandleReport", report: DiagnosisKandangType): void }>();
+defineEmits<{
+  (e: "handleShowHandleReport", report: DiagnosisKandangType): void;
+}>();
 </script>
 
 <template>
@@ -15,39 +17,55 @@ defineEmits<{ (e: "handleShowHandleReport", report: DiagnosisKandangType): void 
     <table>
       <tbody>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">ID Kandang</th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
+            ID Kandang
+          </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
             {{ report?.coop_id || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Tanggal</th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
+            Tanggal
+          </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
             {{ formatDate(report.trans_date, "dd MMM yyyy") }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Pelapor</th>
-          <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433] uppercase">
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
+            Pelapor
+          </th>
+          <td
+            class="py-2 px-6 text-left text-sm font-normal text-[#1D2433] uppercase"
+          >
             {{ report?.reporter || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Riwayat Penyakit</th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
+            Riwayat Penyakit
+          </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
             {{ report?.disease || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Obat yg diberikan</th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
+            Obat yg diberikan
+          </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
             {{ report?.medicine || "" }}
           </td>
         </tr>
         <tr class="py-[2px]">
-          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">Progress</th>
+          <th class="text-left py-2 px-6 text-sm font-normal text-[#1D2433]">
+            Progress
+          </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            <span v-if="!!report?.progres?.length">{{ report?.progres }}</span>
+            <span v-if="!!report?.progres?.toLowerCase()?.includes('sudah')">{{
+              report?.progres
+            }}</span>
             <button
               v-else
               class="py-1 px-2 text-sm font-normal leading-[22px] text-center inline-flex items-center justify-center text-white rounded-md bg-[--app-primary-100] ring-1 ring-[--app-primary-100]"

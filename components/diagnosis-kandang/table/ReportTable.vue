@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import type { DiagnosisKandangPayload, DiagnosisKandangType } from "~/types/report";
+import type {
+  DiagnosisKandangPayload,
+  DiagnosisKandangType,
+} from "~/types/report";
 const columns = [
   "ID Kandang",
   "Nama Kandang",
@@ -16,7 +19,8 @@ defineProps<{
   isLoading?: boolean;
 }>();
 
-const { isLoading: isLoadingUpdate, updateDiagnosisKandangById } = useFetchDiagnosisKandang();
+const { isLoading: isLoadingUpdate, updateDiagnosisKandangById } =
+  useFetchDiagnosisKandang();
 const {
   showModal: showHandleReportModal,
   handleCloseModal: handleCloseReportModal,
@@ -102,7 +106,7 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
           <td
             class="text-sm font-normal leading-[22px] text-[--app-dark-900] px-2 py-2 whitespace-nowrap"
           >
-            <template v-if="!!report?.progres?.length">
+            <template v-if="!report?.progres?.toLowerCase().includes('belum')">
               {{ report?.progres }}
             </template>
             <button
