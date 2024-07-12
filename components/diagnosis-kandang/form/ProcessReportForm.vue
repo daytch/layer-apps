@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mixed, type InferType, string, object, number } from "yup";
+import { mixed, type InferType, ref as yupRef, object, number } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
 import {
   UI_CARD_STYLES,
@@ -26,11 +26,11 @@ const schema = object({
       return !!jenisObatValue?.toString().length;
     }
   ),
-  dosis: mixed().test("required", "Dosis obat tidak boleh kosong", (value) => {
-    const dosisObatValue = value as number;
-
-    return dosisObatValue > 0 && !!dosisObatValue?.toString().length;
-  }),
+  jumlahObat: number().min(-1, "Tidak boleh kosong."),
+  dosis: number()
+    .required("Tidak boleh kosong")
+    .min(1, "Tidak boleh kosong")
+    .max(yupRef("jumlahObat"), "Stok obat tidak mencukupi."),
   progress: mixed().test(
     "Required",
     "Progress tidak boleh kosong.",
@@ -40,10 +40,11 @@ const schema = object({
 
 type FormValueType = InferType<typeof schema>;
 
-const formState = reactive({
+const formState = reactive<FormValueType>({
   medicine: undefined,
-  dosis: undefined,
+  dosis: undefined as any,
   progress: undefined,
+  jumlahObat: -1,
 });
 
 const { getAllFoodMedicineStock } = useFetchFoodMedicine();
@@ -107,7 +108,12 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             <UInputMenu
               size="md"
               :nullable="true"
-              v-model="formState.medicine"
+              :modelValue="formState.medicine"
+              @update:modelValue="(value: number) => {
+                const selectedMedic = foods?.find((f) => f.id === value)
+                formState.medicine = value 
+                formState.jumlahObat = selectedMedic?.quantity ?? -1
+              }"
               :options="foods || []"
               placeholder="Pilih Obat yg diberikan"
               :input-class="'input-select-trigger'"
@@ -120,10 +126,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               <FormLabel>Dosis yg diberikan</FormLabel>
             </template>
             <UInput
+              :disabled="!formState.medicine"
               variant="outline"
               placeholder="Dosis yg diberikan"
               type="number"
-              v-model="formState.dosis"
+              v-model="(formState.dosis as any)"
               :min="0"
             />
           </UFormGroup>

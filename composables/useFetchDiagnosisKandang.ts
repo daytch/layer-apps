@@ -1,6 +1,9 @@
 import { ASYNC_KEY } from "~/constants/api";
 import { diagnosisRepository } from "~/repository/modules/diagnosis";
-import type { DiagnosisKandangParams, DiagnosisKandangPayload } from "~/types/report";
+import type {
+  DiagnosisKandangParams,
+  DiagnosisKandangPayload,
+} from "~/types/report";
 
 export const useFetchDiagnosisKandang = () => {
   const { $api } = useNuxtApp();
@@ -30,12 +33,17 @@ export const useFetchDiagnosisKandang = () => {
     }
   };
 
-  const createNewDiagnosisKandang = async (createPayload: DiagnosisKandangPayload) => {
+  const createNewDiagnosisKandang = async (
+    createPayload: DiagnosisKandangPayload
+  ) => {
     initialState();
     try {
-      const response = await diagnosisRepo.createNewDiagnosisKandang(createPayload);
+      const response = await diagnosisRepo.createNewDiagnosisKandang(
+        createPayload
+      );
       if (!!response?.data) {
         handleSucessUpdateData("Sukses menyimpan diagnosis data.");
+        await refreshNuxtData(ASYNC_KEY.NOTIFICATION);
         return response.data;
       }
     } catch (error) {
@@ -43,12 +51,19 @@ export const useFetchDiagnosisKandang = () => {
     }
   };
 
-  const updateDiagnosisKandangById = async (id: number, updatePayload: DiagnosisKandangPayload) => {
+  const updateDiagnosisKandangById = async (
+    id: number,
+    updatePayload: DiagnosisKandangPayload
+  ) => {
     initialState();
     try {
-      const response = await diagnosisRepo.updateDiagnosisKandangById(id, updatePayload);
+      const response = await diagnosisRepo.updateDiagnosisKandangById(
+        id,
+        updatePayload
+      );
       if (!!response.data) {
         handleSucessUpdateData("Sukses memperbarui diagnosis data.");
+        await refreshNuxtData(ASYNC_KEY.NOTIFICATION);
         return response.data;
       }
     } catch (error) {

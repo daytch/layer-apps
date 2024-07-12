@@ -1,6 +1,7 @@
 import { ASYNC_KEY } from "~/constants/api";
 import { foodMedicineRepository } from "~/repository/modules/food-medicine";
 import type {
+  FoodMedicineHistoryParams,
   FoodMedicineStockPayloadType,
   FoodMedicineStockType,
 } from "~/types/food-medicine-stock";
@@ -25,6 +26,24 @@ export const useFetchFoodMedicine = () => {
     const response = await foodMedicineRepo.getAllFoodMedicineStock();
     if (!!response?.data) {
       return response?.data;
+    }
+  };
+
+  const getFoodMedicHistory = async (params?: FoodMedicineHistoryParams) => {
+    if (!params?.coop_id || !params?.end_date || !params?.start_date) return;
+    const response = await foodMedicineRepo.getFoodMedicHistory(params);
+    if (!!response.data) {
+      return {
+        data: response.data || [],
+        total: {
+          transactionTotal: response?.data?.reduce((prev, currentValue) => {
+            return prev + currentValue?.total;
+          }, 0),
+          qytTotal: response?.data?.reduce((prev, current) => {
+            return prev + current.qty;
+          }, 0),
+        },
+      };
     }
   };
 
@@ -127,5 +146,6 @@ export const useFetchFoodMedicine = () => {
     createNewStock,
     updateStockById,
     isLoading,
+    getFoodMedicHistory,
   };
 };

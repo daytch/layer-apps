@@ -63,17 +63,18 @@ defineEmits<{
             Progress
           </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            <span v-if="!!report?.progres?.toLowerCase()?.includes('sudah')">{{
-              report?.progres
-            }}</span>
             <button
-              v-else
+              v-if="
+                !report?.progres?.length ||
+                report?.progres?.toLowerCase().includes('belum')
+              "
               class="py-1 px-2 text-sm font-normal leading-[22px] text-center inline-flex items-center justify-center text-white rounded-md bg-[--app-primary-100] ring-1 ring-[--app-primary-100]"
               type="button"
               @click="$emit('handleShowHandleReport', report)"
             >
               Tangani
             </button>
+            <span v-else>{{ report?.progres }}</span>
           </td>
         </tr>
       </tbody>

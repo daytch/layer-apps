@@ -33,3 +33,19 @@ export type FoodMedicineStockPayloadType = {
   total: number;
   uom: string;
 };
+
+export type FoodMedicineHistory = {
+  sku: string;
+  pic: string;
+  transaction_date: string;
+  medicine: string;
+  tipe: string;
+  qty: number;
+  total: number;
+};
+
+export type FoodMedicineHistoryParams = {
+  start_date: string;
+  end_date: string;
+  coop_id: number;
+};
