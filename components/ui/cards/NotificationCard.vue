@@ -24,8 +24,8 @@ defineProps<{ notification: NotificationDataType }>();
           {{ notification?.message }}
         </p>
         <p class="text-xs leading-5 font-normal text-[#6B7280]">
-          {{ formatDate(notification.createdAt, "dd MMMM yyyy") }}
-          {{ formatDate(notification.createdAt, "hh.mm") }} WIB
+          {{ formatDate(notification?.transaction_date, "dd MMMM yyyy") }}
+          {{ formatDate(notification?.transaction_date, "hh.mm") }} WIB
         </p>
       </div>
       <div

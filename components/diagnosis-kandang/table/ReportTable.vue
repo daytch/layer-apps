@@ -106,17 +106,21 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
           <td
             class="text-sm font-normal leading-[22px] text-[--app-dark-900] px-2 py-2 whitespace-nowrap"
           >
-            <template v-if="!report?.progres?.toLowerCase().includes('belum')">
-              {{ report?.progres }}
-            </template>
             <button
-              v-else
+              v-if="
+                !report?.progres?.length ||
+                report?.progres?.toLowerCase().includes('belum')
+              "
               @click="handleShowReportModal(report)"
               type="button"
               class="py-1 px-2 text-sm font-normal leading-[22px] text-center inline-flex items-center justify-center text-white rounded-md bg-[--app-primary-100] ring-1 ring-[--app-primary-100]"
             >
               Tangani
             </button>
+
+            <template v-else>
+              {{ report?.progres }}
+            </template>
           </td>
         </tr>
         <tr v-else>

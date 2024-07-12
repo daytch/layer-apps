@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ASYNC_KEY } from "~/constants/api";
+import type { FoodMedicineHistoryParams } from "~/types/food-medicine-stock";
+
 const COLUMNS = [
   "ID Kandang",
   "Nama Pelanggan",
@@ -9,16 +12,31 @@ const COLUMNS = [
   "Value Qty.",
   "Total",
 ];
-const data = {
-  id: "100000051",
-  name: "AHMAD ROZIKIN",
-  date: "02/10/2023",
-  itemId: "G10000000851",
-  itemName: "Stres Block",
-  type: "KREDIT",
-  quantity: 10,
-  total: 121000,
-};
+const { getFoodMedicHistory } = useFetchFoodMedicine();
+const { queryParams } = useQueryParams();
+const { data: historyData, pending } = await useAsyncData(
+  ASYNC_KEY.FOOD_MEDIC_HISTORY,
+  async () => {
+    const params = {} as FoodMedicineHistoryParams;
+    const coopId = queryParams.value["coop"];
+    const from = queryParams.value["from"];
+    const to = queryParams.value["to"];
+    if (queryParams.value["coop"] && !isNaN(Number(coopId))) {
+      params["coop_id"] = Number(coopId);
+    }
+    if (!!from?.toString()?.length && isValidDate(from?.toString())) {
+      params["start_date"] = from.toString();
+    }
+    if (!!to?.toString()?.length && isValidDate(to?.toString())) {
+      params["end_date"] = to.toString();
+    }
+    return getFoodMedicHistory(params);
+  },
+  {
+    lazy: true,
+    watch: [queryParams],
+  }
+);
 </script>
 
 <template>
@@ -35,53 +53,75 @@ const data = {
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="item in [data, data, data, data, data]"
-          class="bg-white even:bg-[#F8F9FC]"
-        >
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+        <template v-if="pending">
+          <tr class="bg-white">
+            <td
+              :colspan="COLUMNS.length"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] border border-t-0"
+            >
+              <LoadingSpinner />
+            </td>
+          </tr>
+        </template>
+        <template v-else-if="!pending && !!historyData?.data?.length">
+          <tr
+            v-for="item in historyData?.data"
+            class="bg-white even:bg-[#F8F9FC]"
           >
-            {{ item?.id }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] uppercase"
-          >
-            {{ item?.name }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.date }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.itemId }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.itemName }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] uppercase"
-          >
-            {{ item?.type }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ item?.quantity }}
-          </td>
-          <td
-            class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
-          >
-            {{ formatMoney(item?.total) }}
-          </td>
-        </tr>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              100000051
+            </td>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] uppercase"
+            >
+              {{ item?.pic }}
+            </td>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ formatDate(item?.transaction_date) }}
+            </td>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.sku }}
+            </td>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.medicine }}
+            </td>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] uppercase"
+            >
+              {{ item?.tipe }}
+            </td>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ item?.qty }}
+            </td>
+            <td
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+            >
+              {{ formatMoney(item?.total) }}
+            </td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr class="bg-white">
+            <td
+              :colspan="COLUMNS.length"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] border border-t-0"
+            >
+              <NoDataStatus>Data Riwayat Tidak Ditemukan.</NoDataStatus>
+            </td>
+          </tr>
+        </template>
       </tbody>
-      <tfoot>
+      <tfoot v-if="!pending && !!historyData?.data?.length">
         <tr class="bg-[--app-primary-800]">
           <th
             :colspan="COLUMNS.length - 2"
@@ -92,12 +132,12 @@ const data = {
           <th
             class="p-2 bg-transparent text-sm font-medium leading-[22px] text-[--app-dark-900] text-left"
           >
-            6642
+            {{ historyData?.total?.qytTotal }}
           </th>
           <th
             class="p-2 bg-transparent text-sm font-medium leading-[22px] text-[--app-dark-900] text-left"
           >
-            {{ formatMoney(49353900) }}
+            {{ formatMoney(historyData?.total?.transactionTotal || 0) }}
           </th>
         </tr>
         <tr class="bg-[--app-primary-100]">
@@ -110,12 +150,12 @@ const data = {
           <th
             class="p-2 bg-transparent text-sm font-bold leading-[22px] text-white text-left"
           >
-            6642
+            {{ historyData?.total?.qytTotal }}
           </th>
           <th
             class="p-2 bg-transparent text-sm font-bold leading-[22px] text-white text-left"
           >
-            {{ formatMoney(49353900) }}
+            {{ formatMoney(historyData?.total?.transactionTotal || 0) }}
           </th>
         </tr>
       </tfoot>

@@ -34,6 +34,9 @@ export const API_LIST = {
     GET: "/notification",
     MARK_DONE: (id: number) => `/notification/${id}`,
   },
+  MEDIC: {
+    GET_HISTORY: "/obat/usage-history",
+  },
 };
 
 export const ASYNC_KEY = {
@@ -52,4 +55,5 @@ export const ASYNC_KEY = {
   FCR_CHART: "fcr-chart",
   EGG_DATA: "egg_data",
   NOTIFICATION: "egg_notification",
+  FOOD_MEDIC_HISTORY: "food_medic_history",
 };

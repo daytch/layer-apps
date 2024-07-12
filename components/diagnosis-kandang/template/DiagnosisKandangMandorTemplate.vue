@@ -65,7 +65,7 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
             type="button"
             class="inline-flex px-2 py-[10px] items-center space-x-2"
             :class="
-              !!item?.progres?.toLowerCase()?.includes('sudah')
+              item?.progres?.toLowerCase()?.includes('sudah')
                 ? 'bg-white'
                 : 'bg-[--app-danger-600]'
             "
@@ -75,7 +75,7 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
               class="w-[22px] h-[22px]"
               name="i-heroicons-minus-circle"
               :class="
-                !!item?.progres?.toLowerCase()?.includes('sudah')
+                item?.progres?.toLowerCase()?.includes('sudah')
                   ? 'text-[--app-primary-100]'
                   : 'text-red-500'
               "
@@ -85,7 +85,7 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
               name="i-heroicons-plus-circle"
               class="w-[22px] h-[22px]"
               :class="
-                !!item?.progres?.toLowerCase()?.includes('sudah')
+                item?.progres?.toLowerCase()?.includes('sudah')
                   ? 'text-[--app-primary-100]'
                   : 'text-red-500'
               "

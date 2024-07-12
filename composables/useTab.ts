@@ -1,6 +1,7 @@
 type Tab = {
   label: string;
   key: string;
+  [key: string]: any;
 };
 
 export const useTab = (tabs: Tab[]) => {

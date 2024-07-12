@@ -4,6 +4,5 @@ export type NotificationDataType = {
   isRead: boolean;
   reporter: string;
   diagnosesId: number;
-  createdAt: string;
-  updatedAt: string;
+  transaction_date: string;
 };

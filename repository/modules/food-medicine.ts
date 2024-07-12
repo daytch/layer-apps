@@ -1,4 +1,6 @@
 import type {
+  FoodMedicineHistory,
+  FoodMedicineHistoryParams,
   FoodMedicineStockPayloadType,
   FoodMedicineStockType,
 } from "~/types/food-medicine-stock";
@@ -40,5 +42,11 @@ export const foodMedicineRepository = <T>(fetch: FetchType<T>) => ({
     return fetch(API_LIST.foodMedicineById(id), {
       method: "DELETE",
     });
+  },
+
+  async getFoodMedicHistory(
+    params: FoodMedicineHistoryParams
+  ): FoodMedicineStockResponse<Array<FoodMedicineHistory>> {
+    return fetch(API_LIST.MEDIC.GET_HISTORY, { params, method: "GET" });
   },
 });

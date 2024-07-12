@@ -6,15 +6,12 @@ const { isSidebarExpanded, isSidebarSliderOpen, isNotificationSliderOpen } =
 const authUser = useAuthUser();
 const { getAllNotifications } = useFetchNotification();
 
-const {
-  data: notifications,
-  pending: notificationPending,
-  error: notificationError,
-} = await useAsyncData(
-  ASYNC_KEY.NOTIFICATION,
-  async () => getAllNotifications(),
-  { lazy: true }
-);
+const { data: notifications, pending: notificationPending } =
+  await useAsyncData(
+    ASYNC_KEY.NOTIFICATION,
+    async () => getAllNotifications(),
+    { lazy: true }
+  );
 
 const items = computed(() => [
   [

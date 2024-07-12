@@ -11,6 +11,7 @@ const items = [
     description: "Riwayat Pemakaian",
   },
 ];
+const { selectedTab } = useTab(items);
 </script>
 
 <template>
@@ -20,6 +21,7 @@ const items = [
     </h1>
     <UTabs
       :items="items"
+      v-model="selectedTab"
       class="w-full stock-tab"
       :ui="{
         list: {
