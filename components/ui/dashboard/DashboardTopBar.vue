@@ -1,7 +1,17 @@
 <script setup lang="ts">
+import { ASYNC_KEY } from "~/constants/api";
+
 const { isSidebarExpanded, isSidebarSliderOpen, isNotificationSliderOpen } =
   useDashboardSidebar();
 const authUser = useAuthUser();
+const { getAllNotifications } = useFetchNotification();
+
+const { data: notifications, pending: notificationPending } =
+  await useAsyncData(
+    ASYNC_KEY.NOTIFICATION,
+    async () => getAllNotifications(),
+    { lazy: true }
+  );
 
 const items = computed(() => [
   [
@@ -64,30 +74,26 @@ const items = computed(() => [
         class="w-auto"
       >
         <template #default="{ open }">
-          <UChip
-            size="2xl"
-            :ui="{
-              base: 'absolute rounded-full w-[14px] h-[14px] bg-red-500 min-w-[0] top-[18px] right-[18px]',
-            }"
-          >
+          <div class="relative">
             <UButton
               type="button"
               icon="i-heroicons-bell"
               color="gray"
               class="rounded-full p-3 bg-transparent ring-[--app-primary-100] [&>span]:text-[--app-primary-100] [&>span]:w-6 [&>span]:h-6"
             />
-            <template #trailing>
-              <UIcon
-                name="i-heroicons-ellipsis-vertical"
-                class="w-5 h-5 ml-auto"
-              />
-            </template>
-          </UChip>
+            <div
+              v-if="notifications?.isNotReadAll"
+              class="absolute rounded-full w-[14px] h-[14px] bg-red-500 min-w-[0] top-3 right-3"
+            />
+          </div>
         </template>
 
         <template #account>
           <div class="w-full text-left">
-            <DashboardNotificationList />
+            <DashboardNotificationList
+              :notifications="notifications?.data || []"
+              :is-loading="notificationPending"
+            />
           </div>
         </template>
       </UDropdown>
@@ -113,14 +119,33 @@ const items = computed(() => [
       </div>
       <!-- End User Avatar -->
     </div>
-    <UButton
-      type="button"
-      @click="isNotificationSliderOpen = !isNotificationSliderOpen"
-      :padded="false"
-      color="gray"
-      variant="link"
-      class="p-0 [&>span]:text-white [&>span]:w-[26px] [&>span]:h-[26px] inline-flex lg:hidden"
-      icon="i-heroicons-bell"
-    />
+    <div class="relative lg:hidden">
+      <UButton
+        type="button"
+        @click="isNotificationSliderOpen = !isNotificationSliderOpen"
+        :padded="false"
+        color="gray"
+        variant="link"
+        class="p-0 [&>span]:text-white [&>span]:w-[26px] [&>span]:h-[26px] inline-flex"
+        icon="i-heroicons-bell"
+      />
+      <div
+        v-if="notifications?.isNotReadAll"
+        class="absolute rounded-full w-[14px] h-[14px] bg-red-500 min-w-[0] top-[0] right-[0]"
+      />
+    </div>
   </nav>
+  <USlideover
+    v-model="isNotificationSliderOpen"
+    side="right"
+    :ui="{
+      width: 'w-screen max-w-[317px]',
+      background: 'bg-white',
+    }"
+  >
+    <DashboardNotificationList
+      :notifications="notifications?.data || []"
+      :is-loading="notificationPending"
+    />
+  </USlideover>
 </template>

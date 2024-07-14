@@ -1,7 +1,8 @@
-type NotificationStatus = "READ" | "UNREAD";
-
-export type AppNotification = {
-  sender: string;
-  text: string;
-  status: NotificationStatus;
+export type NotificationDataType = {
+  id: number;
+  message: string;
+  isRead: boolean;
+  reporter: string;
+  diagnosesId: number;
+  transaction_date: string;
 };

@@ -20,7 +20,6 @@ const { isSidebarExpanded } = useDashboardSidebar();
     </div>
   </div>
   <DashboardSPSidebar :menus="DASHBOARD_MENU_SP || []" />
-  <DashboardSPNotification />
 </template>
 
 <style>

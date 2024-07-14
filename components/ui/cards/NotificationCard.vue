@@ -1,24 +1,40 @@
 <script setup lang="ts">
-import type { AppNotification } from "~/types/notification";
-type NotificationCardProps = {} & AppNotification;
-
-defineProps<NotificationCardProps>();
+import type { NotificationDataType } from "~/types/notification";
+const { isLoading, handleMarkAsDone } = useFetchNotification();
+defineProps<{ notification: NotificationDataType }>();
 </script>
 
 <template>
-  <div class="flex justify-between items-start space-x-1">
-    <div class="flex-1">
-      <p class="text-[--app-dark-100] text-sm font-medium leading-[22px] mb-4">
-        {{ sender }}
-      </p>
-      <p class="text-xs text-[--app-primary-text] leading-5 mb-2">{{ text }}</p>
-    </div>
-    <div
-      class="w-3 h-3 rounded-full"
-      :class="{
-        'bg-[--app-primary-100]': status === 'READ',
-        'bg-[--app-danger-100]': status === 'UNREAD',
-      }"
-    />
-  </div>
+  <li>
+    <button
+      type="button"
+      @click="async () => handleMarkAsDone(notification.id)"
+      :disabled="isLoading"
+      class="flex justify-between items-start space-x-1 text-left"
+    >
+      <div class="flex-1">
+        <p
+          class="mb-1 font-semibold text-sm leading-[22px] text-[--app-dark-100]"
+        >
+          {{ notification?.reporter }}
+        </p>
+        <p
+          class="mb-1 text-sm font-normal leading-[22px] text-[--app-dark-100]"
+        >
+          {{ notification?.message }}
+        </p>
+        <p class="text-xs leading-5 font-normal text-[#6B7280]">
+          {{ formatDate(notification?.transaction_date, "dd MMMM yyyy") }}
+          {{ formatDate(notification?.transaction_date, "hh.mm") }} WIB
+        </p>
+      </div>
+      <div
+        class="w-3 h-3 rounded-full"
+        :class="{
+          'bg-[--app-primary-100]': notification.isRead,
+          'bg-[--app-danger-100]': !notification.isRead,
+        }"
+      />
+    </button>
+  </li>
 </template>

@@ -9,7 +9,7 @@ function isValidDate(date: unknown) {
 export default function (date: Date | string, formatType?: string) {
   const formatToDate = new Date(date);
   const isValid = isValidDate(formatToDate);
-  if (!isValid) return "invalid date";
+  if (!isValid) return date?.toString();
   const style = formatType || "dd MMMM yyyyy";
   return format(formatToDate, style, {
     locale: id,

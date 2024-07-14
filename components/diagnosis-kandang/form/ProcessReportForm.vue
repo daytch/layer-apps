@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { mixed, type InferType, string, object, number } from "yup";
+import { mixed, type InferType, ref as yupRef, object, number } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
-import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
 import { ASYNC_KEY } from "~/constants/api";
 import type { DiagnosisKandangPayload } from "~/types/report";
 
@@ -14,15 +18,19 @@ defineProps<{
 }>();
 
 const schema = object({
-  medicine: mixed().test("required", "Jenis obat tidak boleh kosong", (value) => {
-    const jenisObatValue = value as number;
-    return !!jenisObatValue?.toString().length;
-  }),
-  dosis: mixed().test("required", "Dosis obat tidak boleh kosong", (value) => {
-    const dosisObatValue = value as number;
-
-    return dosisObatValue > 0 && !!dosisObatValue?.toString().length;
-  }),
+  medicine: mixed().test(
+    "required",
+    "Jenis obat tidak boleh kosong",
+    (value) => {
+      const jenisObatValue = value as number;
+      return !!jenisObatValue?.toString().length;
+    }
+  ),
+  jumlahObat: number().min(-1, "Tidak boleh kosong."),
+  dosis: number()
+    .required("Tidak boleh kosong")
+    .min(1, "Tidak boleh kosong")
+    .max(yupRef("jumlahObat"), "Stok obat tidak mencukupi."),
   progress: mixed().test(
     "Required",
     "Progress tidak boleh kosong.",
@@ -32,10 +40,11 @@ const schema = object({
 
 type FormValueType = InferType<typeof schema>;
 
-const formState = reactive({
+const formState = reactive<FormValueType>({
   medicine: undefined,
-  dosis: undefined,
+  dosis: undefined as any,
   progress: undefined,
+  jumlahObat: -1,
 });
 
 const { getAllFoodMedicineStock } = useFetchFoodMedicine();
@@ -46,10 +55,6 @@ const { data: foods } = await useAsyncData(
   { lazy: true }
 );
 const PROGRESS_OPTIONS = [
-  {
-    label: "Belum Lapor PPL",
-    value: "Belum Lapor PPL",
-  },
   {
     label: "Sudah Lapor PPL",
     value: "Sudah Lapor PPL",
@@ -69,11 +74,21 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
 </script>
 
 <template>
-  <UForm ref="form" :schema="schema" :state="formState" class="space-y-4" @submit="onSubmit">
+  <UForm
+    ref="form"
+    :schema="schema"
+    :state="formState"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
-          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
+        <div
+          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
+        >
+          <h2
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
+          >
             Tangani Laporan
           </h2>
           <UButton
@@ -93,7 +108,12 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             <UInputMenu
               size="md"
               :nullable="true"
-              v-model="formState.medicine"
+              :modelValue="formState.medicine"
+              @update:modelValue="(value: number) => {
+                const selectedMedic = foods?.find((f) => f.id === value)
+                formState.medicine = value 
+                formState.jumlahObat = selectedMedic?.quantity ?? -1
+              }"
               :options="foods || []"
               placeholder="Pilih Obat yg diberikan"
               :input-class="'input-select-trigger'"
@@ -106,10 +126,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
               <FormLabel>Dosis yg diberikan</FormLabel>
             </template>
             <UInput
+              :disabled="!formState.medicine"
               variant="outline"
               placeholder="Dosis yg diberikan"
               type="number"
-              v-model="formState.dosis"
+              v-model="(formState.dosis as any)"
               :min="0"
             />
           </UFormGroup>
