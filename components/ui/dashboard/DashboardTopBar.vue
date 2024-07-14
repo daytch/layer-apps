@@ -64,6 +64,8 @@ const items = computed(() => [
         :items="items"
         :ui="{
           width: 'w-[330px]',
+          wrapper: 'relative inline-flex text-left rtl:text-right',
+          height: 'max-h-[65vh]',
           item: { disabled: 'cursor-text select-text' },
         }"
         :popper="{
@@ -141,6 +143,7 @@ const items = computed(() => [
     :ui="{
       width: 'w-screen max-w-[317px]',
       background: 'bg-white',
+      base: 'relative flex-1 flex flex-col w-full focus:outline-none overflow-y-auto',
     }"
   >
     <DashboardNotificationList
