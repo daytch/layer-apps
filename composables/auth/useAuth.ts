@@ -1,4 +1,8 @@
-import type { LoginPayload, LoginResponse, LoginResponseWithoutToken } from "~/types/auth";
+import type {
+  LoginPayload,
+  LoginResponse,
+  LoginResponseWithoutToken,
+} from "~/types/auth";
 import { useAuthUser, type ReturnAuthUser } from "./useAuthUser";
 import { authRepository } from "~/repository/modules/auth";
 import { useAuthCookie } from "./useAuthCookie";

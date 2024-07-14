@@ -42,6 +42,7 @@ export type FoodMedicineHistory = {
   tipe: string;
   qty: number;
   total: number;
+  coopId: number;
 };
 
 export type FoodMedicineHistoryParams = {
