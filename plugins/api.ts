@@ -1,6 +1,7 @@
 export default defineNuxtPlugin({
   setup() {
     const { accessToken } = useAuthCookie();
+    const { logout } = useAuth();
     const api = $fetch.create({
       baseURL: useRuntimeConfig().public.apiUrl as string,
       headers: {
@@ -14,8 +15,12 @@ export default defineNuxtPlugin({
         }
       },
       onResponse: () => {},
-      onRequestError: () => {},
-      onResponseError: () => {},
+      onRequestError: (error) => {},
+      onResponseError: (error) => {
+        if (error?.response?.status === 401) {
+          logout();
+        }
+      },
     });
 
     return {

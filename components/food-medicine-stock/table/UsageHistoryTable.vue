@@ -71,7 +71,7 @@ const { data: historyData, pending } = await useAsyncData(
             <td
               class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
             >
-              100000051
+              {{ item?.coopId }}
             </td>
             <td
               class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] uppercase"

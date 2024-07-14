@@ -52,7 +52,7 @@ const handleApplyFilter = () => {
   }
 };
 
-watch(queryParams, () => {
+function handleSetActiveFilter() {
   let range = [] as Array<Date>;
   if (!!queryParams.value?.["from"]?.length) {
     range.push(new Date(queryParams.value?.["from"] as string));
@@ -64,7 +64,9 @@ watch(queryParams, () => {
     | string
     | undefined),
     (filterState.rageDate = range);
-});
+}
+onMounted(handleSetActiveFilter);
+watch(queryParams, handleSetActiveFilter);
 </script>
 
 <template>
