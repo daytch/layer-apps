@@ -10,9 +10,13 @@ const selectedCoop = computed(() => {
     ? Number(queryParams.value?.["coopId"])
     : undefined;
 });
-const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () => getKandangOptions(), {
-  lazy: true,
-});
+const { data } = await useAsyncData(
+  ASYNC_KEY.KANDANG_OPTIONS,
+  async () => getKandangOptions(),
+  {
+    lazy: true,
+  }
+);
 </script>
 
 <template>
@@ -39,7 +43,9 @@ const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () => getKa
         </div>
       </div>
       <div class="flex items-center justify-between pt-3 mb-[14px]">
-        <p class="text-sm text-[--app-dark-100] font-medium leading-[22px]">Menu</p>
+        <p class="text-sm text-[--app-dark-100] font-medium leading-[22px]">
+          Menu
+        </p>
         <p class="text-xs font-normal leading-5 text-[--app-dark-100]">
           {{ formatDate(new Date(), "EEEE, dd MMMM yyyy") }}
         </p>
@@ -59,7 +65,7 @@ const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () => getKa
           </template>
         </ForemanMemberMenuCard>
         <ForemanMemberMenuCard
-          :to="'/'"
+          :to="'/dashboard/stok-pakan-obat'"
           :heading="'Stok Makan & Obat'"
           :description="'Mengerjakan sesuai SOP'"
         >
@@ -68,7 +74,7 @@ const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () => getKa
           </template>
         </ForemanMemberMenuCard>
         <ForemanMemberMenuCard
-          :to="'/'"
+          :to="'/dashboard/diagnosis-kandang'"
           :heading="'Diagnosis Kandang'"
           :description="'Apabila ada gejala ayam sakit'"
         >

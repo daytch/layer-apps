@@ -87,7 +87,6 @@ export const useFetchSOP = () => {
   }: { id?: number; roleName: string } & SOPFormPayloadType) => {
     const isUpdateMode = id !== undefined;
     initialFetch();
-    console.log(selectedTab.value);
     try {
       const response = isUpdateMode
         ? await sopRepo.updateSOPById(id, { ...restPayload, roleId })

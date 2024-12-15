@@ -33,7 +33,6 @@ const formState = reactive<MonthlyReportSchemaFormType>({
 const handleSubmit = async (
   event: FormSubmitEvent<MonthlyReportSchemaFormType>
 ) => {
-  console.log(event.data);
   emits("handleHideModal");
 };
 </script>

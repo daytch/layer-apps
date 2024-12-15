@@ -1,4 +1,6 @@
-export const useOptimisticUpdate = <T extends { id: number }>(storageKey: string) => {
+export const useOptimisticUpdate = <T extends { id: number }>(
+  storageKey: string
+) => {
   const isLoading = ref(false);
   const isError = ref(false);
   const { data } = useNuxtData<Array<T>>(storageKey);
@@ -11,7 +13,9 @@ export const useOptimisticUpdate = <T extends { id: number }>(storageKey: string
   };
 
   const handleRemoveData = (successResponseData: T) => {
-    data.value = (data.value || [])?.filter((item) => item.id !== successResponseData.id);
+    data.value = (data.value || [])?.filter(
+      (item) => item.id !== successResponseData.id
+    );
   };
 
   const handleReplaceData = (successResponseData: T) => {
