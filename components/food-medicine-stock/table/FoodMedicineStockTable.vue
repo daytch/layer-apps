@@ -55,6 +55,7 @@ const handleDeleteStock = async () => {
   if (!selectedItem.value) return;
   await deleteStockById(selectedItem.value.id);
   selectedItem.value = null;
+  showDeleteModal.value = false;
 };
 </script>
 

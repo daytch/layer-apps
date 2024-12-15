@@ -6,7 +6,7 @@ defineProps<{
 }>();
 </script>
 <template>
-  <div class="w-full p-6">
+  <div class="w-full p-6 overflow-auto">
     <h2 class="text-[--app-dark-100] text-lg font-semibold leading-[26px] mb-6">
       Notifikasi
     </h2>

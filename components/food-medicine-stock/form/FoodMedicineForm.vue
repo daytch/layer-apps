@@ -11,9 +11,8 @@ import type {
   FoodMedicineStockPayloadType,
   FoodMedicineStockType,
 } from "~/types/food-medicine-stock";
-import type { SelectOptionType } from "~/types/ui";
 
-defineEmits<{
+const emit = defineEmits<{
   (e: "handleHideModal"): void;
   (
     e: "handleAddStock",
@@ -43,6 +42,7 @@ const { data } = await useAsyncData(
     lazy: true,
   }
 );
+const { createNewStock, updateStockById } = useFetchFoodMedicine();
 
 onMounted(() => {
   if (!!props?.defaultValue) {
@@ -63,18 +63,19 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
   const { user } = authUser.value;
   if (!user?.id) return;
   const { name, coop, quantity, total, SKU, price, uom } = event.data;
-  const coopId = (coop as any)?.id;
-  const payload: FoodMedicineStockPayloadType = {
+  const { value, label } = coop as any;
+  const payload = {
     name,
     quantity,
     total,
     SKU,
     price,
     uom,
-    coopId,
+    coopId: value,
     userId: user.id,
+    coop_name: label,
   };
-  console.log(payload);
+  emit("handleAddStock", payload);
 };
 </script>
 
@@ -117,7 +118,7 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
             :input-class="'input-select-trigger'"
           />
         </UFormGroup>
-        <div class="sm:flex items-center space-y-6 sm:space-x-10 sm:space-y-0">
+        <div class="sm:flex items-start space-y-6 sm:space-x-10 sm:space-y-0">
           <UFormGroup name="name" label="Nama Barang" class="flex-1">
             <template #label>
               <FormLabel>Nama Barang</FormLabel>
