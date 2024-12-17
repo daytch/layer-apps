@@ -12,15 +12,25 @@ type ExtedFormMedicalStockPayloadType = FoodMedicineStockPayloadType & {
 
 export const useFetchFoodMedicine = () => {
   const { $api } = useNuxtApp();
+  const { handleShowToast } = useShowToast();
   const foodMedicineRepo = foodMedicineRepository($api);
-  const {
-    isLoading,
-    handleError,
-    handleSuccess,
-    initialFetching,
-    previousData,
-    data,
-  } = useOptimisticUpdate<FoodMedicineStockType>(ASYNC_KEY.foodMedicine);
+  const isLoading = ref(false);
+  const isError = ref(false);
+
+  const initialFetching = () => {
+    isLoading.value = true;
+    isError.value = false;
+  };
+
+  const handleSuccess = async (message: string) => {
+    handleShowToast({ type: "SUCCESS", message });
+    await refreshNuxtData(ASYNC_KEY.foodMedicine);
+  };
+
+  const handleError = (message: string) => {
+    isError.value = true;
+    handleShowToast({ type: "ERROR", message });
+  };
 
   const getAllFoodMedicineStock = async () => {
     const response = await foodMedicineRepo.getAllFoodMedicineStock();
@@ -62,18 +72,13 @@ export const useFetchFoodMedicine = () => {
       updateAt: now.toDateString(),
       createdAt: now.toDateString(),
     };
-    previousData.value = data.value;
-    data.value?.push(temporaryData);
+
     try {
       const response = await foodMedicineRepo.createFoodMedicineStock(
         payload as FoodMedicineStockPayloadType
       );
       if (!!response?.data) {
-        handleSuccess({
-          type: "ADD",
-          message: "Data berhasil ditambahkan",
-          successResponseData: response?.data,
-        });
+        handleSuccess("Data berhasil ditambahkan");
       }
     } catch (error) {
       handleError("Data gagal ditambahkan");
@@ -98,21 +103,14 @@ export const useFetchFoodMedicine = () => {
       updateAt: now.toDateString(),
       createdAt: now.toDateString(),
     };
-    previousData.value = data.value;
-    data.value = data.value?.map((item) =>
-      item.id === id ? { ...item, ...temporaryData } : item
-    ) as any;
+
     try {
       const response = await foodMedicineRepo.updateFoodMedicineStokById(
         id,
         payload as FoodMedicineStockPayloadType
       );
       if (!!response?.data) {
-        handleSuccess({
-          type: "REPLACE",
-          message: "Sukses menyimpan data",
-          successResponseData: response?.data,
-        });
+        handleSuccess("Sukses menyimpan data");
       }
     } catch (error) {
       handleError("Data gagal disimpan");
@@ -123,16 +121,11 @@ export const useFetchFoodMedicine = () => {
 
   const deleteStockById = async (id: number) => {
     initialFetching();
-    previousData.value = data.value;
-    data.value = data?.value?.filter((item) => item?.id !== id) || [];
+
     try {
       const response = await foodMedicineRepo.deleteFoodMedicineStockById(id);
       if (!!response.data) {
-        handleSuccess({
-          message: "Data berhasil dihapus",
-          type: "REMOVE",
-          successResponseData: response?.data || {},
-        });
+        handleSuccess("Data berhasil dihapus");
       }
     } catch (error) {
       handleError("Gagal menghapus data.");
@@ -140,6 +133,7 @@ export const useFetchFoodMedicine = () => {
       isLoading.value = false;
     }
   };
+
   return {
     getAllFoodMedicineStock,
     deleteStockById,

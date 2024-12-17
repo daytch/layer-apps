@@ -17,7 +17,10 @@ export default defineNuxtPlugin({
       onResponse: () => {},
       onRequestError: (error) => {},
       onResponseError: (error) => {
-        if (error?.response?.status === 401) {
+        if (
+          error?.response?.status === 401 &&
+          !error?.response?.url?.includes("/login")
+        ) {
           logout();
         }
       },

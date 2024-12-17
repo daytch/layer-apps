@@ -10,9 +10,13 @@ useSeoMeta({
   description: "Report SOP Harian | Layer Apps",
 });
 const { getSOPByUser } = useFetchSOP();
-const { data, pending } = await useAsyncData(ASYNC_KEY.SOP_BY_USER, async () => getSOPByUser(), {
-  lazy: true,
-});
+const { data, pending } = await useAsyncData(
+  ASYNC_KEY.SOP_BY_USER,
+  async () => getSOPByUser(),
+  {
+    lazy: true,
+  }
+);
 </script>
 
 <template>

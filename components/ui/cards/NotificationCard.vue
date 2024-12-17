@@ -5,12 +5,12 @@ defineProps<{ notification: NotificationDataType }>();
 </script>
 
 <template>
-  <li>
+  <li class="w-full">
     <button
       type="button"
       @click="async () => handleMarkAsDone(notification.id)"
       :disabled="isLoading"
-      class="flex justify-between items-start space-x-1 text-left"
+      class="flex justify-between items-start space-x-1 text-left w-full"
     >
       <div class="flex-1">
         <p
