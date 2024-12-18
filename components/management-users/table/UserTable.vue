@@ -94,7 +94,7 @@ const handleDeleteUser = async () => {
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
             >
-              {{ user?.id }}
+              {{ user?.nik }}
             </td>
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"

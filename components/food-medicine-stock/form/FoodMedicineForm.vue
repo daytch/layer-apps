@@ -146,15 +146,11 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
             <template #label>
               <FormLabel>Harga Persatuan</FormLabel>
             </template>
-            <UInput
-              variant="outline"
+            <CurrencyInput
+              :model-value="formState.price"
+              @update:model-value="(value: any) => formState.price = value"
               placeholder="Harga Persatuan"
-              v-model="formState.price"
-            >
-              <template #leading>
-                <span class="text-gray-500 dark:text-gray-400 text-xs">Rp</span>
-              </template></UInput
-            >
+            />
           </UFormGroup>
           <UFormGroup name="uom" label="Satuan" class="flex-1">
             <template #label>
