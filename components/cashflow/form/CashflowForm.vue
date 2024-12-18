@@ -2,7 +2,11 @@
 import { object, number, mixed, type InferType } from "yup";
 import type { CashflowDataType, CashflowPayloadType } from "~/types/cashflow";
 import type { FormSubmitEvent } from "#ui/types";
-import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
 
 const props = defineProps<{
   defaultValue: CashflowDataType | undefined;
@@ -29,7 +33,10 @@ const Schema = object({
     "Nama Kandang tidak boleh kosong.",
     (value: any) => !!value?.length
   ),
-  amount: number().min(0, "Jumlah tidak boleh kosong.").typeError("Jumlah tidak valid."),
+  amount: number()
+    .required()
+    .min(1, "Jumlah tidak boleh kosong.")
+    .typeError("Jumlah tidak valid."),
 });
 type CashflowFormType = InferType<typeof Schema>;
 
@@ -41,7 +48,8 @@ const formState = reactive<CashflowFormType>({
 
 const balance = computed(() => {
   let total = props.totalCashflowValue;
-  if (!formState?.amount?.toString()?.length || formState.amount <= 0) return total;
+  if (!formState?.amount?.toString()?.length || formState.amount <= 0)
+    return total;
   if (formState.tipe === props.defaultValue?.tipe) return total;
   if (formState.tipe === "kredit") {
     total = total - formState.amount;
@@ -87,11 +95,21 @@ const onCloseModal = () => {
 </script>
 
 <template>
-  <UForm ref="form" :schema="Schema" :state="formState" class="space-y-4" @submit="onSubmit">
+  <UForm
+    ref="form"
+    :schema="Schema"
+    :state="formState"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
-          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
+        <div
+          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
+        >
+          <h2
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
+          >
             {{ !!defaultValue ? "Ubah" : "Tambah" }} Cashflow
           </h2>
           <UButton
@@ -142,17 +160,27 @@ const onCloseModal = () => {
           <template #label>
             <FormLabel>Jumlah</FormLabel>
           </template>
-          <UInput variant="outline" placeholder="Jumlah" v-model="formState.amount" type="number" />
+          <template #default>
+            <CurrencyInput
+              :model-value="formState.amount"
+              @update:model-value="(value: any) => formState.amount = value"
+              placeholder="Jumlah"
+            />
+          </template>
+          <template #error="{ error }">
+            <span v-if="error" :class="[error ? 'text-red-500' : '']">
+              {{ error }}
+            </span>
+          </template>
         </UFormGroup>
         <UFormGroup name="balance" label="Saldo Sekarang">
           <template #label>
             <FormLabel>Saldo Sekarang</FormLabel>
           </template>
-          <UInput
-            variant="outline"
-            placeholder="Saldo Sekarang"
+          <CurrencyInput
             :model-value="balance"
-            type="number"
+            @update:model-value="(value: any) => balance = value"
+            placeholder="Jumlah"
             :disabled="true"
           />
         </UFormGroup>
