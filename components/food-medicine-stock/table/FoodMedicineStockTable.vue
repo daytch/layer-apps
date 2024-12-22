@@ -9,12 +9,16 @@ type Column = {
 };
 const columns: Array<Column> = [
   {
-    key: "name",
+    key: "coop_name",
     label: "Nama Kandang",
   },
   {
     key: "SKU",
     label: "SKU Barang",
+  },
+  {
+    key: "name",
+    label: "Nama Barang",
   },
   {
     key: "price",
@@ -86,12 +90,17 @@ const handleDeleteStock = async () => {
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
             >
-              {{ item?.name }}
+              {{ item?.coop_name }}
             </td>
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
             >
               {{ item?.SKU }}
+            </td>
+            <td
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
+            >
+              {{ item?.name }}
             </td>
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"

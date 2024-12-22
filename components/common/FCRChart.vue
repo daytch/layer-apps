@@ -35,9 +35,6 @@ const template = (d: DataRecord) =>
           >
             FCR Overall
           </h3>
-          <p class="text-base leading-6 text-[--app-primary-text]">
-            Nilai terakhir : 2,75
-          </p>
         </div>
 
         <slot name="filter" />
