@@ -5,7 +5,13 @@ const { getAllKandang } = useKandang();
 const selectedCoop = ref<number | undefined>(undefined);
 const { data, pending } = await useAsyncData(
   "DASHBOARD_DATA",
-  async () => getDashboardData({ frcParams: { coopId: selectedCoop.value } }),
+  async () =>
+    getDashboardData({
+      frcParams: {
+        coopId: selectedCoop.value,
+        period: formatDate(new Date(), "yyyy-MM-01"),
+      },
+    }),
   {
     lazy: true,
     watch: [selectedCoop],
@@ -22,6 +28,11 @@ const { data: coops } = await useAsyncData(
     },
   }
 );
+onMounted(() => {
+  if (!!coops?.value?.length) {
+    selectedCoop.value = coops.value[0]?.value;
+  }
+});
 </script>
 
 <template>

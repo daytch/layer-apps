@@ -32,7 +32,7 @@ const isAlreadyShowAllImage = computed(
             width="327"
             height="223"
             format="webp"
-            class="rounded-[22px] w-full h-[223px] object-cover"
+            class="rounded-[22px] w-full h-[223px] object-contain"
           />
           <button
             @click="showAllImages"

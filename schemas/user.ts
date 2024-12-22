@@ -2,15 +2,7 @@ import { mixed, object, type InferType, string, array, boolean } from "yup";
 export const UserFormSchema = object({
   name: string().required("Nama tidak boleh kosong."),
   isUpdateMode: boolean().default(false),
-  password: string()
-    .when(["isUpdateMode"], {
-      is: (value: boolean) => !value,
-      then: () => string().required("Password tidak boleh kosong."),
-    })
-    .when(["isUpdateMode"], {
-      is: (value: boolean) => !!value,
-      then: () => string().nullable(),
-    }),
+  password: string().notRequired().default(""),
   phoneNumber: string().optional(),
   email: string()
     .email("Email tidak valid.")

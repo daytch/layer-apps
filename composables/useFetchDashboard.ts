@@ -11,10 +11,14 @@ export const useFetchDashboard = () => {
 
   const getFCRChartData = (fcrParams: FCRChartParams) => {
     if (!fcrParams?.coopId) return;
-    return fcrRepo.getCoopFCRChartByPeriod(fcrParams);
+    return fcrRepo.getCoopFCRChartByPeriod({ ...fcrParams });
   };
 
-  const getDashboardData = async ({ frcParams }: { frcParams: FCRChartParams }) => {
+  const getDashboardData = async ({
+    frcParams,
+  }: {
+    frcParams: FCRChartParams;
+  }) => {
     const response = await Promise.all([
       getFCRChartData(frcParams),
       userRepo.getAllUsers(),
