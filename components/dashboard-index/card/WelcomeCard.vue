@@ -23,7 +23,7 @@ const authUser = useAuthUser();
               Selamat Datang, {{ authUser?.user?.name }}
             </h2>
             <p class="text-[--app-dark-500] leading-6 text-base mb-9">
-              {{ formatDate(new Date(), "EEEE, dd MMMM yyyyy") }}
+              {{ formatDate(new Date(), "EEEE, dd MMMM yyyy") }}
             </p>
             <p class="text-[--app-dark-500] text-sm leading-[22px] mb-2">
               Pintasan :

@@ -58,7 +58,10 @@ export const useUser = () => {
     }
   };
 
-  const updateUserById = async (id: number, updateUserPayload: CreateUserPayload) => {
+  const updateUserById = async (
+    id: number,
+    updateUserPayload: CreateUserPayload
+  ) => {
     initialFetch();
     try {
       const response = await userRepo.updateUserById(id, updateUserPayload);
@@ -77,6 +80,13 @@ export const useUser = () => {
     try {
       const response = await userRepo.createNewUser(createUserPayload);
       if (!!response?.data) {
+        const responseData = response?.data as any;
+        if (
+          typeof responseData &&
+          responseData?.toLowerCase()?.includes("sudah")
+        ) {
+          return handleError(responseData);
+        }
         handleSuccess("Berhasil menyimpan data user.");
       }
     } catch (error) {
@@ -115,14 +125,18 @@ export const useUser = () => {
           if (!!data?.path?.length) {
             parsingPayload["avatar"] = data?.path;
           }
-          id !== undefined ? updateUserById(id, parsingPayload) : createNewUser(parsingPayload);
+          id !== undefined
+            ? updateUserById(id, parsingPayload)
+            : createNewUser(parsingPayload);
         })
         .catch(() => {
           handleError("Gagal mengupload avatar.");
           isLoading.value = false;
         });
     } else {
-      id !== undefined ? updateUserById(id, parsingPayload) : createNewUser(parsingPayload);
+      id !== undefined
+        ? updateUserById(id, parsingPayload)
+        : createNewUser(parsingPayload);
     }
   };
 

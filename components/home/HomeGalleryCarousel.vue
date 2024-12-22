@@ -86,7 +86,7 @@ watchEffect(() => {
   @apply grow-0 shrink-0 basis-full md:basis-[--slide-size] min-w-0 pl-0 md:pl-[--slide-spacing];
 }
 .gallery-slider-slide-image {
-  @apply rounded-[1.8rem] block h-[223px] md:h-[--slide-height] w-full object-cover;
+  @apply rounded-[1.8rem] block h-[223px] md:h-[--slide-height] w-full object-fill;
 }
 .gallery-slider-slide-image-container {
   transform-origin: center;
