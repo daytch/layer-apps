@@ -26,14 +26,19 @@ const { data: coop } = await useAsyncData(
 );
 const formState = reactive<MonthlyReportSchemaFormType>({
   coop: undefined,
-  periode: undefined,
-  total: 0,
+  file: undefined,
 });
 
 const handleSubmit = async (
   event: FormSubmitEvent<MonthlyReportSchemaFormType>
 ) => {
   emits("handleHideModal");
+};
+
+const handleSelectFile = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = (target.files || [])[0];
+  formState.file = file;
 };
 </script>
 
@@ -63,48 +68,62 @@ const handleSubmit = async (
         </div>
       </template>
       <div class="space-y-6">
-        <UFormGroup name="coop" label="Nama Kandang">
-          <template #label>
-            <FormLabel>Nama Kandang</FormLabel>
-          </template>
-          <UInputMenu
-            size="md"
-            :nullable="true"
-            v-model="formState.coop"
-            :options="coop || []"
-            placeholder="Pilih Nama Kandang"
-            :input-class="'input-select-trigger'"
-          />
-        </UFormGroup>
-        <UFormGroup name="periode" label="Periode">
-          <template #label>
-            <FormLabel>Periode</FormLabel>
-          </template>
-          <template #default="{ error }">
-            <Datepicker
-              v-model:model-value="(formState.periode as any)"
-              placeholder="Pilih Periode"
-              :errorState="error"
-              month-picker
+        <div class="flex flex-col gap-x-6 gap-y-6">
+          <UFormGroup label="Kandang" name="coop" class="flex-1">
+            <template #label>
+              <FormLabel>Kandang</FormLabel>
+            </template>
+            <UInputMenu
+              size="md"
+              v-model="formState.coop"
+              placeholder="Pilih Kandang"
+              :options="coop || []"
+              :input-class="'input-select-trigger'"
+              :option-attribute="'label'"
+              :value-attribute="'value'"
             />
-          </template>
-          <template #error="{ error }">
-            <span v-if="error" :class="[error ? 'text-red-500' : '']">
-              {{ error }}
-            </span>
-          </template>
-        </UFormGroup>
-        <UFormGroup name="total" label="Total">
-          <template #label>
-            <FormLabel>Total</FormLabel>
-          </template>
-          <UInput
-            variant="outline"
-            placeholder="Masukkan total"
-            v-model="formState.total"
-            type="number"
-          />
-        </UFormGroup>
+          </UFormGroup>
+          <UFormGroup name="file" label="" v-if="!formState.file">
+            <template #label>
+              <FormLabel style="display: none">File</FormLabel>
+            </template>
+            <label
+              for="file"
+              class="focus:outline-none focus-visible:outline-0 disabled:opacity-75 flex-shrink-0 rounded-md text-base font-medium gap-x-2 py-3 px-5 text-[--app-primary-100] ring-[--app-primary-100] ring-1 bg-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed inline-flex items-center cursor-pointer"
+            >
+              <span>Pilih File</span>
+            </label>
+            <input
+              type="file"
+              name="file"
+              id="file"
+              class="hidden"
+              @change="handleSelectFile"
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            />
+          </UFormGroup>
+          <div
+            class="p-5 rounded-lg border border-[#E5E7EB] flex items-center space-x-4"
+            v-else
+          >
+            <IconExcel />
+            <div class="flex-1 max-w-[411px]">
+              <p
+                class="mb-2 text-base font-normal leading-6 text-[--app-dark-100] whitespace-normal"
+              >
+                {{ (formState.file as any)?.name || "" }}
+              </p>
+              <div
+                class="relative overflow-hidden h-1 bg-[#DFE4EA] rounded-full w-full"
+              >
+                <div class="absolute top-0 left-0 bottom-0 bg-[#22AD5C]" />
+              </div>
+            </div>
+            <button type="button" @click="formState.file = undefined">
+              <IconTrash :stroke="'#F23030'" />
+            </button>
+          </div>
+        </div>
       </div>
       <template #footer>
         <div class="flex justify-end items-center space-x-[18px]">
@@ -121,10 +140,10 @@ const handleSubmit = async (
           <UButton
             type="submit"
             size="md"
+            color="primary"
             :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
+            >Upload</UButton
           >
-            Tambah
-          </UButton>
         </div>
       </template>
     </UCard>

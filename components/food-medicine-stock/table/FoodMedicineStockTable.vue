@@ -30,12 +30,9 @@ const columns: Array<Column> = [
   },
   {
     key: "quantity",
-    label: "Jumlah Barang",
+    label: "Total Stok",
   },
-  {
-    key: "total",
-    label: "Total Barang",
-  },
+
   {
     key: "",
     label: "",
@@ -117,11 +114,7 @@ const handleDeleteStock = async () => {
             >
               {{ item?.quantity }}
             </td>
-            <td
-              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
-            >
-              {{ item?.total }}
-            </td>
+
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
             >

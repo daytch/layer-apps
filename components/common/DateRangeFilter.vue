@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { ModelValue } from "@vuepic/vue-datepicker";
-import { UI_PRIMARY_BUTTON_STYLES, UI_PRIMARY_GHOST_BUTTON_STYLES } from "~/constants/ui";
+import {
+  UI_PRIMARY_BUTTON_STYLES,
+  UI_PRIMARY_GHOST_BUTTON_STYLES,
+} from "~/constants/ui";
 
 type RangeDate = {
   from: string;

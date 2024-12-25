@@ -172,6 +172,7 @@ const handleCloseModal = () => {
               >
                 <UButton
                   color="white"
+                  id="cage-filter-button"
                   :label="
                     !selectedCageName ? 'Pilih Kandang' : selectedCageName
                   "

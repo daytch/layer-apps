@@ -17,7 +17,6 @@ export type FoodMedicineStockType = {
   quantity: number;
   uom: string;
   price: number;
-  total: number;
   createdAt: string;
   updateAt: string;
   coop_name: string;
@@ -30,7 +29,6 @@ export type FoodMedicineStockPayloadType = {
   userId: number;
   quantity: number;
   price: number;
-  total: number;
   uom: string;
 };
 
