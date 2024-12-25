@@ -14,21 +14,15 @@ export const useFetchDashboard = () => {
     return fcrRepo.getCoopFCRChartByPeriod({ ...fcrParams });
   };
 
-  const getDashboardData = async ({
-    frcParams,
-  }: {
-    frcParams: FCRChartParams;
-  }) => {
+  const getDashboardData = async () => {
     const response = await Promise.all([
-      getFCRChartData(frcParams),
       userRepo.getAllUsers(),
       cashflowRepo.getAllCashflow(),
     ]);
     if (!!response?.length) {
       return {
-        fcrData: response?.[0]?.data,
-        userData: response?.[1]?.data,
-        totalCashflow: response?.[2]?.data?.total || 0,
+        userData: response?.[0]?.data,
+        totalCashflow: response?.[1]?.data?.total || 0,
       };
     }
   };

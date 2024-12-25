@@ -4,9 +4,7 @@ export const UserFormSchema = object({
   isUpdateMode: boolean().default(false),
   password: string().notRequired().default(""),
   phoneNumber: string().optional(),
-  email: string()
-    .email("Email tidak valid.")
-    .required("Email tidak boleh kosong."),
+  email: string().email("Email tidak valid.").notRequired().default(""),
   role: mixed().test("Required", "Role tidak boleh kosong.", (value: any) => {
     return value?.value !== undefined;
   }),
