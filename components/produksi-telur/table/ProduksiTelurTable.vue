@@ -10,6 +10,13 @@ const checkAll = defineModel<boolean>("checkAll");
 const selectedItems = defineModel<Array<number>>("selectedItems");
 
 const { checkVisibleColumn, isUpdateView } = useDataTable();
+const { queryParams } = useQueryParams();
+const queryCoopId = queryParams.value["coopId"];
+const queryPeriod = queryParams.value["period"];
+
+const showSelectCoopAndPeriodMessage = computed(
+  () => !queryParams.value["coopId"] || !queryParams.value["period"]
+);
 
 const {
   handleShowModal: handleShowUpdateRowModal,
@@ -93,25 +100,25 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
             Pop Akhir
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#C2F3D6] border border-[--app-gray-500]"
             colspan="3"
           >
             Pakan
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
             colspan="8"
           >
             Produksi
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#FDD8D8] border border-[--app-gray-500]"
             rowspan="3"
           >
             HD
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#DCEEFF] border border-[--app-gray-500]"
             rowspan="3"
           >
             Egg Weight (Gr/Btr)
@@ -132,31 +139,31 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
         </tr>
         <tr>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#C2F3D6] border border-[--app-gray-500]"
             rowspan="2"
           >
             Jenis
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#C2F3D6] border border-[--app-gray-500]"
             rowspan="2"
           >
             KG
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#C2F3D6] border border-[--app-gray-500]"
             rowspan="2"
           >
             FIT (gr/ek)
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
             colspan="4"
           >
             Butir
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
             colspan="4"
           >
             KG
@@ -164,42 +171,42 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
         </tr>
         <tr>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             N
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             P
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             BS
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             Total Btr.
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             N
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             P
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             BS
           </th>
           <th
-            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[--app-gray-100] border border-[--app-gray-500]"
+            class="text-center px-3 py-2 text-[--app-dark-900] text-sm font-medium leading-[22px] bg-[#7DEEAB] border border-[--app-gray-500]"
           >
             Total Kg.
           </th>
@@ -349,7 +356,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'feedType',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#C2F3D6]"
             >
               {{ item?.feedType }}
             </td>
@@ -362,7 +369,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'pop',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#C2F3D6]"
             >
               {{ item?.feedWeight }}
             </td>
@@ -375,7 +382,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'feedFIT',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#C2F3D6]"
             >
               {{ item?.feedFIT }}
             </td>
@@ -388,7 +395,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodPieceN',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodPieceN }}
             </td>
@@ -401,7 +408,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodPieceP',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodPieceP }}
             </td>
@@ -414,7 +421,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodPieceBS',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodPieceBS }}
             </td>
@@ -427,7 +434,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodTotalPiece',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodTotalPiece }}
             </td>
@@ -440,7 +447,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodWeightN',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodWeightN }}
             </td>
@@ -453,7 +460,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodWeightP',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodWeightP }}
             </td>
@@ -466,7 +473,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodWeightBS',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodWeightBS }}
             </td>
@@ -479,7 +486,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'prodTotalWeight',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#7DEEAB]"
             >
               {{ item?.prodTotalWeight }}
             </td>
@@ -492,7 +499,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'HD',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#FDD8D8]"
             >
               {{ item?.HD }}
             </td>
@@ -505,7 +512,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
                   key: 'FCR',
                 })
               "
-              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900]"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] bg-[#DCEEFF]"
             >
               {{ item?.FCR }}
             </td>
@@ -543,7 +550,20 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
               :colspan="23"
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
             >
-              <NoDataStatus>Data Telur tidak ditemukan.</NoDataStatus>
+              <template v-if="showSelectCoopAndPeriodMessage">
+                <div
+                  class="flex justify-center flex-col items-center space-y-8"
+                >
+                  <LogoGray />
+                  <p class="text-sm text-center text-gray-900 max-w-[288px]">
+                    Pilih Kandang & set Periode terlebih dahulu <br />Data akan
+                    muncul disini
+                  </p>
+                </div>
+              </template>
+              <template v-else>
+                <NoDataStatus>Data Telur tidak ditemukan.</NoDataStatus>
+              </template>
             </td>
           </tr>
         </template>

@@ -1,17 +1,23 @@
 <script setup lang="ts">
-const { getDashboardData } = useFetchDashboard();
+const { getDashboardData, getFCRChartData } = useFetchDashboard();
 const { getAllKandang } = useKandang();
 
 const selectedCoop = ref<number | undefined>(undefined);
 const { data, pending } = await useAsyncData(
   "DASHBOARD_DATA",
-  async () =>
-    getDashboardData({
-      frcParams: {
-        coopId: selectedCoop.value,
-        period: formatDate(new Date(), "yyyy-MM-01"),
-      },
-    }),
+  async () => getDashboardData(),
+  {
+    lazy: true,
+  }
+);
+const { data: fcrData, pending: pendingFCR } = await useAsyncData(
+  "FCR_DASHBOARD_DATA",
+  async () => {
+    getFCRChartData({
+      coopId: selectedCoop.value,
+      period: formatDate(new Date(), "yyyy-MM-01"),
+    });
+  },
   {
     lazy: true,
     watch: [selectedCoop],
@@ -19,7 +25,15 @@ const { data, pending } = await useAsyncData(
 );
 const { data: coops } = await useAsyncData(
   "FCR_KANDANG",
-  async () => getAllKandang(),
+  async () => {
+    const result = getAllKandang();
+    result.then((data) => {
+      if (!selectedCoop.value && !!data?.length) {
+        selectedCoop.value = data[0]?.id;
+      }
+    });
+    return result;
+  },
   {
     lazy: true,
     transform: (data) => {
@@ -28,11 +42,6 @@ const { data: coops } = await useAsyncData(
     },
   }
 );
-onMounted(() => {
-  if (!!coops?.value?.length) {
-    selectedCoop.value = coops.value[0]?.value;
-  }
-});
 </script>
 
 <template>
@@ -44,7 +53,7 @@ onMounted(() => {
         <MonthlyResultCard />
         <MemberOverviewCard :users="data?.userData || []" />
       </div>
-      <FCRChart :fcr-data="data?.fcrData || []" :is-loading="pending">
+      <FCRChart :fcr-data="fcrData || []" :is-loading="pendingFCR">
         <template #filter>
           <USelectMenu
             v-model="selectedCoop"

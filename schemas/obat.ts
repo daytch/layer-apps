@@ -18,9 +18,9 @@ export const OBAT_SCHEMA = object({
     .required("Jumlah barang tidak boleh kosong.")
     .max(ref("total"), "Tidak boleh lebih dari total"),
   total: number()
-    .min(0, "Total barang tidak boleh kosong.")
-    .typeError("Total barang tidak valid.")
-    .required("Total barang tidak boleh kosong."),
+    .min(0, "Total Stok tidak boleh kosong.")
+    .typeError("Total Stok tidak valid.")
+    .required("Total Stok tidak boleh kosong."),
 });
 
 export type FormValueObat = InferType<typeof OBAT_SCHEMA>;
