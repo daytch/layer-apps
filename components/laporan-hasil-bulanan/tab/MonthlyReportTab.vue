@@ -4,14 +4,6 @@ const tabs = [
     label: "Hasil Akhir",
     key: "hasil-akhir",
   },
-  {
-    label: "Penerimaan",
-    key: "penerimaan",
-  },
-  {
-    label: "Pengeluaran",
-    key: "pengeluaran",
-  },
 ];
 const { selectedTab, handleChangeTab } = useTab(tabs);
 </script>

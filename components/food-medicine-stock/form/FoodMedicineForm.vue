@@ -27,7 +27,6 @@ const props = defineProps<{
 const formState = reactive<FormValueObat>({
   price: 0,
   quantity: 0,
-  total: 0,
   name: "",
   coop: undefined,
   uom: "",
@@ -49,8 +48,7 @@ onMounted(() => {
     formState.SKU = props?.defaultValue?.SKU;
     formState.name = props?.defaultValue?.name;
     formState.price = props?.defaultValue?.price;
-    (formState.total = props?.defaultValue?.total),
-      (formState.quantity = props?.defaultValue?.quantity);
+    formState.quantity = props?.defaultValue?.quantity;
     formState.uom = props?.defaultValue?.uom;
     formState.coop = {
       value: props?.defaultValue?.coopId,
@@ -62,12 +60,11 @@ onMounted(() => {
 const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
   const { user } = authUser.value;
   if (!user?.id) return;
-  const { name, coop, quantity, total, SKU, price, uom } = event.data;
+  const { name, coop, quantity, SKU, price, uom } = event.data;
   const { value, label } = coop as any;
   const payload = {
     name,
     quantity,
-    total,
     SKU,
     price,
     uom,
@@ -164,23 +161,13 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
           </UFormGroup>
         </div>
         <div class="sm:flex items-center space-y-6 sm:space-x-10 sm:space-y-0">
-          <UFormGroup name="total" label="Total Stok" class="flex-1">
+          <UFormGroup name="quantity" label="Total Stok" class="flex-1">
             <template #label>
               <FormLabel>Total Stok</FormLabel>
             </template>
             <UInput
               variant="outline"
               placeholder="Total Stok"
-              v-model="formState.total"
-            />
-          </UFormGroup>
-          <UFormGroup name="quantity" label="Value Qty." class="flex-1">
-            <template #label>
-              <FormLabel>Value Qty.</FormLabel>
-            </template>
-            <UInput
-              variant="outline"
-              placeholder="Value Qty."
               v-model="formState.quantity"
             />
           </UFormGroup>

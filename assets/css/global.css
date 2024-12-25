@@ -58,3 +58,7 @@ body .card-body {
 body .card-footer {
   padding: 0 40px 40px;
 }
+
+button#cage-filter-button span:not([aria-hidden]) {
+  @apply text-ellipsis overflow-hidden;
+}

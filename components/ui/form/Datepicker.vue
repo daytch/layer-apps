@@ -38,7 +38,10 @@ defineProps<{
       />
     </template>
     <template #input-icon>
-      <UIcon name="i-heroicons-calendar-days" class="w-4 h-4 text-[--app-dark-100]" />
+      <UIcon
+        name="i-heroicons-calendar-days"
+        class="w-4 h-4 text-[--app-dark-100]"
+      />
     </template>
     <template #action-preview="{ value }">
       {{
