@@ -86,11 +86,14 @@ watchEffect(() => {
   @apply grow-0 shrink-0 basis-full md:basis-[--slide-size] min-w-0 pl-0 md:pl-[--slide-spacing];
 }
 .gallery-slider-slide-image {
-  @apply rounded-[1.8rem] block h-[223px] md:h-[--slide-height] w-full object-fill;
+  @apply block h-auto w-full object-fill rounded-[1.8rem];
 }
 .gallery-slider-slide-image-container {
   transform-origin: center;
   transition: all linear 0.25s;
+}
+.gallery-slider-slide-image-container {
+  @apply h-[223px] lg:h-[--slide-height] overflow-hidden rounded-[1.8rem];
 }
 .gallery-slider-slide:not(.is-snapped) .gallery-slider-slide-image-container {
   transform: scale(0.95);

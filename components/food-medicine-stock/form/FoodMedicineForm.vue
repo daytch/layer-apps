@@ -164,13 +164,13 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
           </UFormGroup>
         </div>
         <div class="sm:flex items-center space-y-6 sm:space-x-10 sm:space-y-0">
-          <UFormGroup name="total" label="Total Barang" class="flex-1">
+          <UFormGroup name="total" label="Total Stok" class="flex-1">
             <template #label>
-              <FormLabel>Total Barang</FormLabel>
+              <FormLabel>Total Stok</FormLabel>
             </template>
             <UInput
               variant="outline"
-              placeholder="Total Barang"
+              placeholder="Total Stok"
               v-model="formState.total"
             />
           </UFormGroup>

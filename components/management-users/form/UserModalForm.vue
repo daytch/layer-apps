@@ -112,7 +112,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
     name,
     password: password || undefined,
     roleId: (role as any)?.value,
-    email,
+    email: email || undefined,
     isUpdateMode,
     phone: phoneNumber,
     coopId,
@@ -121,6 +121,9 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
   };
   if (!payload?.password?.length) {
     delete payload["password"];
+  }
+  if (!payload.email?.length) {
+    delete payload["email"];
   }
   emits("handleSuccessAddUser", payload);
 }
@@ -187,12 +190,12 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
           </UFormGroup>
           <UFormGroup name="email" label="Email" class="flex-1">
             <template #label>
-              <FormLabel>Email User</FormLabel>
+              <FormLabel>Email User (opsional)</FormLabel>
             </template>
             <UInput
               variant="outline"
-              placeholder="Email User"
-              v-model="formState.email"
+              placeholder="Email User (opsional)"
+              v-model="formState.email as string"
             />
           </UFormGroup>
         </div>
@@ -211,7 +214,11 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
               v-model="formState.phoneNumber"
             />
           </UFormGroup>
-          <UFormGroup label="Password" name="password" class="flex-1">
+          <UFormGroup
+            label="Password (opsional)"
+            name="password"
+            class="flex-1"
+          >
             <UButton
               @click="showFieldPassword = true"
               v-if="
@@ -236,7 +243,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
               :ui="{ icon: { trailing: { pointer: '' } } }"
               v-model="formState.password as string"
               :type="type"
-              placeholder="Masukan password"
+              placeholder="Masukan password (opsional)"
             >
               <template #trailing>
                 <UButton

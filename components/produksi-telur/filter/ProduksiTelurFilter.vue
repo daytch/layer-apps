@@ -65,7 +65,7 @@ const handleApplyFilter = () => {
   }
 };
 
-onMounted(() => {
+watchEffect(() => {
   const queryCoopId = queryParams.value["coopId"];
   const queryPeriod = queryParams.value["period"];
   let filter: Record<string, any> = {
@@ -91,6 +91,7 @@ onMounted(() => {
   }
   filterState.value = filter as any;
 });
+
 const handleDownloadEggDataOnCoopAndDate = async () => {
   const coopId = queryParams.value["coopId"];
   const date = queryParams.value["period"];

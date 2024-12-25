@@ -12,7 +12,15 @@ const selectedCoop = computed(() => {
 });
 const { data } = await useAsyncData(
   ASYNC_KEY.KANDANG_OPTIONS,
-  async () => getKandangOptions(),
+  async () => {
+    const result = getKandangOptions();
+    result.then((data) => {
+      if (!!data?.length) {
+        handleNewQueryParams({ coopId: data[0]?.value });
+      }
+    });
+    return result;
+  },
   {
     lazy: true,
   }
