@@ -26,7 +26,7 @@ const COLUMNS = [
   },
 ];
 const { queryParams } = useQueryParams();
-const router = useRouter();
+// const router = useRouter();
 
 const params = computed(() => {
   const obj = {} as Record<string, string>;
@@ -47,8 +47,8 @@ const { data, pending } = await useAsyncData(
     watch: [params],
   }
 );
-const selected = ref<any>(undefined);
-const showModal = ref(false);
+// const selected = ref<any>(undefined);
+// const showModal = ref(false);
 
 const handleClickDetail = (selected: MonthlyReportDataType) => {
   if (!selected) return;
@@ -97,7 +97,7 @@ const handleClickDetail = (selected: MonthlyReportDataType) => {
                   class="w-6 h-6 [&>g]:stroke-[#292D32]"
                 />
               </NuxtLink>
-              <button
+              <!-- <button
                 type="button"
                 @click="
                   () => {
@@ -107,14 +107,14 @@ const handleClickDetail = (selected: MonthlyReportDataType) => {
                 "
               >
                 <IconTrash />
-              </button>
+              </button> -->
             </div>
           </td>
         </tr>
       </template>
     </template>
   </MonthlyReportBaseTable>
-  <DeleteConfirmModal
+  <!-- <DeleteConfirmModal
     v-model="showModal"
     @handle-confirm-delete=""
     :title="'Yakin'"
@@ -124,5 +124,5 @@ const handleClickDetail = (selected: MonthlyReportDataType) => {
         JSON.stringify(selected, null, 2)
       }}</pre>
     </template>
-  </DeleteConfirmModal>
+  </DeleteConfirmModal> -->
 </template>
