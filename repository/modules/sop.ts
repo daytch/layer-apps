@@ -23,7 +23,10 @@ export const sopRepository = <T>(fetch: FetchType<T>) => ({
       body: JSON.stringify(payload),
     });
   },
-  async updateSOPById(id: number, payload: SOPFormPayloadType): SOPAPIResponse<SOPDataType> {
+  async updateSOPById(
+    id: number,
+    payload: SOPFormPayloadType
+  ): SOPAPIResponse<SOPDataType> {
     return fetch(API_LIST.selectSOPById(id), {
       method: "PUT",
       body: JSON.stringify(payload),
@@ -40,12 +43,18 @@ export const sopRepository = <T>(fetch: FetchType<T>) => ({
       body: JSON.stringify(payload),
     });
   },
-  async checkSOPProgress(roleId: number, date: string): SOPAPIResponse<Array<SOPProgressDataType>> {
+  async checkSOPProgress(
+    roleId: number,
+    date: string
+  ): SOPAPIResponse<Array<SOPProgressDataType>> {
     return fetch(API_LIST.getSOPProggress(roleId, date), {
       method: "GET",
     });
   },
-  async getSOPByUser(): SOPAPIResponse<Array<SOPByUserDataType>> {
-    return fetch(API_LIST.getSopByUser, { method: "GET" });
+  async getSOPByUser(coopId: string): SOPAPIResponse<Array<SOPByUserDataType>> {
+    return fetch(API_LIST.getSopByUser(coopId), { method: "GET" });
+  },
+  async runSOPScheduler() {
+    return fetch("/sop/run-scheduler", { method: "POST" });
   },
 });

@@ -1,16 +1,32 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { MONTHLY_REPORT_DETAIL_KEY } from "~/constants/api";
+import type { MonthlyReportDataType } from "~/types/month-report";
+
+const detailData = ref<MonthlyReportDataType | undefined>(undefined);
+
+onMounted(() => {
+  const data = localStorage.getItem(MONTHLY_REPORT_DETAIL_KEY);
+  if (data) {
+    detailData.value = JSON.parse(data);
+  }
+});
+</script>
 
 <template>
   <div class="w-full p-6 border border-[--app-gray-500] bg-white rounded-lg">
     <div class="w-full overflow-x-auto">
       <table class="w-full">
         <tr>
-          <th class="w-44 py-1">ID Pelanggan</th>
-          <td>100000000921</td>
+          <th class="w-44 py-1">Kandang</th>
+          <td>{{ detailData?.coopId }}</td>
         </tr>
         <tr>
           <th class="w-44 py-1">Nama Kandang</th>
-          <td>Kandang Jatisari</td>
+          <td>{{ detailData?.name }}</td>
+        </tr>
+        <tr>
+          <th class="w-44 py-1">Periode</th>
+          <td>{{ formatDate(detailData?.transDate || "", "MMMM yyyy") }}</td>
         </tr>
         <tr>
           <th class="w-44 py-1">Alamat</th>
@@ -25,39 +41,20 @@
             <tr>
               <th></th>
               <th>Jumlah</th>
-              <th>Saldo</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <th>Saldo Awal Bulan</th>
-              <td>-</td>
-              <td>Rp11.194.800</td>
+              <th>Pengeluaran</th>
+              <td>{{ formatMoney(detailData?.totalExpenses || 0) }}</td>
             </tr>
             <tr>
-              <th>Pengambilan</th>
-              <td>Rp42.232.700</td>
-              <td>Rp42.232.700</td>
+              <th>Pemasukan</th>
+              <td>{{ formatMoney(detailData?.totalIncome || 0) }}</td>
             </tr>
             <tr>
-              <th>Pembayaran</th>
-              <td>Rp42.232.700</td>
-              <td>Rp42.232.700</td>
-            </tr>
-            <tr>
-              <th>Koreksi*</th>
-              <td>Rp42.232.700</td>
-              <td>Rp42.232.700</td>
-            </tr>
-            <tr>
-              <th>Saldo Akhir Bulan</th>
-              <td></td>
-              <td>Rp42.232.700</td>
-            </tr>
-            <tr>
-              <th>Check</th>
-              <td></td>
-              <td>Rp42.232.700</td>
+              <th>Pendapatan Bersih</th>
+              <td>{{ formatMoney(detailData?.netincome || 0) }}</td>
             </tr>
           </tbody>
         </table>

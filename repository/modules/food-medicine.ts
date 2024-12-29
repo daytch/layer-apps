@@ -1,4 +1,5 @@
 import type {
+  FeedDropdownSOPDataType,
   FoodMedicineHistory,
   FoodMedicineHistoryParams,
   FoodMedicineStockPayloadType,
@@ -9,12 +10,15 @@ import type { FetchType } from "~/types/fetch-repo";
 import { API_LIST } from "~/constants/api";
 
 type FoodMedicineStockResponse<T> = Promise<APIResponse<T>>;
+type GetParams = {
+  coopId?: string;
+};
 
 export const foodMedicineRepository = <T>(fetch: FetchType<T>) => ({
-  async getAllFoodMedicineStock(): FoodMedicineStockResponse<
-    Array<FoodMedicineStockType>
-  > {
-    return fetch(API_LIST.foodMedicineStock, { method: "GET" });
+  async getAllFoodMedicineStock(
+    params?: GetParams
+  ): FoodMedicineStockResponse<Array<FoodMedicineStockType>> {
+    return fetch(API_LIST.foodMedicineStock, { method: "GET", params });
   },
 
   async createFoodMedicineStock(
@@ -45,8 +49,14 @@ export const foodMedicineRepository = <T>(fetch: FetchType<T>) => ({
   },
 
   async getFoodMedicHistory(
-    params: FoodMedicineHistoryParams
+    params?: FoodMedicineHistoryParams
   ): FoodMedicineStockResponse<Array<FoodMedicineHistory>> {
     return fetch(API_LIST.MEDIC.GET_HISTORY, { params, method: "GET" });
+  },
+
+  async getFeedDropdownSOP(params: {
+    coopId: string;
+  }): FoodMedicineStockResponse<FeedDropdownSOPDataType[]> {
+    return fetch("/obat/dropdown", { params, method: "GET" });
   },
 });

@@ -17,19 +17,13 @@ const { queryParams } = useQueryParams();
 const { data: historyData, pending } = await useAsyncData(
   ASYNC_KEY.FOOD_MEDIC_HISTORY,
   async () => {
+    if (queryParams.value["tab"] !== "riwayat-pemakaian") return;
     const params = {} as FoodMedicineHistoryParams;
     const coopId = queryParams.value["coop"];
-    const from = queryParams.value["from"];
-    const to = queryParams.value["to"];
     if (queryParams.value["coop"] && !isNaN(Number(coopId))) {
       params["coop_id"] = Number(coopId);
     }
-    if (!!from?.toString()?.length && isValidDate(from?.toString())) {
-      params["start_date"] = from.toString();
-    }
-    if (!!to?.toString()?.length && isValidDate(to?.toString())) {
-      params["end_date"] = to.toString();
-    }
+
     return getFoodMedicHistory(params);
   },
   {

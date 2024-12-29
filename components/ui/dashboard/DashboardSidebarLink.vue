@@ -5,14 +5,21 @@ type Props = {
   isShowFullMenu: boolean;
   isActive: boolean;
 } & Menu;
-
+const { queryParams } = useQueryParams();
 defineProps<Props>();
+
+const dashboardURL = computed(() => {
+  if (!queryParams.value["coopId"]?.length) {
+    return "/dashboard";
+  }
+  return `/dashboard?coopId=${queryParams.value["coopId"]}`;
+});
 </script>
 
 <template>
   <NuxtLink
     active-class="bg-[--app-gray-100] text-[--app-primary-100] fill-[#22AD5C] active-link"
-    :to="to"
+    :to="to !== '/dashboard' ? to : dashboardURL"
     class="inline-flex items-center py-[18px] pl-10 pr-4 text-lg font-medium leading-6 w-full rounded-tr-[12px] rounded-br-[12px] relative group text-[#C2F3D6] dashboard-link"
   >
     <div

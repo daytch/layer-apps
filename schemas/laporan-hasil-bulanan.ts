@@ -12,6 +12,13 @@ export const MonthlyReportSchema = object({
     const file = value as File;
     return !!file?.name?.length;
   }),
+  periode: mixed().test(
+    "required",
+    "Periode tidak boleh kosong",
+    (value?: any) => {
+      return value && !!value?.year?.toString()?.length;
+    }
+  ),
 });
 
 export type MonthlyReportSchemaFormType = InferType<typeof MonthlyReportSchema>;

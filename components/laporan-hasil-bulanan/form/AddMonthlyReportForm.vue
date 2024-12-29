@@ -16,6 +16,7 @@ const emits = defineEmits<{
 }>();
 
 const { getKandangOptions } = useKandang();
+const { handleUploadMonthlyReport, isLoading, progress } = useMonthlyReport();
 
 const { data: coop } = await useAsyncData(
   ASYNC_KEY.KANDANG_OPTIONS,
@@ -27,12 +28,31 @@ const { data: coop } = await useAsyncData(
 const formState = reactive<MonthlyReportSchemaFormType>({
   coop: undefined,
   file: undefined,
+  periode: undefined,
 });
+
+const handleCloseModal = () => {
+  emits("handleHideModal");
+};
+
+const periodText = computed(() => getFieldPeriodText(formState.periode as any));
 
 const handleSubmit = async (
   event: FormSubmitEvent<MonthlyReportSchemaFormType>
 ) => {
-  emits("handleHideModal");
+  const { data } = event;
+  if (!data?.coop || !data?.periode || !data?.file) return;
+
+  handleUploadMonthlyReport({
+    payload: {
+      coopId: data?.coop as number,
+      file: data?.file as File,
+      period: `${(data?.periode as any)?.year}-${
+        (data?.periode as any)?.month + 1
+      }-01`,
+    },
+    onCloseModal: handleCloseModal,
+  });
 };
 
 const handleSelectFile = (event: Event) => {
@@ -83,6 +103,32 @@ const handleSelectFile = (event: Event) => {
               :value-attribute="'value'"
             />
           </UFormGroup>
+          <UFormGroup label="Periode" name="periode" class="flex-1">
+            <template #label>
+              <FormLabel>Periode</FormLabel>
+            </template>
+            <UPopover :popper="{ placement: 'bottom-start' }">
+              <UInput
+                :ui="{
+                  padding: {
+                    md: 'py-[12px] px-5',
+                  },
+                }"
+                :value="periodText"
+                class="w-full"
+                variant="outline"
+                placeholder="Pilih Periode"
+              />
+              <template #panel>
+                <BaseDatepicker
+                  v-model="(formState.periode as any)"
+                  inline
+                  auto-apply
+                  :month-picker="true"
+                />
+              </template>
+            </UPopover>
+          </UFormGroup>
           <UFormGroup name="file" label="" v-if="!formState.file">
             <template #label>
               <FormLabel style="display: none">File</FormLabel>
@@ -116,7 +162,12 @@ const handleSelectFile = (event: Event) => {
               <div
                 class="relative overflow-hidden h-1 bg-[#DFE4EA] rounded-full w-full"
               >
-                <div class="absolute top-0 left-0 bottom-0 bg-[#22AD5C]" />
+                <div
+                  class="absolute top-0 left-0 bottom-0 bg-[#22AD5C]"
+                  :style="{
+                    width: progress + '%',
+                  }"
+                />
               </div>
             </div>
             <button type="button" @click="formState.file = undefined">
@@ -138,11 +189,12 @@ const handleSelectFile = (event: Event) => {
             Batal
           </UButton>
           <UButton
+            :disabled="isLoading"
             type="submit"
             size="md"
             color="primary"
             :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
-            >Upload</UButton
+            >{{ isLoading ? "Mengunggah" : "Upload" }}</UButton
           >
         </div>
       </template>

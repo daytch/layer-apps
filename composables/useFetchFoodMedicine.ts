@@ -32,15 +32,22 @@ export const useFetchFoodMedicine = () => {
     handleShowToast({ type: "ERROR", message });
   };
 
-  const getAllFoodMedicineStock = async () => {
-    const response = await foodMedicineRepo.getAllFoodMedicineStock();
+  const getAllFoodMedicineStock = async (params?: { coopId: string }) => {
+    const response = await foodMedicineRepo.getAllFoodMedicineStock(params);
+    if (!!response?.data) {
+      return response?.data;
+    }
+  };
+
+  const getFeedDropdownSOP = async (params?: { coopId: string }) => {
+    if (!params || !params?.coopId?.length) return;
+    const response = await foodMedicineRepo.getFeedDropdownSOP(params);
     if (!!response?.data) {
       return response?.data;
     }
   };
 
   const getFoodMedicHistory = async (params?: FoodMedicineHistoryParams) => {
-    if (!params?.coop_id || !params?.end_date || !params?.start_date) return;
     const response = await foodMedicineRepo.getFoodMedicHistory(params);
     if (!!response.data) {
       return {
@@ -65,13 +72,6 @@ export const useFetchFoodMedicine = () => {
       ...createPayload,
     } as Partial<ExtedFormMedicalStockPayloadType>;
     delete payload.coop_name;
-    const now = new Date();
-    const temporaryData: FoodMedicineStockType = {
-      ...createPayload,
-      id: now.getTime(),
-      updateAt: now.toDateString(),
-      createdAt: now.toDateString(),
-    };
 
     try {
       const response = await foodMedicineRepo.createFoodMedicineStock(
@@ -141,5 +141,6 @@ export const useFetchFoodMedicine = () => {
     updateStockById,
     isLoading,
     getFoodMedicHistory,
+    getFeedDropdownSOP,
   };
 };

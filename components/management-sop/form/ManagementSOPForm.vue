@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { object, string, type InferType, mixed } from "yup";
+import { object, string, type InferType, mixed, bool } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
-import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
 import type { SOPDataType, SOPFormPayloadType } from "~/types/sop";
 import { ROLES_OPTIONS_FORM } from "~/constants/role";
 
@@ -32,6 +36,7 @@ const Schema = object({
   }),
   title: string().required("Judul kegiatan tidak boleh kosong."),
   description: string().nullable().default(""),
+  isReduceStock: bool().notRequired().default(false),
 });
 
 type FormValueType = InferType<typeof Schema>;
@@ -41,6 +46,7 @@ const formState = reactive<FormValueType>({
   time: undefined,
   title: "",
   description: "",
+  isReduceStock: false,
 });
 
 onMounted(() => {
@@ -50,7 +56,10 @@ onMounted(() => {
     );
     formState.title = props?.defaultFormValue?.title;
     formState.description = props?.defaultFormValue?.description;
-    formState.time = changeAPIResponseToValidFormValue(props?.defaultFormValue?.time || "");
+    formState.time = changeAPIResponseToValidFormValue(
+      props?.defaultFormValue?.time || ""
+    );
+    formState.isReduceStock = props?.defaultFormValue?.isReduceStock || false;
   }
 });
 
@@ -63,12 +72,15 @@ function handleCloseModal() {
 }
 
 async function onSubmit(event: FormSubmitEvent<FormValueType>) {
-  const { time, title, description, userType } = event.data;
+  let { time, title, description, userType, isReduceStock } = event.data;
   const sopTime = time as Array<{
     hours: number;
     minutes: number;
     seconds: number;
   }>;
+  if (isReduceStock === null) {
+    isReduceStock = false;
+  }
   const formatedTime = changeFormValueToValidPayload(sopTime || []);
   const payload: SOPFormPayloadType & { id?: number; roleName: string } = {
     id: props?.defaultFormValue?.id,
@@ -77,17 +89,30 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
     description: description || "",
     roleId: (userType as any)?.value,
     roleName: (userType as any)?.label,
+    isReduceStock:
+      (userType as any)?.label?.toLowerCase() === "mandor"
+        ? isReduceStock
+        : false,
   };
   emits("handleSuccessAddData", payload);
 }
 </script>
 
 <template>
-  <UForm class="space-y-4" :schema="Schema" :state="formState" @submit="onSubmit">
+  <UForm
+    class="space-y-4"
+    :schema="Schema"
+    :state="formState"
+    @submit="onSubmit"
+  >
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
-          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
+        <div
+          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
+        >
+          <h2
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
+          >
             {{ !!defaultFormValue ? "Ubah" : "Tambah" }} SOP
           </h2>
           <UButton
@@ -135,7 +160,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
           <template #label>
             <FormLabel>Judul Kegiatan</FormLabel>
           </template>
-          <UInput variant="outline" placeholder="Tulis Judul Kegiatan" v-model="formState.title" />
+          <UInput
+            variant="outline"
+            placeholder="Tulis Judul Kegiatan"
+            v-model="formState.title"
+          />
         </UFormGroup>
         <UFormGroup name="description" label="Deskripsi Kegiatan (opsional)">
           <template #label>
@@ -145,6 +174,16 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             variant="outline"
             placeholder="Tulis Deskripsi Kegiatan"
             v-model="(formState.description as string)"
+          />
+        </UFormGroup>
+        <UFormGroup
+          name="isReduceStock"
+          v-if="formState.userType && (formState.userType as any)?.label?.toLowerCase() === 'mandor'"
+        >
+          <UCheckbox
+            v-model="(formState.isReduceStock as boolean)"
+            name="isReduceStock"
+            label="Ini adalah SOP yang akan mengurangi / memakai stok pakan"
           />
         </UFormGroup>
       </div>
@@ -166,7 +205,13 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
             size="md"
             :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
           >
-            {{ isLoading ? "Menyimpan..." : !!defaultFormValue ? "Ubah" : "Tambah" }}
+            {{
+              isLoading
+                ? "Menyimpan..."
+                : !!defaultFormValue
+                ? "Ubah"
+                : "Tambah"
+            }}
           </UButton>
         </div>
       </template>

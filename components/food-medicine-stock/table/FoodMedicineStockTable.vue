@@ -75,14 +75,26 @@ const handleDeleteStock = async () => {
       </thead>
       <tbody>
         <template v-if="loading">
-          <td
-            :colspan="columns.length"
-            class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
-          >
-            <LoadingSpinner />
-          </td>
+          <tr>
+            <td
+              :colspan="columns.length"
+              class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap text-center"
+            >
+              <LoadingSpinner />
+            </td>
+          </tr>
         </template>
-        <template v-else-if="!loading && !!items.length">
+        <template v-else-if="!loading && !items?.length">
+          <tr>
+            <td
+              :colspan="columns.length"
+              class="p-2 text-sm font-normal leading-[22px] text-[--app-dark-900] border border-t-0"
+            >
+              <NoDataStatus>Data Tidak Ditemukan</NoDataStatus>
+            </td>
+          </tr>
+        </template>
+        <template v-else>
           <tr v-for="item in items" class="border-b">
             <td
               class="p-4 text-[--app-dark-100] font-medium text-sm whitespace-nowrap"
@@ -139,11 +151,6 @@ const handleDeleteStock = async () => {
               </div>
             </td>
           </tr>
-        </template>
-        <template v-else>
-          <td :colspan="columns.length">
-            <NoDataStatus>Data Tidak Ditemukan</NoDataStatus>
-          </td>
         </template>
       </tbody>
     </table>
