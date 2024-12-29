@@ -19,7 +19,6 @@ defineProps<{
 }>();
 
 const { getKandangOptions } = useKandang();
-
 const { data: kandangOptions } = await useAsyncData(
   ASYNC_KEY.KANDANG_OPTIONS,
   async () => getKandangOptions(),
@@ -32,7 +31,6 @@ const filterState = reactive<{
   rageDate?: Array<Date> | Array<string>;
 }>({
   cageName: undefined,
-  rageDate: undefined,
 });
 
 const handleApplyFilter = () => {
@@ -40,30 +38,15 @@ const handleApplyFilter = () => {
   if (!!filterState?.cageName?.toString()?.length) {
     newQuery["coop"] = filterState.cageName.toString();
   }
-  if (!!filterState?.rageDate?.[0]) {
-    newQuery["from"] = formatDate(filterState?.rageDate?.[0], "yyyy-MM-dd");
-  }
-  if (!!filterState?.rageDate?.[1]) {
-    newQuery["to"] = formatDate(filterState?.rageDate?.[1], "yyyy-MM-dd");
-  }
-
   if (!!Object.keys(newQuery)?.length) {
     handleNewQueryParams(newQuery);
   }
 };
 
 function handleSetActiveFilter() {
-  let range = [] as Array<Date>;
-  if (!!queryParams.value?.["from"]?.length) {
-    range.push(new Date(queryParams.value?.["from"] as string));
-  }
-  if (!!queryParams.value?.["to"]?.length) {
-    range.push(new Date(queryParams.value?.["to"] as string));
-  }
-  (filterState.cageName = (queryParams.value?.["coop"] || undefined) as
+  filterState.cageName = (queryParams.value?.["coop"] || undefined) as
     | string
-    | undefined),
-    (filterState.rageDate = range);
+    | undefined;
 }
 onMounted(handleSetActiveFilter);
 watch(queryParams, handleSetActiveFilter);
@@ -106,13 +89,7 @@ watch(queryParams, handleSetActiveFilter);
           value-attribute="value"
           option-attribute="label"
         />
-        <div class="max-w-full lg:max-w-[248px]">
-          <Datepicker
-            :range="true"
-            v-model:model-value="filterState.rageDate"
-            :placeholder="'Pilih Tanggal'"
-          />
-        </div>
+
         <UButton
           type="button"
           size="md"

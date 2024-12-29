@@ -7,6 +7,7 @@ useSeoMeta({
   title: "Detail Laporan Hasil Bulanan | Layer Apps",
   description: "Detail Laporan Hasil Bulanan | Layer Apps",
 });
+const { downloadData, isLoading } = useMonthlyReport();
 </script>
 
 <template>
@@ -25,7 +26,9 @@ useSeoMeta({
             >Kembali</NuxtLink
           >
           <UButton
+            @click="downloadData"
             type="button"
+            :disabled="isLoading"
             size="md"
             :ui="{
               strategy: 'override',
@@ -42,7 +45,7 @@ useSeoMeta({
               },
             }"
           >
-            PDF
+            {{ isLoading ? "Mengunduh" : "Lihat Detail" }}
           </UButton>
         </div>
       </div>

@@ -27,6 +27,7 @@ export type SOPDataType = {
   description: string;
   createdAt: string;
   updateAt: string;
+  isReduceStock: boolean;
 };
 
 export type SOPFormPayloadType = {
@@ -34,11 +35,15 @@ export type SOPFormPayloadType = {
   title: string;
   description: string;
   time: string;
+  isReduceStock: boolean;
 };
 
 export type SOPCompletePayloadType = {
   sopId: number;
   userId: number;
+  coopId: number;
+  feedId?: number;
+  qty?: number;
 };
 
 export type SOPProgressDataType = {
@@ -57,4 +62,5 @@ export type SOPByUserDataType = {
   createdAt: string;
   updateAt: string;
   status: boolean;
+  isReduceStock: boolean;
 };

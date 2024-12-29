@@ -31,6 +31,7 @@ const formState = reactive<FormValueObat>({
   coop: undefined,
   uom: "",
   SKU: "",
+  isEatable: false,
 });
 const authUser = useAuthUser();
 const { getKandangOptions } = useKandang();
@@ -41,7 +42,6 @@ const { data } = await useAsyncData(
     lazy: true,
   }
 );
-const { createNewStock, updateStockById } = useFetchFoodMedicine();
 
 onMounted(() => {
   if (!!props?.defaultValue) {
@@ -54,13 +54,14 @@ onMounted(() => {
       value: props?.defaultValue?.coopId,
       label: props?.defaultValue?.coop_name,
     };
+    formState.isEatable = props?.defaultValue?.isEatable || false;
   }
 });
 
 const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
   const { user } = authUser.value;
   if (!user?.id) return;
-  const { name, coop, quantity, SKU, price, uom } = event.data;
+  const { name, coop, quantity, SKU, price, uom, isEatable } = event.data;
   const { value, label } = coop as any;
   const payload = {
     name,
@@ -71,6 +72,7 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
     coopId: value,
     userId: user.id,
     coop_name: label,
+    isEatable: isEatable || false,
   };
   emit("handleAddStock", payload);
 };
@@ -169,6 +171,15 @@ const handleAddFoodMedicine = async (event: FormSubmitEvent<FormValueObat>) => {
               variant="outline"
               placeholder="Total Stok"
               v-model="formState.quantity"
+            />
+          </UFormGroup>
+        </div>
+        <div>
+          <UFormGroup name="isEatable">
+            <UCheckbox
+              v-model="(formState.isEatable as boolean)"
+              name="isEatable"
+              label="Jadikan ini muncul di SOP harian Mandor"
             />
           </UFormGroup>
         </div>

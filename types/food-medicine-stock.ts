@@ -20,6 +20,7 @@ export type FoodMedicineStockType = {
   createdAt: string;
   updateAt: string;
   coop_name: string;
+  isEatable: boolean;
 };
 
 export type FoodMedicineStockPayloadType = {
@@ -30,6 +31,7 @@ export type FoodMedicineStockPayloadType = {
   quantity: number;
   price: number;
   uom: string;
+  isEatable: boolean;
 };
 
 export type FoodMedicineHistory = {
@@ -44,7 +46,12 @@ export type FoodMedicineHistory = {
 };
 
 export type FoodMedicineHistoryParams = {
-  start_date: string;
-  end_date: string;
   coop_id: number;
+};
+
+export type FeedDropdownSOPDataType = {
+  id: number;
+  coopId: number;
+  name: string;
+  quantity: number;
 };
