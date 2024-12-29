@@ -87,8 +87,8 @@ export const useUser = () => {
         ) {
           return handleError(responseData);
         }
-        handleSuccess("Berhasil menyimpan data user.");
       }
+      handleSuccess("Berhasil menyimpan data user.");
     } catch (error) {
       handleError("Gagal menyimpan data user.");
     } finally {
