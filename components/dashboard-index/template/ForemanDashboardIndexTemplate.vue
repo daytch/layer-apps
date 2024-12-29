@@ -15,7 +15,7 @@ const { data } = await useAsyncData(
   async () => {
     const result = getKandangOptions();
     result.then((data) => {
-      if (!!data?.length) {
+      if (!!data?.length && !queryParams.value["coopId"]?.length) {
         handleNewQueryParams({ coopId: data[0]?.value });
       }
     });

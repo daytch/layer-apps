@@ -7,11 +7,21 @@ import { ASYNC_KEY } from "~/constants/api";
 
 const { getAllFoodMedicineStock, isLoading, createNewStock, updateStockById } =
   useFetchFoodMedicine();
+const { queryParams } = useQueryParams();
+
 const { data, pending } = await useAsyncData(
   ASYNC_KEY.foodMedicine,
-  async () => getAllFoodMedicineStock(),
+  async () => {
+    if (queryParams.value["tab"] === "riwayat-pemakaian") return;
+    const params = {} as Record<string, string>;
+    if (!!queryParams.value["coop"]?.length) {
+      params["coopId"] = queryParams.value["coop"] as string;
+    }
+    return getAllFoodMedicineStock(params as any);
+  },
   {
     lazy: true,
+    watch: [queryParams],
   }
 );
 const { showModal, handleShowModal, handleCloseModal, selectedItem } =

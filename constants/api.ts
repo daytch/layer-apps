@@ -18,7 +18,7 @@ export const API_LIST = {
   completeSOPById: "/sop/complete",
   getSOPProggress: (roleId: number, date: string) =>
     `/sop/progress/${roleId}/${date}`,
-  getSopByUser: "/sop/getsopbyuser",
+  getSopByUser: (coopId: string) => `/sop/getsopbyuser/${coopId}`,
   getFCRChart: "/dashboard/FCRChart",
   getAllDiagnosis: "/diagnostic",
   getSingleDiagnosis: (id: number) => `/diagnostic/${id}`,
@@ -36,6 +36,12 @@ export const API_LIST = {
   },
   MEDIC: {
     GET_HISTORY: "/obat/usage-history",
+  },
+  MONTHLY_REPORT: {
+    GET_MONTHLY: "/cashflow/report-income",
+    GET_BY_ID_PERIOD: (id: string) => `/cashflow/report/${id}`,
+    DOWNLOAD_MONTHLY: (id: string, period: string) =>
+      `/cashflow/download/${id}/${period}`,
   },
 };
 
@@ -56,4 +62,7 @@ export const ASYNC_KEY = {
   EGG_DATA: "egg_data",
   NOTIFICATION: "egg_notification",
   FOOD_MEDIC_HISTORY: "food_medic_history",
+  MONTHLY_REPORT: "monthly_report",
 };
+
+export const MONTHLY_REPORT_DETAIL_KEY = "MONTHLY_REPORT_DETAIL_KEY";

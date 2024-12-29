@@ -19,7 +19,6 @@ const { data: kandangOptions } = await useAsyncData(
 );
 
 const filterState = ref({
-  periode: undefined,
   cageName: undefined,
 });
 
@@ -30,23 +29,10 @@ const selectedCageName = computed(() => {
   )?.label;
 });
 
-const getPeriodeText = (periodeValue: string) => {
-  if (!periodeValue?.length) return "";
-  return `${getMonthName(
-    getDateMonthIndex({ type: "string", date: periodeValue })
-  )} ${periodeValue.split("/")[1]}`;
-};
-
 const handleApplyFilter = () => {
   const newQuery: Record<string, string> = {};
   if (!!filterState.value.cageName) {
     newQuery["coopId"] = filterState.value.cageName;
-  }
-  if (!!filterState.value.periode) {
-    const month = (filterState.value.periode as any).month + 1;
-    newQuery["period"] = `${(filterState.value.periode as any)?.year}-${
-      month < 10 ? "0" + month : month
-    }-01`;
   }
 
   if (!!Object.keys(newQuery)?.length) {
@@ -56,7 +42,6 @@ const handleApplyFilter = () => {
 
 watchEffect(() => {
   const queryCoopId = queryParams.value["coopId"];
-  const queryPeriod = queryParams.value["period"];
   let filter: Record<string, any> = {
     periode: undefined,
     cageName: undefined,
@@ -67,17 +52,7 @@ watchEffect(() => {
   ) {
     filter["cageName"] = Number(queryCoopId.toString());
   }
-  if (
-    !!queryPeriod?.toString().length &&
-    isValidDate(queryPeriod?.toString())
-  ) {
-    const appliedDate = new Date(queryPeriod?.toString());
 
-    filter["periode"] = {
-      month: appliedDate.getMonth(),
-      year: appliedDate.getFullYear(),
-    };
-  }
   filterState.value = filter as any;
 });
 </script>
@@ -132,31 +107,7 @@ watchEffect(() => {
           </UDropdown>
         </div>
         <!-- End Opsi Kandang -->
-        <!-- Date picker -->
-        <div class="lg:w-[166px]">
-          <DateTimePicker
-            v-model:model-value="filterState.periode"
-            :month-picker="true"
-          >
-            <template #input="{ value }">
-              <UInput
-                :ui="{
-                  padding: {
-                    md: 'py-[12px] px-5',
-                  },
-                }"
-                variant="outline"
-                :value="getPeriodeText(value)"
-                placeholder="Pilih Periode"
-              >
-                <template #trailing>
-                  <IconCalendar />
-                </template>
-              </UInput>
-            </template>
-          </DateTimePicker>
-        </div>
-        <!-- End Date picker -->
+
         <!-- Tampilkan -->
         <UButton
           type="button"

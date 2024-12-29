@@ -1,3 +1,16 @@
+<script setup lang="ts">
+const userData = useAuthUser();
+
+const dailySOPLink = computed(() => {
+  let url = "/dashboard/report-sop/anak-kandang?tab=Anak%20Kandang";
+  const coopId = userData.value?.user?.coops[0]?.coopId;
+  if (!!coopId) {
+    url += "&coopId=" + coopId;
+  }
+  return url;
+});
+</script>
+
 <template>
   <div class="content-wrapper-height flex flex-col w-full bg-white pb-20">
     <ForemanMemberWelcome />
@@ -12,7 +25,7 @@
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[14px]">
         <ForemanMemberMenuCard
-          :to="'/dashboard/report-sop/anak-kandang?tab=Anak%20Kandang'"
+          :to="dailySOPLink"
           :heading="'SOP Harian'"
           :description="'Mengerjakan sesuai SOP'"
         >

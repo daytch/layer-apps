@@ -1,4 +1,4 @@
-import { object, string, type InferType, mixed, number, ref } from "yup";
+import { object, string, type InferType, mixed, number, ref, bool } from "yup";
 
 export const OBAT_SCHEMA = object({
   name: string().required("Nama tidak boleh kosong."),
@@ -16,6 +16,7 @@ export const OBAT_SCHEMA = object({
   quantity: number()
     .typeError("Jumlah barang tidak valid.")
     .required("Jumlah barang tidak boleh kosong."),
+  isEatable: bool().notRequired().default(false),
 });
 
 export type FormValueObat = InferType<typeof OBAT_SCHEMA>;

@@ -26,7 +26,9 @@ export const useFetchSOP = () => {
   const isError = ref(false);
   const { data: sopsAnakKandang } = useNuxtData(ASYNC_KEY.SOP_ANAK_KANDANG);
   const { data: sopsMandor } = useNuxtData(ASYNC_KEY.SOP_MANDOR);
-  const { data: sopByUser } = useNuxtData<Array<SOPByUserDataType>>(ASYNC_KEY.SOP_BY_USER);
+  const { data: sopByUser } = useNuxtData<Array<SOPByUserDataType>>(
+    ASYNC_KEY.SOP_BY_USER
+  );
   const previousSops = ref<Array<any> | undefined>(undefined);
   const { selectedTab } = useAdminSOP(items);
 
@@ -92,7 +94,9 @@ export const useFetchSOP = () => {
         ? await sopRepo.updateSOPById(id, { ...restPayload, roleId })
         : await sopRepo.createNewSOP({ ...restPayload, roleId });
       if (!!response?.data) {
-        handleSuccess(`Berhasil ${isUpdateMode ? "mengubah" : "menyimpan"} data.`);
+        handleSuccess(
+          `Berhasil ${isUpdateMode ? "mengubah" : "menyimpan"} data.`
+        );
       }
     } catch (error) {
       handleError(`Gagal ${isUpdateMode ? "mengubah" : "menyimpan"} data.`);
@@ -124,7 +128,10 @@ export const useFetchSOP = () => {
     try {
       const response = await sopRepo.completeSOPById(completePayload);
       if (!!response?.data) {
-        handleShowToast({ type: "SUCCESS", message: "Berhasil menyimpan progress." });
+        handleShowToast({
+          type: "SUCCESS",
+          message: "Berhasil menyimpan progress.",
+        });
         previousSopByUser = [];
         return response;
       }
@@ -136,11 +143,16 @@ export const useFetchSOP = () => {
     }
   };
 
-  const getSOPByUser = async () => {
-    const response = await sopRepo.getSOPByUser();
+  const getSOPByUser = async (coopId: string) => {
+    const response = await sopRepo.getSOPByUser(coopId);
     if (!!response?.data) {
       return response.data;
     }
+  };
+
+  const runSOPScheduler = async () => {
+    const response = await sopRepo.runSOPScheduler();
+    return response;
   };
 
   return {
@@ -152,5 +164,6 @@ export const useFetchSOP = () => {
     checkSOPProgress,
     completeSOPById,
     getSOPByUser,
+    runSOPScheduler,
   };
 };
