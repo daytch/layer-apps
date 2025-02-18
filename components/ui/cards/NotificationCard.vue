@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { NotificationDataType } from "~/types/notification";
+import formatDate from "~/utils/formatDate";
+
 const { isLoading, handleMarkAsDone } = useFetchNotification();
 defineProps<{ notification: NotificationDataType }>();
 </script>

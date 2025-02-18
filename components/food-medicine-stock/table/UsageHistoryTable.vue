@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ASYNC_KEY } from "~/constants/api";
 import type { FoodMedicineHistoryParams } from "~/types/food-medicine-stock";
+import formatDate from "~/utils/formatDate";
+import formatMoney from "~/utils/formatMoney";
 
 const COLUMNS = [
   "ID Kandang",
@@ -14,7 +16,7 @@ const COLUMNS = [
 ];
 const { getFoodMedicHistory } = useFetchFoodMedicine();
 const { queryParams } = useQueryParams();
-const { data: historyData, pending } = await useAsyncData(
+const { data: historyData, status } = await useAsyncData(
   ASYNC_KEY.FOOD_MEDIC_HISTORY,
   async () => {
     if (queryParams.value["tab"] !== "riwayat-pemakaian") return;
@@ -22,6 +24,12 @@ const { data: historyData, pending } = await useAsyncData(
     const coopId = queryParams.value["coop"];
     if (queryParams.value["coop"] && !isNaN(Number(coopId))) {
       params["coop_id"] = Number(coopId);
+    }
+    if (queryParams.value["from"] && !!queryParams.value["from"]?.length) {
+      params["start_date"] = queryParams.value["from"]?.toString();
+    }
+    if (queryParams.value["to"] && !!queryParams.value["to"]?.length) {
+      params["end_date"] = queryParams.value["to"]?.toString();
     }
 
     return getFoodMedicHistory(params);
@@ -47,7 +55,7 @@ const { data: historyData, pending } = await useAsyncData(
         </tr>
       </thead>
       <tbody>
-        <template v-if="pending">
+        <template v-if="status === 'pending'">
           <tr class="bg-white">
             <td
               :colspan="COLUMNS.length"
@@ -57,7 +65,9 @@ const { data: historyData, pending } = await useAsyncData(
             </td>
           </tr>
         </template>
-        <template v-else-if="!pending && !!historyData?.data?.length">
+        <template
+          v-else-if="status === 'success' && !!historyData?.data?.length"
+        >
           <tr
             v-for="item in historyData?.data"
             class="bg-white even:bg-[#F8F9FC]"
@@ -115,7 +125,7 @@ const { data: historyData, pending } = await useAsyncData(
           </tr>
         </template>
       </tbody>
-      <tfoot v-if="!pending && !!historyData?.data?.length">
+      <tfoot v-if="status === 'success' && !!historyData?.data?.length">
         <tr class="bg-[--app-primary-800]">
           <th
             :colspan="COLUMNS.length - 2"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { MONTHLY_REPORT_DETAIL_KEY } from "~/constants/api";
 import type { MonthlyReportDataType } from "~/types/month-report";
+import formatDate from "~/utils/formatDate";
+import formatMoney from "~/utils/formatMoney";
 
 const detailData = ref<MonthlyReportDataType | undefined>(undefined);
 

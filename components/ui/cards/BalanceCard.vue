@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const props = defineProps<{
+import formatDate from "~/utils/formatDate";
+import formatMoney from "~/utils/formatMoney";
+
+defineProps<{
   totalCashflow?: number;
 }>();
 </script>

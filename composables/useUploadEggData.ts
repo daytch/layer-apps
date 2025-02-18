@@ -76,7 +76,11 @@ const _useUploadEggData = () => {
           });
         }
       } else {
-        handleShowToast({ type: "ERROR", message: "Gagal konfirmasi data." });
+        const errorResponse = JSON.parse(request?.response || "{}");
+        handleShowToast({
+          type: "ERROR",
+          message: errorResponse?.error || "Gagal konfirmasi data.",
+        });
         isLoading.value = false;
       }
     });

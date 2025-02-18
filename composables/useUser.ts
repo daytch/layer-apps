@@ -52,7 +52,9 @@ export const useUser = () => {
         handleSuccess("Berhasil menghapus data user.");
       }
     } catch (error) {
-      handleError("Gagal menghapus data user.");
+      handleError(
+        (error as any)?.data?.message || "Gagal menghapus data user."
+      );
     } finally {
       isLoading.value = false;
     }
@@ -69,7 +71,7 @@ export const useUser = () => {
         handleSuccess("Berhasil mengubah data user.");
       }
     } catch (error) {
-      handleError("Gagal mengubah data user.");
+      handleError((error as any)?.data?.message || "Gagal mengubah data user.");
     } finally {
       isLoading.value = false;
     }
@@ -90,7 +92,9 @@ export const useUser = () => {
       }
       handleSuccess("Berhasil menyimpan data user.");
     } catch (error) {
-      handleError("Gagal menyimpan data user.");
+      handleError(
+        (error as any)?.data?.message || "Gagal menyimpan data user."
+      );
     } finally {
       isLoading.value = false;
     }
@@ -129,8 +133,10 @@ export const useUser = () => {
             ? updateUserById(id, parsingPayload)
             : createNewUser(parsingPayload);
         })
-        .catch(() => {
-          handleError("Gagal mengupload avatar.");
+        .catch((error) => {
+          handleError(
+            (error as any)?.data?.message || "Gagal mengupload avatar."
+          );
           isLoading.value = false;
         });
     } else {

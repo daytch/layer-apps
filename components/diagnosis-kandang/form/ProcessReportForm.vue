@@ -6,15 +6,15 @@ import {
   UI_GHOST_BUTTON_STYLES,
   UI_PRIMARY_BUTTON_STYLES,
 } from "~/constants/ui";
-import { ASYNC_KEY } from "~/constants/api";
 import type { DiagnosisKandangPayload } from "~/types/report";
 
 const emits = defineEmits<{
   (e: "handleCloseModal"): void;
   (e: "handleSubmitForm", data: DiagnosisKandangPayload): void;
 }>();
-defineProps<{
+const props = defineProps<{
   isLoading?: boolean;
+  coopId?: number | string;
 }>();
 
 const schema = object({
@@ -47,12 +47,15 @@ const formState = reactive<FormValueType>({
   jumlahObat: -1,
 });
 
-const { getAllFoodMedicineStock } = useFetchFoodMedicine();
-
+const { getFeedDropdownSOP } = useFetchFoodMedicine();
+const { coopId } = toRefs(props);
 const { data: foods } = await useAsyncData(
-  ASYNC_KEY.foodMedicine,
-  async () => getAllFoodMedicineStock(),
-  { lazy: true }
+  "REPORT_FORM_MEDIC_OPTIONS_BY_COOP",
+  async () => {
+    if (!coopId.value) return;
+    return getFeedDropdownSOP({ coopId: coopId.value?.toString() });
+  },
+  { lazy: true, watch: [coopId] }
 );
 const PROGRESS_OPTIONS = [
   {

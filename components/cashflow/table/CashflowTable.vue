@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { CashflowDataType } from "~/types/cashflow";
+import formatDate from "~/utils/formatDate";
+import formatMoney from "~/utils/formatMoney";
 
 defineProps<{
   items: Array<CashflowDataType>;
@@ -27,19 +29,29 @@ const handleDeleteCashflowById = async () => {
     <table class="w-full">
       <thead>
         <tr>
-          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
+          <th
+            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
+          >
             Tanggal
           </th>
-          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
+          <th
+            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
+          >
             Periode
           </th>
-          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
+          <th
+            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
+          >
             Tipe
           </th>
-          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
+          <th
+            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
+          >
             Jumlah
           </th>
-          <th class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left">
+          <th
+            class="bg-white py-[18px] px-4 text-base font-medium text-[--app-dark-100] text-left"
+          >
             Total Saldo
           </th>
           <th
@@ -78,7 +90,9 @@ const handleDeleteCashflowById = async () => {
             <td
               class="p-4 bg-white text-left text-sm font-normal leading-[22px]"
               :class="
-                (item?.nominal || 0) > 50000 ? 'text-[--app-blue-100]' : 'text-[--app-danger-300]'
+                (item?.nominal || 0) > 50000
+                  ? 'text-[--app-blue-100]'
+                  : 'text-[--app-danger-300]'
               "
             >
               {{ formatMoney(item?.nominal || 0) }}
@@ -92,7 +106,10 @@ const handleDeleteCashflowById = async () => {
               class="p-4 bg-white text-left text-sm font-normal leading-[22px] text-[--app-dark-100] uppercase"
             >
               <div class="flex items-center space-x-5">
-                <button type="button" @click="$emit('handleShowUpdateModal', item)">
+                <button
+                  type="button"
+                  @click="$emit('handleShowUpdateModal', item)"
+                >
                   <IconPencilUpdate :width="24" :height="24" />
                 </button>
                 <button type="button" @click="handleShowModal(item)">

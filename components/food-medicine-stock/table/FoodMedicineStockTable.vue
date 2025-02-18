@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FoodMedicineStockType } from "~/types/food-medicine-stock";
+import formatMoney from "~/utils/formatMoney";
 
 type ColumnKey = keyof FoodMedicineStockType;
 

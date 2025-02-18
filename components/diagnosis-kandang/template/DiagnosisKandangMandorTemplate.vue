@@ -110,6 +110,7 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
   <AppModal v-model="showHandleReportModal" :transition="false">
     <ProcessReportForm
       :is-loading="isLoadingUpdate"
+      :coop-id="selectedReport?.coop_id"
       @handle-close-modal="handleCloseReportModal"
       @handle-submit-form="handleUpdateReport"
     />

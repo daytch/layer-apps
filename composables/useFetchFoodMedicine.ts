@@ -1,6 +1,7 @@
 import { ASYNC_KEY } from "~/constants/api";
 import { foodMedicineRepository } from "~/repository/modules/food-medicine";
 import type {
+  FeedMedicConsumptionPayloadType,
   FoodMedicineHistoryParams,
   FoodMedicineStockPayloadType,
   FoodMedicineStockType,
@@ -81,7 +82,7 @@ export const useFetchFoodMedicine = () => {
         handleSuccess("Data berhasil ditambahkan");
       }
     } catch (error) {
-      handleError("Data gagal ditambahkan");
+      handleError((error as any)?.data?.message || "Data gagal ditambahkan");
     } finally {
       isLoading.value = false;
     }
@@ -96,13 +97,6 @@ export const useFetchFoodMedicine = () => {
       ...updatePayload,
     } as Partial<ExtedFormMedicalStockPayloadType>;
     delete payload.coop_name;
-    const now = new Date();
-    const temporaryData: FoodMedicineStockType = {
-      ...updatePayload,
-      id,
-      updateAt: now.toDateString(),
-      createdAt: now.toDateString(),
-    };
 
     try {
       const response = await foodMedicineRepo.updateFoodMedicineStokById(
@@ -113,7 +107,7 @@ export const useFetchFoodMedicine = () => {
         handleSuccess("Sukses menyimpan data");
       }
     } catch (error) {
-      handleError("Data gagal disimpan");
+      handleError((error as any)?.data?.message || "Data gagal disimpan");
     } finally {
       isLoading.value = false;
     }
@@ -128,10 +122,27 @@ export const useFetchFoodMedicine = () => {
         handleSuccess("Data berhasil dihapus");
       }
     } catch (error) {
-      handleError("Gagal menghapus data.");
+      handleError((error as any)?.data?.message || "Gagal menghapus data.");
     } finally {
       isLoading.value = false;
     }
+  };
+
+  const createNewConsumptionStock = async (
+    createPayload: FeedMedicConsumptionPayloadType
+  ) => {
+    initialFetching();
+    foodMedicineRepo
+      .createFeedComsumption(createPayload)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        handleError(error?.data?.message || "Data gagal ditambahkan");
+      })
+      .finally(() => {
+        isLoading.value = false;
+      });
   };
 
   return {
@@ -142,5 +153,6 @@ export const useFetchFoodMedicine = () => {
     isLoading,
     getFoodMedicHistory,
     getFeedDropdownSOP,
+    createNewConsumptionStock,
   };
 };

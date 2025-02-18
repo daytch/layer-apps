@@ -2,7 +2,11 @@
 import { type InferType, string, object, number } from "yup";
 import { type DiagnosisKandangPayload } from "~/types/report";
 import type { FormSubmitEvent } from "#ui/types";
-import { UI_CARD_STYLES, UI_GHOST_BUTTON_STYLES, UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
+import {
+  UI_CARD_STYLES,
+  UI_GHOST_BUTTON_STYLES,
+  UI_PRIMARY_BUTTON_STYLES,
+} from "~/constants/ui";
 import { ASYNC_KEY } from "~/constants/api";
 
 const emits = defineEmits<{
@@ -13,7 +17,9 @@ defineProps<{ isLoading?: boolean }>();
 
 const { getKandangOptions } = useKandang();
 
-const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () => getKandangOptions());
+const { data } = await useAsyncData(ASYNC_KEY.KANDANG_OPTIONS, async () =>
+  getKandangOptions()
+);
 
 const authuser = useAuthUser();
 const schema = object({
@@ -37,7 +43,9 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
   if (!data?.coopId || !authuser?.value?.user) return;
   const payload: DiagnosisKandangPayload = {
     coopId: data.coopId,
-    transDate: isValidDate(data?.transDate) ? formatDate(data?.transDate, "yyyy-MM-dd") : "",
+    transDate: isValidDate(data?.transDate)
+      ? formatDate(data?.transDate, "yyyy-MM-dd")
+      : "",
     disease: data.disease,
     reporterId: authuser?.value?.user?.id,
   };
@@ -46,11 +54,21 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
 </script>
 
 <template>
-  <UForm ref="form" :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+  <UForm
+    ref="form"
+    :schema="schema"
+    :state="state"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
     <UCard :ui="{ ...UI_CARD_STYLES }">
       <template #header>
-        <div class="w-full flex justify-between items-center pb-6 mb-6 border-b">
-          <h2 class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]">
+        <div
+          class="w-full flex justify-between items-center pb-6 mb-6 border-b"
+        >
+          <h2
+            class="text-[--app-dark-100] text-2xl font-semibold leading-[30px]"
+          >
             Tambah Laporan
           </h2>
           <UButton
@@ -121,7 +139,11 @@ async function onSubmit(event: FormSubmitEvent<FormValueType>) {
           <template #label>
             <FormLabel>Penyakit</FormLabel>
           </template>
-          <UInput variant="outline" placeholder="Penyakit" v-model="state.disease" />
+          <UInput
+            variant="outline"
+            placeholder="Penyakit"
+            v-model="state.disease"
+          />
         </UFormGroup>
       </div>
       <template #footer>

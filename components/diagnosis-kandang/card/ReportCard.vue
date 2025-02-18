@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
 import { type DiagnosisKandangType } from "~/types/report";
+import formatDate from "~/utils/formatDate";
 
 defineProps<{ report: DiagnosisKandangType }>();
 
@@ -29,7 +29,7 @@ defineEmits<{
             Tanggal
           </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            {{ formatDate(report.trans_date, "dd MMM yyyy") }}
+            {{ formatDate(report.trans_date, "dd MMMM yyyy") }}
           </td>
         </tr>
         <tr class="py-[2px]">

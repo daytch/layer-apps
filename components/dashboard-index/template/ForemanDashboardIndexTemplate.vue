@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ASYNC_KEY } from "~/constants/api";
+import formatDate from "~/utils/formatDate";
 
 const { queryParams, handleNewQueryParams } = useQueryParams();
 const { getKandangOptions } = useKandang();

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ASYNC_KEY } from "~/constants/api";
 import { UI_PRIMARY_GHOST_BUTTON_STYLES } from "~/constants/ui";
+import getMonthName, { getDateMonthIndex } from "~/utils/getMonthName";
 
 const { getKandangOptions } = useKandang();
 const { data: KandangOptions } = await useAsyncData(
@@ -37,24 +38,35 @@ const handleApplyFilter = () => {
   handleNewQueryParams(params);
 };
 
-onMounted(() => {
+const handleSetActiveFilter = () => {
   const cage = queryParams.value["coopId"]?.toString();
   const periode = (
-    !!queryParams.value["periode"]?.length && isValidDate(queryParams.value["periode"]?.toString())
+    !!queryParams.value["periode"]?.length &&
+    isValidDate(queryParams.value["periode"]?.toString())
       ? {
-          month: new Date(queryParams.value?.["periode"].toString())?.getMonth(),
-          year: new Date(queryParams.value?.["periode"].toString())?.getFullYear(),
+          month: new Date(
+            queryParams.value?.["periode"].toString()
+          )?.getMonth(),
+          year: new Date(
+            queryParams.value?.["periode"].toString()
+          )?.getFullYear(),
         }
       : undefined
   ) as Periode | undefined;
-  filterState.cage = !!cage?.length && !isNaN(Number(cage)) ? Number(cage) : undefined;
+  filterState.cage =
+    !!cage?.length && !isNaN(Number(cage)) ? Number(cage) : undefined;
   filterState.periode = periode;
-});
+};
+
+onMounted(handleSetActiveFilter);
+watch(queryParams, handleSetActiveFilter);
 </script>
 
 <template>
   <div class="my-4 mb-8 p-4 border rounded-lg bg-white">
-    <div class="space-y-4 md:flex md:items-center md:justify-end md:space-x-4 md:space-y-0">
+    <div
+      class="space-y-4 md:flex md:items-center md:justify-end md:space-x-4 md:space-y-0"
+    >
       <div class="md:max-w-[250px]">
         <UInputMenu
           size="md"
@@ -68,7 +80,10 @@ onMounted(() => {
         />
       </div>
       <div class="md:max-w-[200px]">
-        <DateTimePicker v-model:model-value="filterState.periode" :month-picker="true">
+        <DateTimePicker
+          v-model:model-value="filterState.periode"
+          :month-picker="true"
+        >
           <template #input="{ value }">
             <UInput
               :ui="{
@@ -77,7 +92,9 @@ onMounted(() => {
                 },
               }"
               variant="outline"
-              :value="getMonthName(getDateMonthIndex({ type: 'string', date: value }))"
+              :value="
+                getMonthName(getDateMonthIndex({ type: 'string', date: value }))
+              "
               placeholder="Pilih Periode"
             >
               <template #trailing>

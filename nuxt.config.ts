@@ -8,7 +8,9 @@ export default defineNuxtConfig({
       crawlLinks: true,
     },
   },
+
   devtools: { enabled: true },
+
   modules: [
     "@nuxt/ui",
     "@nuxtjs/google-fonts",
@@ -16,6 +18,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@pinia/nuxt",
   ],
+
   runtimeConfig: {
     public: {
       apiUrl: process.env.BASE_API_URL || "https://api-dev.layerapps.id",
@@ -23,7 +26,9 @@ export default defineNuxtConfig({
       cookieExpires: ONE_DAY.toString(),
     },
   },
+
   css: ["~/assets/css/variabel.css", "~/assets/css/global.css"],
+
   app: {
     head: {
       htmlAttrs: {
@@ -33,12 +38,15 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
     },
   },
+
   typescript: {
     typeCheck: true,
   },
+
   colorMode: {
     preference: "light",
   },
+
   googleFonts: {
     display: "swap",
     families: {
@@ -50,16 +58,21 @@ export default defineNuxtConfig({
       },
     },
   },
+
   image: {
     format: ["webp"],
   },
+
   components: [
     {
       path: "~/components",
       pathPrefix: false,
     },
   ],
+
   build: {
     transpile: ["@vuepic/vue-datepicker"],
   },
+
+  compatibilityDate: "2025-02-16",
 });

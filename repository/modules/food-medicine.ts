@@ -1,5 +1,6 @@
 import type {
   FeedDropdownSOPDataType,
+  FeedMedicConsumptionPayloadType,
   FoodMedicineHistory,
   FoodMedicineHistoryParams,
   FoodMedicineStockPayloadType,
@@ -58,5 +59,14 @@ export const foodMedicineRepository = <T>(fetch: FetchType<T>) => ({
     coopId: string;
   }): FoodMedicineStockResponse<FeedDropdownSOPDataType[]> {
     return fetch("/obat/dropdown", { params, method: "GET" });
+  },
+
+  async createFeedComsumption(
+    createPayload: FeedMedicConsumptionPayloadType
+  ): FoodMedicineStockResponse<any> {
+    return fetch("/obat/consumption", {
+      method: "POST",
+      body: JSON.stringify(createPayload),
+    });
   },
 });

@@ -9,9 +9,9 @@ export const useKandang = () => {
   const isLoading = ref(false);
   const isError = ref(false);
   const { data: kandangs } = useNuxtData<Array<KandangType>>(ASYNC_KEY.kandang);
-  const { data: kandangOptions } = useNuxtData<Array<{ label: string; value: number }>>(
-    ASYNC_KEY.KANDANG_OPTIONS
-  );
+  const { data: kandangOptions } = useNuxtData<
+    Array<{ label: string; value: number }>
+  >(ASYNC_KEY.KANDANG_OPTIONS);
   const previousKandans = ref<any>([]);
   const authuser = useAuthUser();
 
@@ -46,7 +46,9 @@ export const useKandang = () => {
       return kandangOptions.value;
     }
     const response = await getAllKandang();
-    return !!response?.length ? response.map((r) => ({ label: r.name, value: r.id })) : [];
+    return !!response?.length
+      ? response.map((r) => ({ label: r.name, value: r.id }))
+      : [];
   };
 
   const createKandang = async (payload: KandangPayload) => {
@@ -67,7 +69,9 @@ export const useKandang = () => {
         handleSuccess("Sukses menyimpan data kandang.");
       }
     } catch (error) {
-      handleError("Gagal menyimpan data kandang.");
+      handleError(
+        (error as any)?.data?.message || "Gagal menyimpan data kandang."
+      );
     } finally {
       isLoading.value = false;
     }
@@ -84,8 +88,10 @@ export const useKandang = () => {
       if (response?.data?.id) {
         handleSuccess("Sukses mengubah data kandang.");
       }
-    } catch {
-      handleError("Gagal mengubah data kandang.");
+    } catch (error) {
+      handleError(
+        (error as any)?.data?.message || "Gagal mengubah data kandang."
+      );
     } finally {
       isLoading.value = false;
     }
@@ -94,14 +100,17 @@ export const useKandang = () => {
   const deleteKandang = async (id: number) => {
     initialFetch();
     previousKandans.value = kandangs.value;
-    kandangs.value = (kandangs.value?.filter((kandang) => kandang.id !== id) || undefined) as any;
+    kandangs.value = (kandangs.value?.filter((kandang) => kandang.id !== id) ||
+      undefined) as any;
     try {
       const response = await kandangRepo.deleteKandang(id);
       if (response) {
         handleSuccess("Sukses menghapus data kandang.");
       }
     } catch (error) {
-      handleError("Gagal menyimpan data kandang.");
+      handleError(
+        (error as any)?.data?.message || "Gagal menyimpan data kandang."
+      );
     } finally {
       isLoading.value = false;
     }

@@ -11,7 +11,7 @@ export default defineNuxtPlugin({
         if (accessToken.value?.length) {
           options.headers = {
             Authorization: "Bearer " + accessToken.value,
-          };
+          } as any;
         }
       },
       onResponse: () => {},

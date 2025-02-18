@@ -2,6 +2,7 @@
 import VueDatePicker, { type ModelValue } from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { id } from "date-fns/locale";
+import formatDate from "~/utils/formatDate";
 
 defineEmits<{
   (e: "update:modelValue", value: ModelValue): void;
@@ -22,7 +23,7 @@ defineProps<{
     :teleport="true"
     :range="range"
     :enable-time-picker="false"
-    @update:model-value="(value) => $emit('update:modelValue', value)"
+    @update:model-value="(value: any) => $emit('update:modelValue', value)"
     :select-text="'Pilih'"
     :cancel-text="'Batal'"
     v-bind="$attrs"

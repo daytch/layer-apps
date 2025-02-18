@@ -47,6 +47,8 @@ export type FoodMedicineHistory = {
 
 export type FoodMedicineHistoryParams = {
   coop_id: number;
+  start_date?: string;
+  end_date?: string;
 };
 
 export type FeedDropdownSOPDataType = {
@@ -54,4 +56,11 @@ export type FeedDropdownSOPDataType = {
   coopId: number;
   name: string;
   quantity: number;
+};
+
+export type FeedMedicConsumptionPayloadType = {
+  coopId: number;
+  feedId: number;
+  total: number;
+  transDate: string;
 };
