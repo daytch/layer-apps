@@ -29,7 +29,7 @@ defineEmits<{
             Tanggal
           </th>
           <td class="py-2 px-6 text-left text-sm font-normal text-[#1D2433]">
-            {{ formatDate(report.trans_date, "dd MMM yyyy") }}
+            {{ formatDate(report.trans_date, "dd MMMM yyyy") }}
           </td>
         </tr>
         <tr class="py-[2px]">

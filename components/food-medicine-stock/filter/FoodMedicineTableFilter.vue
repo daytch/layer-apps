@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ModelValue } from "@vuepic/vue-datepicker";
 import { ASYNC_KEY } from "~/constants/api";
 import {
   UI_PRIMARY_BUTTON_STYLES,
@@ -28,22 +29,41 @@ const { handleNewQueryParams, queryParams } = useQueryParams();
 
 const filterState = reactive<{
   cageName?: string | number;
-  rageDate?: Array<Date> | Array<string>;
+  range?: Array<Date> | Array<string>;
 }>({
   cageName: undefined,
+  range: undefined,
 });
 
 const handleApplyFilter = () => {
-  const newQuery: Record<string, string> = {};
-  if (!!filterState?.cageName?.toString()?.length) {
-    newQuery["coop"] = filterState.cageName.toString();
-  }
-  if (!!Object.keys(newQuery)?.length) {
-    handleNewQueryParams(newQuery);
+  let params: Record<string, string | undefined | number> = {};
+  params["coop"] = filterState.cageName;
+  params["from"] = filterState?.range?.[0]
+    ? formatDate(filterState?.range?.[0], "yyyy-MM-dd")
+    : undefined;
+  params["to"] = filterState?.range?.[1]
+    ? formatDate(filterState?.range?.[1], "yyyy-MM-dd")
+    : undefined;
+  if (!!Object.keys(params)?.length) {
+    handleNewQueryParams(params);
   }
 };
 
 function handleSetActiveFilter() {
+  let range = [] as Array<Date>;
+  if (
+    !!queryParams.value?.["from"]?.length &&
+    isValidDate(queryParams.value?.["from"]?.toString())
+  ) {
+    range.push(new Date(queryParams.value?.["from"] as string));
+  }
+  if (
+    !!queryParams.value?.["to"]?.length &&
+    isValidDate(queryParams.value?.["to"]?.toString())
+  ) {
+    range.push(new Date(queryParams.value?.["to"] as string));
+  }
+  filterState.range = range;
   filterState.cageName = (queryParams.value?.["coop"] || undefined) as
     | string
     | undefined;
@@ -53,54 +73,30 @@ watch(queryParams, handleSetActiveFilter);
 </script>
 
 <template>
-  <div class="p-4 border rounded">
-    <div
-      class="flex flex-col lg:flex-row lg:items-center"
-      :class="{
-        'lg:justify-between space-y-4 lg:space-y-0 lg:space-x-4': showAddButton,
-        'lg:justify-end': !showAddButton,
-      }"
-    >
-      <UButton
-        v-if="showAddButton"
-        @click="$emit('handleAddData')"
-        type="button"
-        icon="i-heroicons-plus"
+  <DateRangeFilter
+    v-model:model-value="filterState.range"
+    :show-add-button="true"
+    :add-button-text="'Tambah Data'"
+    @handle-add-data="$emit('handleAddData')"
+    style="background-color: white"
+    @apply-filter="handleApplyFilter"
+  >
+    <template #additional>
+      <UInputMenu
         size="md"
-        :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
-      >
-        {{ addButtonText || "" }}
-      </UButton>
-      <div
-        class="flex flex-col lg:flex-row lg:items-center justify-end space-y-4 lg:space-y-0 lg:space-x-4 w-full lg:w-auto"
-      >
-        <UInputMenu
-          size="md"
-          :nullable="true"
-          v-model="filterState.cageName"
-          :options="
-            kandangOptions?.map((p) => ({
-              label: p?.label,
-              value: p?.value?.toString(),
-            }))
-          "
-          placeholder="Pilih Nama Kandang"
-          :input-class="'input-select-trigger'"
-          value-attribute="value"
-          option-attribute="label"
-        />
-
-        <UButton
-          type="button"
-          size="md"
-          color="primary"
-          variant="ghost"
-          @click="handleApplyFilter"
-          :ui="{ ...UI_PRIMARY_GHOST_BUTTON_STYLES }"
-        >
-          Tampilkan
-        </UButton>
-      </div>
-    </div>
-  </div>
+        :nullable="true"
+        v-model="filterState.cageName"
+        :options="
+          kandangOptions?.map((p) => ({
+            label: p?.label,
+            value: p?.value?.toString(),
+          }))
+        "
+        placeholder="Pilih Nama Kandang"
+        :input-class="'input-select-trigger'"
+        value-attribute="value"
+        option-attribute="label"
+      />
+    </template>
+  </DateRangeFilter>
 </template>

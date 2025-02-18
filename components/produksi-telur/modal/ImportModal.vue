@@ -9,6 +9,12 @@ import {
 import { ASYNC_KEY } from "~/constants/api";
 import type { UploadEggResponse } from "~/types/egg";
 
+const IMPORTANT_NOTES = [
+  "File yang diupload berformat : .xls, .xlsx, .xlsm, .xltx, dan .xlsb",
+  "Pastikan nama sheet di dalam excel adalah : RECORDING PRODUKSI atau sheet1 (ini yang akan dibaca oleh sistem)",
+  "Jika gagal, cek ulang file yang diupload dan pastikan sudah sesuai",
+];
+
 const emit = defineEmits<{
   (e: "handleCloseModal"): void;
 }>();
@@ -149,6 +155,23 @@ async function onSubmit(event: FormSubmitEvent<FormValue>) {
               <IconTrash :stroke="'#F23030'" />
             </button>
           </div>
+
+          <div class="p-3 bg-[#F3F4F6]">
+            <p class="text-base font-semibold text-[#637381] mb-3">
+              Info Penting!!
+            </p>
+            <ol
+              class="list-decimal list-outside rounded-[12px] space-y-3 notes"
+            >
+              <li
+                v-for="(note, index) in IMPORTANT_NOTES"
+                :key="index"
+                class="text-sm text-[#637381]"
+              >
+                {{ note }}
+              </li>
+            </ol>
+          </div>
         </div>
       </div>
       <template #footer>
@@ -176,3 +199,30 @@ async function onSubmit(event: FormSubmitEvent<FormValue>) {
     </UCard>
   </UForm>
 </template>
+
+<style scoped>
+ol.notes {
+  list-style: none;
+  counter-reset: my-awesome-counter;
+}
+ol.notes li {
+  counter-increment: my-awesome-counter;
+  position: relative;
+  padding-left: 36px;
+}
+ol.notes li::before {
+  content: counter(my-awesome-counter);
+  background: #2cd673;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-block;
+  line-height: 26px;
+  color: white;
+  text-align: center;
+  margin-right: 0.5rem;
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+</style>

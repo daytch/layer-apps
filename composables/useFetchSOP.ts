@@ -113,7 +113,7 @@ export const useFetchSOP = () => {
         handleSuccess("Sukses menghapus data.");
       }
     } catch (error) {
-      handleError("Gagal menghapus data.");
+      handleError((error as any)?.data?.message || "Gagal menghapus data.");
     } finally {
       isLoading.value = false;
     }

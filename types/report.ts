@@ -1,6 +1,6 @@
 export type DiagnosisKandangType = {
   id: number;
-  coop_id: string;
+  coop_id: string | number;
   coop_name: string;
   reporter: string;
   trans_date: string;

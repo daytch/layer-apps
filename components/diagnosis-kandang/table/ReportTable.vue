@@ -81,7 +81,7 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
           <td
             class="text-sm font-normal leading-[22px] text-[--app-dark-900] px-2 py-2 whitespace-nowrap"
           >
-            {{ formatDate(report?.trans_date, "dd MMM yyyy") }}
+            {{ formatDate(report?.trans_date, "dd MMMM yyyy") }}
           </td>
           <td
             class="text-sm font-normal leading-[22px] text-[--app-dark-900] px-2 py-2 uppercase whitespace-nowrap"
@@ -137,6 +137,7 @@ const handleUpdateReport = (payload: DiagnosisKandangPayload) => {
   <AppModal v-model="showHandleReportModal" :transition="false">
     <ProcessReportForm
       :is-loading="isLoadingUpdate"
+      :coop-id="selectedReport?.coop_id"
       @handle-close-modal="handleCloseReportModal"
       @handle-submit-form="handleUpdateReport"
     />

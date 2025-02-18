@@ -1,26 +1,106 @@
 <script setup lang="ts">
-import {
-  VisXYContainer,
-  VisLine,
-  VisAxis,
-  VisArea,
-  VisCrosshair,
-  VisTooltip,
-} from "@unovis/vue";
 import type { FCRChartDataType } from "~/types/fcr-chart";
 
-type DataRecord = FCRChartDataType;
-
-defineProps<{
+const props = defineProps<{
   fcrData: Array<FCRChartDataType>;
   isLoading?: boolean;
 }>();
 
-const x = (_: DataRecord, i: number) => i;
-const y = (d: DataRecord) => d.FCR;
+const sortedData = computed(() =>
+  (props?.fcrData || []).sort(
+    (a, b) => (new Date(a.transDate) as any) - (new Date(b.transDate) as any)
+  )
+);
 
-const template = (d: DataRecord) =>
-  `${formatDate(d.transDate, "dd MMMM")}: ${d.FCR}`;
+const chartOptions = ref({
+  chart: {
+    type: "area",
+    height: 500,
+    zoom: {
+      type: "x",
+      enabled: true,
+      autoScaleYaxis: true,
+    },
+    toolbar: {
+      tools: {
+        download: false,
+      },
+    },
+  },
+  dataLabels: {
+    enabled: true,
+    formatter: function (val: any) {
+      return val.toFixed(2);
+    },
+    style: {
+      fontSize: "14px",
+    },
+  },
+  stroke: {
+    curve: "smooth",
+    width: 2,
+  },
+  fill: {
+    type: "gradient",
+    gradient: {
+      shadeIntensity: 1,
+      opacityFrom: 0.7,
+      opacityTo: 0.2,
+      stops: [0, 100],
+    },
+  },
+  colors: ["#4ade80"], // Green color
+  xaxis: {
+    type: "datetime",
+    labels: {
+      formatter: function (val: any) {
+        return new Date(val).toLocaleDateString("id-ID", {
+          month: "short",
+          day: "numeric",
+        });
+      },
+      style: {
+        fontSize: "14px",
+      },
+    },
+  },
+  yaxis: {
+    labels: {
+      formatter: function (val: any) {
+        return val.toFixed(2);
+      },
+      style: {
+        fontSize: "14px",
+      },
+    },
+  },
+  markers: {
+    size: 6,
+    hover: {
+      size: 8,
+    },
+  },
+  tooltip: {
+    x: {
+      format: "dd MMM",
+    },
+  },
+  grid: {
+    show: true,
+    borderColor: "#f1f1f1",
+    strokeDashArray: 0,
+  },
+});
+
+const series = computed(() => [
+  {
+    name: "FCR",
+    data: sortedData.value.map((item) => ({
+      x: new Date(item.transDate).getTime(),
+      y: item.FCR,
+    })),
+  },
+]);
 </script>
 
 <template>
@@ -46,43 +126,14 @@ const template = (d: DataRecord) =>
         <LoadingSpinner />
       </template>
       <template v-if="!!fcrData.length && !isLoading">
-        <VisXYContainer
-          :data="fcrData"
-          :padding="{ top: 10 }"
-          class="h-[383px]"
-          :width="'100%'"
-        >
-          <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
-          <VisArea
-            :x="x"
-            :y="y"
-            color="rgb(var(--color-primary-DEFAULT))"
-            :opacity="0.1"
+        <div class="w-full h-[500px]">
+          <apexchart
+            type="area"
+            height="100%"
+            :options="chartOptions"
+            :series="series"
           />
-          <VisAxis
-            type="y"
-            :tick-format="(i:any) => {
-          return i
-        }"
-          />
-          <VisAxis
-            type="x"
-            :x="x"
-            :tick-format="(i: number) => {
-            if(!fcrData[i]) {
-              return ''
-            }
-          return formatDate(fcrData[i].transDate, 'MMM')
-        }"
-          />
-
-          <VisCrosshair
-            color="rgb(var(--color-primary-DEFAULT))"
-            :template="template"
-          />
-
-          <VisTooltip />
-        </VisXYContainer>
+        </div>
       </template>
       <template v-else-if="!isLoading && !fcrData?.length">
         <NoDataStatus>Data tidak ditemukan.</NoDataStatus>
@@ -94,20 +145,6 @@ const template = (d: DataRecord) =>
   </UCard>
 </template>
 
-<style scoped>
-.unovis-xy-container {
-  --vis-crosshair-line-stroke-color: rgb(var(--color-primary-500));
-  --vis-crosshair-circle-stroke-color: #fff;
-
-  --vis-axis-grid-color: rgb(var(--color-gray-200));
-  --vis-axis-tick-color: rgb(var(--color-gray-200));
-  --vis-axis-tick-label-color: rgb(var(--color-gray-400));
-
-  --vis-tooltip-background-color: #fff;
-  --vis-tooltip-border-color: rgb(var(--color-gray-200));
-  --vis-tooltip-text-color: rgb(var(--color-gray-900));
-}
-</style>
 <style>
 .select-options .block.truncate {
   @apply text-base;
