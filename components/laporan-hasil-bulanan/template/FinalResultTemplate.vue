@@ -2,6 +2,7 @@
 import { ASYNC_KEY, MONTHLY_REPORT_DETAIL_KEY } from "~/constants/api";
 import type { MonthlyReportDataType } from "~/types/month-report";
 const { getAllData } = useMonthlyReport();
+import formatMoney from "~/utils/formatMoney";
 
 const COLUMNS = [
   {

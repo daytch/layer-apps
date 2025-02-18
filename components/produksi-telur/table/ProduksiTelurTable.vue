@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { EggResponseDataType, UpdateRowFormType } from "~/types/egg";
+import formatDate, { isValidDate } from "~/utils/formatDate";
 
 defineProps<{
   eggData: Array<EggResponseDataType>;

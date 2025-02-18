@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import formatDate from "~/utils/formatDate";
 const { getDashboardData, getFCRChartData } = useFetchDashboard();
 const { getAllKandang } = useKandang();
 

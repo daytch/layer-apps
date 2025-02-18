@@ -3,7 +3,7 @@ import { format } from "date-fns/format";
 import { id } from "date-fns/locale/id";
 import { MONTH } from "~/constants/time";
 
-function isValidDate(date: unknown) {
+export function isValidDate(date: unknown) {
   return isValid(date);
 }
 

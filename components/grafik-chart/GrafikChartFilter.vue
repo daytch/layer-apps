@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ASYNC_KEY } from "~/constants/api";
 import { UI_PRIMARY_GHOST_BUTTON_STYLES } from "~/constants/ui";
+import getMonthName, { getDateMonthIndex } from "~/utils/getMonthName";
 
 const { getKandangOptions } = useKandang();
 const { data: KandangOptions } = await useAsyncData(

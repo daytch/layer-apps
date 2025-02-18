@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import formatMoney from "~/utils/formatMoney";
+
 const monthlyResult: Array<{
   name: string;
   date?: string;

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { SOPDataType, SOPProgressDataType } from "~/types/sop";
+import formatDate from "~/utils/formatDate";
 
 type FormatedProgressData = {
   sopData: Array<SOPDataType>;

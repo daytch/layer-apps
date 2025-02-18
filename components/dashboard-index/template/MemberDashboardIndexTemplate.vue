@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const userData = useAuthUser();
+import formatDate from "~/utils/formatDate";
 
 const dailySOPLink = computed(() => {
   let url = "/dashboard/report-sop/anak-kandang?tab=Anak%20Kandang";

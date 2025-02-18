@@ -3,6 +3,8 @@ import type {
   DiagnosisKandangPayload,
   DiagnosisKandangType,
 } from "~/types/report";
+import formatDate from "~/utils/formatDate";
+
 const columns = [
   "ID Kandang",
   "Nama Kandang",

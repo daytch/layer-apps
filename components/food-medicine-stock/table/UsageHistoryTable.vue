@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ASYNC_KEY } from "~/constants/api";
 import type { FoodMedicineHistoryParams } from "~/types/food-medicine-stock";
+import formatDate from "~/utils/formatDate";
+import formatMoney from "~/utils/formatMoney";
 
 const COLUMNS = [
   "ID Kandang",

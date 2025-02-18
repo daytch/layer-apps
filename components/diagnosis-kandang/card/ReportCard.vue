@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UI_PRIMARY_BUTTON_STYLES } from "~/constants/ui";
 import { type DiagnosisKandangType } from "~/types/report";
+import formatDate from "~/utils/formatDate";
 
 defineProps<{ report: DiagnosisKandangType }>();
 

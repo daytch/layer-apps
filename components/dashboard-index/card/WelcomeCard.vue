@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const authUser = useAuthUser();
+import formatDate from "~/utils/formatDate";
 </script>
 
 <template>

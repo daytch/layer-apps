@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { API_LIST, ASYNC_KEY } from "~/constants/api";
+import { ASYNC_KEY } from "~/constants/api";
 import { UI_PRIMARY_GHOST_BUTTON_STYLES } from "~/constants/ui";
 
 defineProps<{
