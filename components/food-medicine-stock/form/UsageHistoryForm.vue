@@ -89,7 +89,6 @@ async function onSubmit(event: FormSubmitEvent<FormValueUsageFoodMedicine>) {
         </div>
       </template>
       <div class="space-y-6">
-        <pre>{{ JSON.stringify(formState, null, 2) }}</pre>
         <div class="flex flex-col gap-x-6 gap-y-6">
           <UFormGroup label="Kandang" name="coop" class="flex-1">
             <template #label>
