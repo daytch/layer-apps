@@ -5,9 +5,7 @@ const { showModal, handleShowModal, handleCloseModal } = useModalForm<any>();
 const { isLoading, createNewConsumptionStock } = useFetchFoodMedicine();
 
 const handleAddNewData = async (payload: FeedMedicConsumptionPayloadType) => {
-  createNewConsumptionStock(payload).then(() => {
-    handleCloseModal();
-  });
+  createNewConsumptionStock(payload, handleCloseModal);
 };
 </script>
 

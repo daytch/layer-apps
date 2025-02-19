@@ -12,6 +12,17 @@ import {
 } from "~/schemas/obat";
 import type { FeedMedicConsumptionPayloadType } from "~/types/food-medicine-stock";
 
+const options = { timeZone: "Asia/Jakarta", hour12: false };
+const formatter = new Intl.DateTimeFormat("sv-SE", {
+  ...options,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+});
+
 const emits = defineEmits<{
   (e: "handleAddReport", data: FeedMedicConsumptionPayloadType): void;
   (e: "handleCloseModal"): void;
@@ -48,16 +59,15 @@ const { data: foods } = await useAsyncData(
 async function onSubmit(event: FormSubmitEvent<FormValueUsageFoodMedicine>) {
   const { data } = event;
   const payload = {} as FeedMedicConsumptionPayloadType;
-  if (payload["coopId"] && !isNaN(payload["coopId"])) {
+  if (data["coop"] && !isNaN(Number(data["coop"]))) {
     payload["coopId"] = Number(data.coop);
   }
-  if (payload["feedId"] && !isNaN(payload["feedId"])) {
+  if (data["food"] && !isNaN(Number(data["food"]))) {
     payload["feedId"] = Number(data.food);
   }
-  (payload["transDate"] = isValidDate(data?.transDate)
-    ? formatDate(data?.transDate, "yyyy-MM-dd")
-    : ""),
-    (payload["total"] = data.total);
+  payload["transDate"] =
+    formatter.format((data as any)?.transDate).replace(" ", "T") + ".000Z";
+  payload["total"] = data.total;
   emits("handleAddReport", payload);
 }
 </script>

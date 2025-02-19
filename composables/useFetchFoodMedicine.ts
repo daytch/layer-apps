@@ -129,13 +129,21 @@ export const useFetchFoodMedicine = () => {
   };
 
   const createNewConsumptionStock = async (
-    createPayload: FeedMedicConsumptionPayloadType
+    createPayload: FeedMedicConsumptionPayloadType,
+    successCallback: () => void
   ) => {
     initialFetching();
     foodMedicineRepo
       .createFeedComsumption(createPayload)
-      .then((data) => {
-        console.log(data);
+      .then(async (data) => {
+        if (data?.data) {
+          handleShowToast({
+            type: "SUCCESS",
+            message: "Data berhasil ditambahkan.",
+          });
+          successCallback();
+          await refreshNuxtData(ASYNC_KEY.FOOD_MEDIC_HISTORY);
+        }
       })
       .catch((error) => {
         handleError(error?.data?.message || "Data gagal ditambahkan");
