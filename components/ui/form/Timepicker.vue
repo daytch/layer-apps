@@ -20,7 +20,7 @@ defineProps<{
     :teleport="true"
     time-picker
     range
-    @update:model-value="(value) => $emit('update:modelValue', value)"
+    @update:model-value="(value: any) => $emit('update:modelValue', value)"
     :select-text="'Pilih'"
     :cancel-text="'Batal'"
     v-bind="$attrs"
