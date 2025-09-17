@@ -136,7 +136,7 @@ async function onSubmit(event: FormSubmitEvent<UserFormValueType>) {
     :state="formState"
     @submit="onSubmit"
   >
-    <UCard :ui="{ ...UI_CARD_STYLES }">
+    <UCard :ui="UI_CARD_STYLES">
       <template #header>
         <div
           class="w-full flex justify-between items-center pb-6 mb-6 border-b"

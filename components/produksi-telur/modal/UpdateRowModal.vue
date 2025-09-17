@@ -84,7 +84,7 @@ async function onSubmit(event: FormSubmitEvent<FormType>) {
     @submit="onSubmit"
     :no-validate="true"
   >
-    <UCard :ui="{ ...UI_CARD_STYLES }">
+    <UCard :ui="UI_CARD_STYLES">
       <template #header>
         <div
           class="w-full flex justify-between items-center pb-6 mb-6 border-b"
@@ -168,7 +168,7 @@ async function onSubmit(event: FormSubmitEvent<FormType>) {
             type="submit"
             :disabled="isLoadingUpdateData"
             size="md"
-            :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
+            :ui="UI_PRIMARY_BUTTON_STYLES"
           >
             {{ isLoadingUpdateData ? "Menyimpan..." : "Ubah" }}
           </UButton>

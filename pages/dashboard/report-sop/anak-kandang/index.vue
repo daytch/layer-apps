@@ -47,7 +47,7 @@ const handleRefreshSOP = async () => {
         block
         class="mt-[10px]"
         size="md"
-        :ui="{ ...UI_PRIMARY_BUTTON_STYLES }"
+        :ui="UI_PRIMARY_BUTTON_STYLES"
         >{{ isRunningScheduler ? "TUNGGU..." : "REFRESH SOP" }}</UButton
       >
     </div>

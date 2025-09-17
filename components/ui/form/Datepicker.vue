@@ -48,7 +48,7 @@ defineProps<{
       {{
         Array.isArray(value)
           ? value.map((v) => formatDate(v, "dd MMM yy")).join("-")
-          : formatDate(value, "dd MMM yy")
+          : formatDate(value as Date, "dd MMM yy")
       }}
     </template>
   </VueDatePicker>
