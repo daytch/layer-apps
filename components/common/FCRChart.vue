@@ -8,8 +8,8 @@ const props = defineProps<{
 
 const sortedData = computed(() =>
   (props?.fcrData || []).sort(
-    (a, b) => (new Date(a.transDate) as any) - (new Date(b.transDate) as any)
-  )
+    (a, b) => (new Date(a.transDate) as any) - (new Date(b.transDate) as any),
+  ),
 );
 
 const chartOptions = ref({
@@ -122,10 +122,10 @@ const series = computed(() => [
     </template>
 
     <div class="px-4">
-      <template v-if="isLoading">
+      <template v-if="$props?.isLoading">
         <LoadingSpinner />
       </template>
-      <template v-if="!!fcrData.length && !isLoading">
+      <template v-if="!!$props?.fcrData.length && !$props?.isLoading">
         <div class="w-full h-[500px]">
           <apexchart
             type="area"
@@ -135,7 +135,7 @@ const series = computed(() => [
           />
         </div>
       </template>
-      <template v-else-if="!isLoading && !fcrData?.length">
+      <template v-else-if="!$props?.isLoading && !$props?.fcrData?.length">
         <NoDataStatus>Data tidak ditemukan.</NoDataStatus>
       </template>
       <template v-else>
