@@ -9,20 +9,24 @@ const { data, pending } = await useAsyncData(
   async () => getDashboardData(),
   {
     lazy: true,
-  }
+  },
 );
-const { data: fcrData, pending: pendingFCR } = await useAsyncData(
+const {
+  data: fcrData,
+  pending: pendingFCR,
+  execute: executeFCR,
+} = await useAsyncData(
   "FCR_DASHBOARD_DATA",
   async () => {
-    getFCRChartData({
+    if (!selectedCoop.value) return;
+    return getFCRChartData({
       coopId: selectedCoop.value,
       period: formatDate(new Date(), "yyyy-MM-01"),
     });
   },
   {
-    lazy: true,
-    watch: [selectedCoop],
-  }
+    immediate: false,
+  },
 );
 const { data: coops } = await useAsyncData(
   "FCR_KANDANG",
@@ -41,7 +45,19 @@ const { data: coops } = await useAsyncData(
       if (!data?.length) return [];
       return data.map((coop) => ({ label: coop?.name, value: coop?.id }));
     },
-  }
+  },
+);
+
+watch(
+  selectedCoop,
+  (newValue) => {
+    if (newValue) {
+      executeFCR();
+    }
+  },
+  {
+    immediate: true,
+  },
 );
 </script>
 
@@ -54,7 +70,7 @@ const { data: coops } = await useAsyncData(
         <MonthlyResultCard />
         <MemberOverviewCard :users="data?.userData || []" />
       </div>
-      <FCRChart :fcr-data="fcrData || []" :is-loading="pendingFCR">
+      <FCRChart :fcr-data="fcrData?.data || []" :is-loading="pendingFCR">
         <template #filter>
           <USelectMenu
             v-model="selectedCoop"
