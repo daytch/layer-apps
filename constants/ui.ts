@@ -63,7 +63,7 @@ export const UI_CARD_STYLES = {
     background: "",
     padding: "p-0",
   },
-};
+} as const;
 
 export const UI_GHOST_BUTTON_STYLES = {
   strategy: "override",
@@ -75,7 +75,7 @@ export const UI_GHOST_BUTTON_STYLES = {
       ghost: "bg-white text-[--app-dark-100] disabled:cursor-not-allowed ring-1 ring-[#DFE4EA]",
     },
   },
-};
+} as const;
 
 export const UI_PRIMARY_BUTTON_STYLES = {
   strategy: "override",
@@ -88,7 +88,7 @@ export const UI_PRIMARY_BUTTON_STYLES = {
         "bg-[--app-primary-100] ring-[--app-primary-100] text-white disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed",
     },
   },
-};
+} as const;
 
 export const UI_PRIMARY_GHOST_BUTTON_STYLES = {
   strategy: "override",
@@ -101,4 +101,4 @@ export const UI_PRIMARY_GHOST_BUTTON_STYLES = {
         "bg-white ring-1 ring-[--app-primary-100] text-[--app-primary-100] disabled:bg-[--app-dark-800] disabled:text-[--app-dark-500] disabled:cursor-not-allowed",
     },
   },
-};
+} as const;

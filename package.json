@@ -14,6 +14,7 @@
     "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@pinia/nuxt": "^0.5.1",
+    "@tailwindcss/postcss": "^4.3.3",
     "@vuepic/vue-datepicker": "^8.3.2",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
@@ -30,6 +31,8 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/node": "^22.20.3",
+    "tailwindcss": "3.4.17",
     "typescript": "^5.9.2",
     "vue-tsc": "^3.0.7"
   }

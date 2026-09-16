@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EggResponseDataType, UpdateRowFormType } from "~/types/egg";
-import formatDate, { isValidDate } from "~/utils/formatDate";
+import formatDate from "~/utils/formatDate";
 
 defineProps<{
   eggData: Array<EggResponseDataType>;
@@ -237,7 +237,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
               @click="
                 showUpdateRowModal({
                   type: 'date',
-                  value: formatDate(item.transDate ?? new Date(), "EEEE, dd MMMM yyyy") ,
+                  value: item.transDate,
                   id: item.id,
                   key: 'transDate',
                 })

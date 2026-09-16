@@ -2,9 +2,16 @@ import { isValid } from "date-fns/isValid";
 import { format } from "date-fns/format";
 import { id } from "date-fns/locale/id";
 import { MONTH } from "~/constants/time";
+import { parseISO } from "date-fns/fp/parseISO";
 
-export function isValidDate(date: unknown) {
-  return isValid(date);
+export function isValidDate(date: unknown): boolean {
+  if (typeof date === "string") {
+    // Jika bentuknya string, ubah dulu ke format Date sebelum dicek
+    return isValid(parseISO(date)); 
+  }
+  
+  // Jika bentuknya sudah Date atau angka (timestamp)
+  return isValid(date as Date | number);
 }
 
 export default function (date: Date | string, formatType?: string) {

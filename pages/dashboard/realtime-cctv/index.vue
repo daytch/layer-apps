@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from "vue";
+
 definePageMeta({
   layout: "dashboard",
   middleware: ["dashboard"],
@@ -7,7 +9,6 @@ useSeoMeta({
   title: "Realtime CCTV | Layer Apps",
   description: "Realtime CCTV | Layer Apps",
 });
-const showCCTVModal = ref(false);
 
 interface CCTVData {
   id: number;
@@ -59,7 +60,7 @@ const cctvList = ref<CCTVData[]>([
       "https://cctv.molecool.id/Monas-Barat-009/video.m3u8?token=5f5b3708667ae2e99e70b941bc5d47e607d4e41d-db26797924ffd7353f5d9dd97340dc98-1789579929-1789576329",
   },
   {
-    id: 5,
+    id: 6,
     name: "Bendungan Hilir 003",
     code: "CAM-006",
     status: "Connected",
@@ -67,7 +68,7 @@ const cctvList = ref<CCTVData[]>([
       "https://cctv.molecool.id/Bendungan-Hilir-003/video.m3u8?token=1e6252fac9e6732b6dabceaa2799e5fbec7f6cbc-c28b89c94f950b9f7ce2381d99a8b056-1789579738-1789576138",
   },
   {
-    id: 6,
+    id: 7,
     name: "Cempaka Putih Barat 003",
     code: "CAM-007",
     status: "Connected",
@@ -75,7 +76,7 @@ const cctvList = ref<CCTVData[]>([
       "https://cctv.molecool.id/Cempaka-Putih-Barat-003/video.m3u8?token=6f73ae469e5511b77fc068c40481f5379381ec82-81ed4fd9d31ed528ecae852f0795ac9b-1789580431-1789576831",
   },
   {
-    id: 7,
+    id: 8,
     name: "Gambir004",
     code: "CAM-008",
     status: "Connected",
@@ -83,6 +84,14 @@ const cctvList = ref<CCTVData[]>([
       "https://cctv.molecool.id/Gambir-004/video.m3u8?token=228370a9ef0a7725fd768455bf82cbf4c7e1e60e-3397e38e268785ed79d8d34c9a32edb3-1789580611-1789577011",
   },
 ]);
+const showCCTVModal = ref(false);
+const selectedCCTV = ref<CCTVData | null>(null);
+
+// 4. Fungsi yang dipanggil saat event @on-select-card memicu (Fix Error TypeScript)
+const handleSelectCard = (cctv: CCTVData) => {
+  selectedCCTV.value = cctv;
+  showCCTVModal.value = true;
+};
 </script>
 
 <template>
