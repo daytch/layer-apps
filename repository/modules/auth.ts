@@ -11,7 +11,7 @@ export const authRepository = <T>(fetch: FetchType<T>) => ({
   async login(payload: LoginPayload): Promise<APIResponse<LoginResponse>> {
     return fetch(API_LIST.login, {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify({username: payload.email, password: payload.password}),
     });
   },
   async profile(): Promise<APIResponse<LoginResponseWithoutToken>> {
