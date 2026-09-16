@@ -237,7 +237,7 @@ const showUpdateRowModal = (showModalParams: UpdateRowFormType) => {
               @click="
                 showUpdateRowModal({
                   type: 'date',
-                  value: item.transDate,
+                  value: formatDate(item.transDate ?? new Date(), "EEEE, dd MMMM yyyy") ,
                   id: item.id,
                   key: 'transDate',
                 })
